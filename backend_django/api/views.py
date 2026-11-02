@@ -16,16 +16,17 @@ from .serializers import CustomUserSerializer, TradeSerializer, CapitalLogSerial
 @api_view(['GET'])
 @permission_classes([AllowAny])
 def root_status_view(request):
+    base_url = request.build_absolute_uri('/')[:-1]
     return Response({
         'status': 'online',
-        'project': 'TRADETRACKER Pro $20,000 Trading Terminal API',
+        'project': 'TRADETRACKER Pro Trading Terminal API',
         'version': 'v2.0 Global',
         'endpoints': {
-            'api_root': 'http://localhost:8000/api/',
-            'admin_portal': 'http://localhost:8000/admin/',
-            'auth_signup': 'http://localhost:8000/api/auth/signup/',
-            'auth_login': 'http://localhost:8000/api/auth/login/',
-            'data_sync': 'http://localhost:8000/api/data/'
+            'api_root': f'{base_url}/api/',
+            'admin_portal': f'{base_url}/admin/',
+            'auth_signup': f'{base_url}/api/auth/signup/',
+            'auth_login': f'{base_url}/api/auth/login/',
+            'data_sync': f'{base_url}/api/data/'
         }
     })
 

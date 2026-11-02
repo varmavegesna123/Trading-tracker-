@@ -17,12 +17,22 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
   }
 });
 
+// Resilient network timeout wrapper to prevent browser hanging on paused/unreachable Supabase projects
+const SUPABASE_TIMEOUT_MS = 2500;
+
+function withTimeout(promise, ms = SUPABASE_TIMEOUT_MS, errorMsg = 'Supabase network timeout') {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(errorMsg)), ms))
+  ]);
+}
+
 // Primary Supabase Authentication Service
 export const supabaseAuthService = {
   // 1. User Registration via Supabase Auth
   signUp: async ({ email, password, fullName, username }) => {
     try {
-      const { data, error } = await supabase.auth.signUp({
+      const { data, error } = await withTimeout(supabase.auth.signUp({
         email: email.trim().toLowerCase(),
         password: password.trim(),
         options: {
@@ -31,7 +41,7 @@ export const supabaseAuthService = {
             username: username.trim().toLowerCase()
           }
         }
-      });
+      }));
 
       if (error) {
         return { success: false, error: error.message };
@@ -52,10 +62,10 @@ export const supabaseAuthService = {
   // 2. Sign-In with Password via Supabase Auth
   signIn: async ({ email, password }) => {
     try {
-      const { data, error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await withTimeout(supabase.auth.signInWithPassword({
         email: email.trim().toLowerCase(),
         password: password.trim()
-      });
+      }), 2500, 'Supabase network timeout');
 
       if (error) {
         return { success: false, error: error.message };
@@ -84,10 +94,10 @@ export const supabaseAuthService = {
 
   signInWithOAuth: async (provider) => {
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await withTimeout(supabase.auth.signInWithOAuth({
         provider,
         options: { redirectTo: window.location.origin }
-      });
+      }), 2500, 'Supabase network timeout');
       if (error) return { success: false, error: error.message };
       if (data?.url) {
         window.location.assign(data.url);
@@ -161,7 +171,7 @@ export const supabaseAuthService = {
   // 4. Session Retrieval & JWT Token Access
   getSession: async () => {
     try {
-      const { data, error } = await supabase.auth.getSession();
+      const { data, error } = await withTimeout(supabase.auth.getSession(), 1500, 'Session timeout');
       if (error || !data.session) return null;
 
       const user = data.session.user;

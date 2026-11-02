@@ -1,12 +1,13 @@
 // Django REST API Storage & Persistence Service for TRADETRACKER Pro
 import { authService } from './auth';
+import { DJANGO_DATA_URL } from './apiConfig';
 
 const TRADES_KEY = 'tradetracker_trades_v1';
 const CAPITAL_LOGS_KEY = 'tradetracker_capital_logs_v1';
 const SETTINGS_KEY = 'tradetracker_settings_v1';
 
-const DJANGO_API_URL = import.meta.env.VITE_DJANGO_DATA_URL || 'http://localhost:8000/api/data';
-const NODE_API_URL = import.meta.env.VITE_NODE_DATA_URL || 'http://localhost:3001/api/data';
+const DJANGO_API_URL = DJANGO_DATA_URL;
+
 
 const getUserStorageKey = (key) => {
   const user = authService.getCurrentUser();

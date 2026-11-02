@@ -7,18 +7,33 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies and Build Artifacts
 node_modules
 dist
 dist-ssr
-*.local
+.vercel
+
+# Environment & Secret files
 .env
+.env.*
+!.env.example
+*.local
 backend_django/.env
+backend_django/.env.*
+!backend_django/.env.example
 data/database.json
 
-# Python
+# Python & Django
 __pycache__/
 *.py[cod]
+*$py.class
 *.sqlite3
+staticfiles/
+backend_django/staticfiles/
+venv/
+.venv/
+env/
+ENV/
 
 # Editor directories and files
 .vscode/*

@@ -2,6 +2,7 @@
 // Primary Authority: Supabase Auth (Registration, Passwords, Sessions & JWT Tokens)
 
 import { supabaseAuthService } from './supabase';
+import { DJANGO_AUTH_LOGIN_URL } from './apiConfig';
 
 const AUTH_USER_KEY = 'tradetracker_auth_user_v1';
 const JWT_TOKEN_KEY = 'tradetracker_jwt_token_v1';
@@ -82,7 +83,7 @@ export const authService = {
       return { success: false, error: 'Please enter both email address and password.' };
     }
 
-    // A. Primary Authority: Supabase Auth
+    // A. Primary Authority: Supabase Auth (with fast timeout)
     try {
       const supaRes = await supabaseAuthService.signIn({ email: cleanEmail, password: cleanPassword });
       if (supaRes.success && supaRes.user) {
@@ -92,29 +93,43 @@ export const authService = {
         }
         return { success: true, user: supaRes.user, token: supaRes.token };
       }
-      if (supaRes.error && !supaRes.error.toLowerCase().includes('fetch')) {
-        return { success: false, error: supaRes.error };
-      }
     } catch (e) {
-      // Network/Supabase unreachable, try local backend
+      // Network/Supabase unreachable or timed out, try local backend
     }
 
-    // B. Secondary Authority: Local Node Server Fallback
+    // B. Secondary Authority: Backend Django Server Fallback
     try {
-      const nodeRes = await fetch('http://localhost:3001/api/auth/login', {
+      const backendRes = await fetch(DJANGO_AUTH_LOGIN_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: cleanEmail, password: cleanPassword })
       });
-      const nodeData = await nodeRes.json();
-      if (nodeRes.ok && nodeData.success && nodeData.user) {
-        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(nodeData.user));
-        if (nodeData.token) localStorage.setItem(JWT_TOKEN_KEY, nodeData.token);
-        return { success: true, user: nodeData.user, token: nodeData.token };
+      const backendData = await backendRes.json();
+      if (backendRes.ok && backendData.success && backendData.user) {
+        localStorage.setItem(AUTH_USER_KEY, JSON.stringify(backendData.user));
+        if (backendData.token) localStorage.setItem(JWT_TOKEN_KEY, backendData.token);
+        return { success: true, user: backendData.user, token: backendData.token };
       }
     } catch (e) {}
 
-    return { success: false, error: 'Invalid email or password.' };
+    // C. Tertiary Authority: Local Node Server Fallback (port 3001)
+    if (typeof window !== 'undefined' && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+      try {
+        const nodeRes = await fetch('http://localhost:3001/api/auth/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: cleanEmail, password: cleanPassword })
+        });
+        const nodeData = await nodeRes.json();
+        if (nodeRes.ok && nodeData.success && nodeData.user) {
+          localStorage.setItem(AUTH_USER_KEY, JSON.stringify(nodeData.user));
+          if (nodeData.token) localStorage.setItem(JWT_TOKEN_KEY, nodeData.token);
+          return { success: true, user: nodeData.user, token: nodeData.token };
+        }
+      } catch (e) {}
+    }
+
+    return { success: false, error: 'Invalid email or password. You can also use 1-Click Demo Access below.' };
   },
 
   loginDemo: async () => {
