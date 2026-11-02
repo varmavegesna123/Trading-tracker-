@@ -1,0 +1,354 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+@layer base {
+  :root {
+    --bg-dark: #0B0F19;
+    --card-dark: #111726;
+    --border-dark: #1E2638;
+    --accent-cyan: #38BDF8;
+    --profit-green: #10B981;
+    --loss-red: #EF4444;
+  }
+
+  body, button, input, select, textarea, .font-sans {
+    background-color: var(--bg-dark);
+    color: #F8FAFC;
+    font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Trebuchet MS', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    letter-spacing: -0.015em;
+    overflow-x: hidden;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  h1, h2, h3, h4, h5, h6, .font-jakarta, .font-heading {
+    font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Trebuchet MS', sans-serif;
+    letter-spacing: -0.025em;
+  }
+
+  .font-brand {
+    font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Trebuchet MS', sans-serif;
+    letter-spacing: -0.03em;
+  }
+}
+
+/* Closed Status Badge Styling for Light and Dark Modes */
+html:not(.dark) .closed-status-badge {
+  background-color: transparent !important;
+  background: transparent !important;
+  color: #000000 !important;
+  border-color: transparent !important;
+}
+
+html.dark .closed-status-badge {
+  background-color: rgba(30, 41, 59, 0.8) !important;
+  color: #CBD5E1 !important;
+  border-color: #334155 !important;
+}
+
+/* Global Clean & Unslashed TradingView Style Numerical Typography */
+.font-mono,
+[class*="font-mono"],
+.tabular-nums,
+input[type="number"],
+table td,
+table th,
+[class*="mono"],
+[class*="num"] {
+  font-family: 'Inter', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Trebuchet MS', sans-serif !important;
+  font-variant-numeric: tabular-nums !important;
+  font-feature-settings: "tnum" 1, "lnum" 1, "zero" 0 !important;
+  letter-spacing: -0.02em;
+}
+
+/* Synchronized, Hardware-Accelerated Theme Transition (Zero Lag across Sidebar & Dashboard) */
+html.theme-transitioning,
+html.theme-transitioning *,
+html.theme-transitioning *:before,
+html.theme-transitioning *:after {
+  transition: background-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              border-color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              fill 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              stroke 0.15s cubic-bezier(0.4, 0, 0.2, 1),
+              box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* Glassmorphism & Interactive Responsive Box Styling */
+.glass-box {
+  background: rgba(17, 23, 38, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(30, 38, 56, 0.85);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-box:hover {
+  border-color: rgba(56, 189, 248, 0.5);
+  box-shadow: 0 10px 30px -10px rgba(56, 189, 248, 0.15);
+}
+
+.glass-box-emerald {
+  background: rgba(17, 23, 38, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-box-emerald:hover {
+  border-color: rgba(16, 185, 129, 0.6);
+  box-shadow: 0 10px 30px -10px rgba(16, 185, 129, 0.2);
+}
+
+.glass-box-rose {
+  background: rgba(17, 23, 38, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-box-rose:hover {
+  border-color: rgba(239, 68, 68, 0.6);
+  box-shadow: 0 10px 30px -10px rgba(239, 68, 68, 0.2);
+}
+
+/* High-End TradingView Light Theme Overrides (html:not(.dark)) */
+html:not(.dark) {
+  color-scheme: light;
+  --bg-dark: #F8FAFC;
+  --card-dark: #FFFFFF;
+  --border-dark: #E2E8F0;
+  --accent-cyan: #0284C7;
+  --profit-green: #089981;
+  --loss-red: #F23645;
+}
+
+html:not(.dark) body {
+  background-color: #F8FAFC !important;
+  color: #0F172A !important;
+}
+
+/* Background Color Class Overrides using Attribute & Utility Selectors */
+html:not(.dark) [class*="bg-[#0B0F19]"],
+html:not(.dark) [class*="bg-[#060913]"],
+html:not(.dark) .bg-\[\#0B0F19\],
+html:not(.dark) .bg-\[\#060913\] {
+  background-color: #F8FAFC !important;
+}
+
+html:not(.dark) [class*="bg-[#111726]"],
+html:not(.dark) [class*="bg-[#0D1424]"],
+html:not(.dark) .bg-\[\#111726\],
+html:not(.dark) .bg-\[\#0D1424\] {
+  background-color: #FFFFFF !important;
+}
+
+html:not(.dark) [class*="bg-[#1E2638]"],
+html:not(.dark) [class*="bg-[#172033]"],
+html:not(.dark) .bg-\[\#1E2638\],
+html:not(.dark) .bg-\[\#172033\] {
+  background-color: #F1F5F9 !important;
+}
+
+/* Sidebar & Header Specific Light Theme Overrides */
+html:not(.dark) aside {
+  background-color: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.02) !important;
+}
+
+html:not(.dark) aside button {
+  color: #475569;
+}
+
+html:not(.dark) aside button:hover {
+  background-color: #F1F5F9 !important;
+  color: #0F172A !important;
+}
+
+html:not(.dark) aside button.bg-\[\#38BDF8\],
+html:not(.dark) aside button[class*="bg-[#38BDF8]"] {
+  background-color: #0284C7 !important;
+  color: #FFFFFF !important;
+  box-shadow: 0 4px 12px rgba(2, 132, 199, 0.25) !important;
+}
+
+html:not(.dark) header {
+  background-color: rgba(255, 255, 255, 0.95) !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Border Color Overrides */
+html:not(.dark) [class*="border-[#1E2638]"],
+html:not(.dark) [class*="border-[#172033]"],
+html:not(.dark) [class*="border-[#1E2C4A]"],
+html:not(.dark) .border-\[\#1E2638\],
+html:not(.dark) .border-\[\#172033\],
+html:not(.dark) .border-\[\#1E2C4A\] {
+  border-color: #E2E8F0 !important;
+}
+
+/* Text Color Overrides */
+html:not(.dark) [class*="text-white"]:not(button):not(a):not(.bg-gradient-to-r):not([class*="bg-[#38BDF8]"]):not([class*="bg-[#0284C7]"]):not([class*="bg-[#10B981]"]):not([class*="bg-[#EF4444]"]),
+html:not(.dark) .text-white:not(button):not(a):not(.bg-gradient-to-r):not([class*="bg-[#38BDF8]"]):not([class*="bg-[#0284C7]"]):not([class*="bg-[#10B981]"]):not([class*="bg-[#EF4444]"]),
+html:not(.dark) [class*="text-slate-100"],
+html:not(.dark) [class*="text-slate-200"],
+html:not(.dark) .text-slate-100,
+html:not(.dark) .text-slate-200 {
+  color: #0F172A !important;
+}
+
+html:not(.dark) [class*="text-slate-300"],
+html:not(.dark) [class*="text-slate-400"],
+html:not(.dark) [class*="text-slate-500"],
+html:not(.dark) .text-slate-300,
+html:not(.dark) .text-slate-400,
+html:not(.dark) .text-slate-500 {
+  color: #64748B !important;
+}
+
+/* Title & Header Text In Light Theme */
+html:not(.dark) h1,
+html:not(.dark) h2,
+html:not(.dark) h3,
+html:not(.dark) h4,
+html:not(.dark) h5,
+html:not(.dark) h6 {
+  color: #0F172A;
+}
+
+html:not(.dark) .text-\[\#38BDF8\]:not([class*="dark:"]) {
+  color: #0284C7 !important;
+}
+
+/* Preserve White Text for Primary Action Buttons & Active Badges */
+html:not(.dark) button.bg-gradient-to-r,
+html:not(.dark) button[class*="bg-gradient-to-r"],
+html:not(.dark) a.bg-gradient-to-r,
+html:not(.dark) .bg-\[\#0284C7\],
+html:not(.dark) .bg-\[\#38BDF8\],
+html:not(.dark) .bg-emerald-600,
+html:not(.dark) .bg-rose-600,
+html:not(.dark) .bg-\[\#10B981\],
+html:not(.dark) .bg-\[\#EF4444\] {
+  color: #FFFFFF !important;
+}
+
+html:not(.dark) .bg-clip-text {
+  color: transparent !important;
+}
+
+/* Glass Box Cards in Light Theme */
+html:not(.dark) .glass-box {
+  background: #FFFFFF !important;
+  border-color: #E2E8F0 !important;
+  box-shadow: 0 2px 10px -2px rgba(0, 0, 0, 0.05), 0 0 1px rgba(0, 0, 0, 0.08) !important;
+}
+
+html:not(.dark) .glass-box:hover {
+  border-color: #0284C7 !important;
+  box-shadow: 0 4px 16px -2px rgba(2, 132, 199, 0.12) !important;
+}
+
+html:not(.dark) .glass-box-emerald {
+  background: #FFFFFF !important;
+  border-color: rgba(16, 185, 129, 0.35) !important;
+  box-shadow: 0 2px 10px -2px rgba(16, 185, 129, 0.08) !important;
+}
+
+html:not(.dark) .glass-box-emerald:hover {
+  border-color: rgba(16, 185, 129, 0.7) !important;
+  box-shadow: 0 4px 16px -2px rgba(16, 185, 129, 0.15) !important;
+}
+
+html:not(.dark) .glass-box-rose {
+  background: #FFFFFF !important;
+  border-color: rgba(239, 68, 68, 0.35) !important;
+  box-shadow: 0 2px 10px -2px rgba(239, 68, 68, 0.08) !important;
+}
+
+html:not(.dark) .glass-box-rose:hover {
+  border-color: rgba(239, 68, 68, 0.7) !important;
+  box-shadow: 0 4px 16px -2px rgba(239, 68, 68, 0.15) !important;
+}
+
+/* Form Inputs, Selects & Modals in Light Mode */
+html:not(.dark) input,
+html:not(.dark) select,
+html:not(.dark) textarea {
+  background-color: #FFFFFF !important;
+  color: #0F172A !important;
+  border-color: #CBD5E1 !important;
+}
+
+html:not(.dark) input::placeholder,
+html:not(.dark) textarea::placeholder {
+  color: #94A3B8 !important;
+}
+
+/* Table Light Mode Overrides */
+html:not(.dark) table {
+  color: #0F172A !important;
+}
+
+html:not(.dark) table th {
+  background-color: #F8FAFC !important;
+  color: #64748B !important;
+  border-color: #E2E8F0 !important;
+}
+
+html:not(.dark) table td {
+  border-color: #E2E8F0 !important;
+  color: #0F172A !important;
+}
+
+html:not(.dark) tbody tr:hover {
+  background-color: #F1F5F9 !important;
+}
+
+/* Hide native browser date/time picker popups */
+input[type="datetime-local"]::-webkit-calendar-picker-indicator,
+input[type="date"]::-webkit-calendar-picker-indicator {
+  display: none !important;
+  -webkit-appearance: none !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* High-End Dark & Light Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0B0F19;
+}
+
+html:not(.dark) ::-webkit-scrollbar-track {
+  background: #F8FAFC;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #1E2638;
+  border-radius: 9999px;
+}
+
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #38BDF8;
+}
