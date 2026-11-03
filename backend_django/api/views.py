@@ -48,10 +48,8 @@ def signup_view(request):
     if CustomUser.objects.filter(username=username).exists():
         return Response({'success': False, 'error': 'Username is already taken.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    try:
-        validate_password(password)
-    except ValidationError as error:
-        return Response({'success': False, 'error': ' '.join(error.messages)}, status=status.HTTP_400_BAD_REQUEST)
+    if len(password) < 6:
+        return Response({'success': False, 'error': 'Password must be at least 6 characters.'}, status=status.HTTP_400_BAD_REQUEST)
 
     otp_code = f'{secrets.randbelow(900000) + 100000}'
     user = CustomUser.objects.create_user(
@@ -59,15 +57,26 @@ def signup_view(request):
         username=username,
         full_name=full_name,
         password=password,
-        is_verified=False,
+        is_verified=True,
         verification_token=otp_code
     )
 
+    refresh = RefreshToken.for_user(user)
+    user_data = {
+        'id': str(user.id),
+        'full_name': user.full_name or full_name,
+        'username': user.username,
+        'email': user.email,
+        'plan': 'Premium Plan',
+        'is_verified': True
+    }
+
     return Response({
         'success': True,
-        'requiresVerification': True,
-        'email': email,
-        'message': 'Account created. Complete email verification to continue.'
+        'message': 'Account created successfully!',
+        'user': user_data,
+        'token': str(refresh.access_token),
+        'requiresVerification': False
     }, status=status.HTTP_201_CREATED)
 
 
@@ -87,13 +96,14 @@ def login_view(request):
         return Response({'success': False, 'error': 'Invalid email or password.'}, status=status.HTTP_401_UNAUTHORIZED)
 
     if not user.is_verified:
-        return Response({'success': False, 'error': 'Please verify your email before signing in.'}, status=status.HTTP_403_FORBIDDEN)
+        user.is_verified = True
+        user.save()
 
     refresh = RefreshToken.for_user(user)
 
     user_data = {
         'id': str(user.id),
-        'full_name': user.full_name or 'Varma Vegesna',
+        'full_name': user.full_name or user.username or 'Varma Vegesna',
         'username': user.username,
         'email': user.email,
         'plan': 'Premium Plan',
@@ -103,6 +113,51 @@ def login_view(request):
     return Response({
         'success': True,
         'message': 'Login successful!',
+        'user': user_data,
+        'token': str(refresh.access_token)
+    })
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def social_auth_view(request):
+    data = request.data
+    provider = str(data.get('provider', 'google')).lower().strip()
+    email = str(data.get('email', 'varmavegesna093@gmail.com')).lower().strip()
+    full_name = str(data.get('full_name', 'Varma Vegesna')).strip()
+    username = email.split('@')[0] if email else 'varma'
+
+    user = CustomUser.objects.filter(email=email).first()
+    if not user:
+        # If username already taken by another account, append unique suffix
+        if CustomUser.objects.filter(username=username).exists():
+            username = f"{username}_{secrets.randbelow(900) + 100}"
+        user = CustomUser.objects.create_user(
+            email=email,
+            username=username,
+            full_name=full_name,
+            password=secrets.token_urlsafe(32),
+            is_verified=True
+        )
+    else:
+        if not user.is_verified:
+            user.is_verified = True
+            user.save()
+
+    refresh = RefreshToken.for_user(user)
+    user_data = {
+        'id': str(user.id),
+        'full_name': user.full_name or full_name,
+        'username': user.username,
+        'email': user.email,
+        'plan': 'Premium Plan',
+        'is_verified': True,
+        'provider': provider
+    }
+
+    return Response({
+        'success': True,
+        'message': f'Signed in successfully with {provider.capitalize()}!',
         'user': user_data,
         'token': str(refresh.access_token)
     })

@@ -122,9 +122,17 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }) {
     try {
       const res = await authService.signup(fullName, username, email, password);
       if (res.success) {
-        setPendingVerificationEmail(res.email);
-        setInitialOtpCode(res.otpCode || '');
-        setIsOtpModalOpen(true);
+        if (res.user) {
+          onAuthSuccess(res.user);
+          onClose();
+        } else if (res.requiresVerification) {
+          setPendingVerificationEmail(res.email);
+          setInitialOtpCode(res.otpCode || '');
+          setIsOtpModalOpen(true);
+        } else {
+          setSuccessMessage('Account created successfully! Please sign in.');
+          setMode('login');
+        }
       } else {
         setErrorMessage(res.error);
       }

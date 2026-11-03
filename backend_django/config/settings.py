@@ -93,10 +93,12 @@ if DATABASE_URL and dj_database_url:
         )
     }
 else:
+    # On Vercel serverless environments, only /tmp is writable
+    db_path = Path('/tmp/db.sqlite3') if (os.getenv('VERCEL') == '1' or os.getenv('AWS_LAMBDA_FUNCTION_NAME')) else (BASE_DIR / 'db.sqlite3')
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
+            'NAME': db_path,
         }
     }
 
