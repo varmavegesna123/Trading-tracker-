@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrandLogo } from './BrandLogo';
 import { 
   X, 
@@ -44,6 +44,31 @@ export function AuthModal({ isOpen, onClose, onAuthSuccess }) {
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Catch OAuth redirect errors in the URL (such as bad_oauth_state or expired session)
+  useEffect(() => {
+    if (!isOpen) return;
+    try {
+      const search = window.location.search;
+      const hash = window.location.hash;
+      const params = new URLSearchParams(search || (hash.startsWith('#') ? hash.slice(1) : ''));
+      const errorParam = params.get('error_description') || params.get('error');
+      const errorCode = params.get('error_code');
+
+      if (errorParam || errorCode) {
+        if (errorCode === 'bad_oauth_state' || (errorParam && errorParam.toLowerCase().includes('state'))) {
+          setErrorMessage(
+            'Google OAuth session expired or origin redirect mismatch. Please use "⚡ 1-Click Demo Access" below or enter your email and password.'
+          );
+        } else if (errorParam) {
+          setErrorMessage(decodeURIComponent(errorParam).replace(/\+/g, ' '));
+        }
+        window.history.replaceState({}, document.title, window.location.pathname);
+      }
+    } catch {
+      // ignore
+    }
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
