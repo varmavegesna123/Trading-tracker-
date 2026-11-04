@@ -70,3 +70,16 @@ class JournalEntry(models.Model):
     title = models.CharField(max_length=200)
     content = models.TextField()
     date = models.DateField(auto_now_add=True)
+
+
+class UserTradingData(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user = models.OneToOneField(CustomUser, on_delete=models.CASCADE, related_name='trading_data')
+    trades = models.JSONField(default=list, blank=True)
+    capital_logs = models.JSONField(default=list, blank=True)
+    settings = models.JSONField(default=dict, blank=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        trade_count = len(self.trades) if isinstance(self.trades, list) else 0
+        return f"TradingData for {self.user.email} ({trade_count} trades)"

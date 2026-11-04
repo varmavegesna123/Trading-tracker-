@@ -8,30 +8,34 @@ const SETTINGS_KEY = 'tradetracker_settings_v1';
 
 const DJANGO_API_URL = DJANGO_DATA_URL;
 
-
+// Generate user-scoped storage key using email as primary stable identity
 const getUserStorageKey = (key) => {
   const user = authService.getCurrentUser();
-  const identity = user?.id || user?.email;
-  return identity ? `${key}:${identity}` : null;
+  const email = user?.email ? user.email.toLowerCase().trim() : null;
+  const identity = email || user?.id || user?.username;
+  return identity ? `${key}:${identity}` : `${key}:guest`;
 };
 
 // Helper to push updates to the authenticated data service.
-const syncToBackend = async (dataPayload) => {
+const syncToBackend = async (dataPayload = {}) => {
   try {
-    if (!DJANGO_API_URL) return;
+    if (!DJANGO_API_URL) return false;
 
     const token = authService.getToken();
-    if (!token || !authService.getCurrentUser()) return;
+    if (!token || !authService.getCurrentUser()) return false;
 
     const currentLocalTrades = storageService.getTrades();
     const currentLocalCapital = storageService.getCapitalLogs();
     
     const payload = {
-      trades: dataPayload.trades || currentLocalTrades,
-      capitalLogs: dataPayload.capitalLogs || currentLocalCapital,
-      settings: storageService.getSettings(),
+      trades: dataPayload.trades !== undefined ? dataPayload.trades : currentLocalTrades,
+      capitalLogs: dataPayload.capitalLogs !== undefined ? dataPayload.capitalLogs : currentLocalCapital,
+      settings: dataPayload.settings !== undefined ? dataPayload.settings : storageService.getSettings(),
       updatedAt: new Date().toISOString()
     };
+
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 8000);
 
     const response = await fetch(DJANGO_API_URL, {
       method: 'POST',
@@ -39,18 +43,29 @@ const syncToBackend = async (dataPayload) => {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${token}`
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      signal: controller.signal
     });
+    clearTimeout(timeoutId);
+
     if (!response.ok) {
-      throw new Error(`Data sync failed with status ${response.status}.`);
+      console.warn(`Data sync returned status ${response.status}. Local data is retained.`);
+      return false;
     }
+    return true;
   } catch (err) {
-    console.error('Data sync failed; local data was retained.', err);
+    console.error('Data sync failed; local data was safely retained.', err);
+    return false;
   }
 };
 
 export const storageService = {
-  // Fetch data from Django backend on page reload
+  // Explicit immediate sync function
+  syncNow: async (extraData = {}) => {
+    return await syncToBackend(extraData);
+  },
+
+  // Fetch data from Django backend on page load / login
   fetchFromBackend: async () => {
     try {
       if (!DJANGO_API_URL) return null;
@@ -58,18 +73,56 @@ export const storageService = {
       const token = authService.getToken();
       if (!token || !authService.getCurrentUser()) return null;
 
-      const headers = { Authorization: `Bearer ${token}` };
-      const res = await fetch(DJANGO_API_URL, { headers }).catch(() => null);
+      const headers = { 
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      };
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+
+      const res = await fetch(DJANGO_API_URL, { headers, signal: controller.signal }).catch(() => null);
+      clearTimeout(timeoutId);
+
       if (!res || !res.ok) return null;
       const data = await res.json();
+      
       const tradesKey = getUserStorageKey(TRADES_KEY);
       const capitalLogsKey = getUserStorageKey(CAPITAL_LOGS_KEY);
+      const settingsKey = getUserStorageKey(SETTINGS_KEY);
+
+      // Data Protection:
+      // If backend has trades, cache them locally.
+      // If backend returns empty trades ([]), but local storage already has trades,
+      // preserve local trades and sync them UP to the backend!
       if (data && Array.isArray(data.trades)) {
-        if (tradesKey) localStorage.setItem(tradesKey, JSON.stringify(data.trades));
+        if (data.trades.length > 0) {
+          if (tradesKey) localStorage.setItem(tradesKey, JSON.stringify(data.trades));
+        } else {
+          const localTrades = storageService.getTrades();
+          if (localTrades && localTrades.length > 0) {
+            syncToBackend({ trades: localTrades });
+            data.trades = localTrades;
+          }
+        }
       }
+
       if (data && Array.isArray(data.capitalLogs)) {
-        if (capitalLogsKey) localStorage.setItem(capitalLogsKey, JSON.stringify(data.capitalLogs));
+        if (data.capitalLogs.length > 0) {
+          if (capitalLogsKey) localStorage.setItem(capitalLogsKey, JSON.stringify(data.capitalLogs));
+        } else {
+          const localCapital = storageService.getCapitalLogs();
+          if (localCapital && localCapital.length > 0) {
+            syncToBackend({ capitalLogs: localCapital });
+            data.capitalLogs = localCapital;
+          }
+        }
       }
+
+      if (data && data.settings && typeof data.settings === 'object' && Object.keys(data.settings).length > 0) {
+        if (settingsKey) localStorage.setItem(settingsKey, JSON.stringify(data.settings));
+      }
+
       return data;
     } catch (err) {
       return null;
@@ -79,8 +132,16 @@ export const storageService = {
   getTrades: () => {
     try {
       const key = getUserStorageKey(TRADES_KEY);
-      if (!key) return [];
-      const data = localStorage.getItem(key);
+      let data = localStorage.getItem(key);
+      if (!data) {
+        // Fallback to legacy user id key
+        const user = authService.getCurrentUser();
+        if (user?.id) data = localStorage.getItem(`${TRADES_KEY}:${user.id}`);
+      }
+      if (!data) {
+        // Fallback to plain un-namespaced key
+        data = localStorage.getItem(TRADES_KEY);
+      }
       return data ? JSON.parse(data) : [];
     } catch (e) {
       return [];
@@ -90,17 +151,17 @@ export const storageService = {
   saveTrades: (trades) => {
     try {
       const key = getUserStorageKey(TRADES_KEY);
-      if (!key) return;
-      localStorage.setItem(key, JSON.stringify(trades));
+      if (key) localStorage.setItem(key, JSON.stringify(trades));
     } catch (e) {
       console.warn('LocalStorage quota exceeded, saving lightweight trades copy without images', e);
       try {
+        const key = getUserStorageKey(TRADES_KEY);
         const strippedTrades = trades.map(t => {
           if (!t) return t;
           const { chartUrl, ...rest } = t;
           return rest;
         });
-        localStorage.setItem(key, JSON.stringify(strippedTrades));
+        if (key) localStorage.setItem(key, JSON.stringify(strippedTrades));
       } catch (err) {
         console.error('Failed to save trades to storage', err);
       }
@@ -111,8 +172,14 @@ export const storageService = {
   getCapitalLogs: () => {
     try {
       const key = getUserStorageKey(CAPITAL_LOGS_KEY);
-      if (!key) return [];
-      const data = localStorage.getItem(key);
+      let data = localStorage.getItem(key);
+      if (!data) {
+        const user = authService.getCurrentUser();
+        if (user?.id) data = localStorage.getItem(`${CAPITAL_LOGS_KEY}:${user.id}`);
+      }
+      if (!data) {
+        data = localStorage.getItem(CAPITAL_LOGS_KEY);
+      }
       return data ? JSON.parse(data) : [];
     } catch (e) {
       return [];
@@ -122,8 +189,7 @@ export const storageService = {
   saveCapitalLogs: (capitalLogs) => {
     try {
       const key = getUserStorageKey(CAPITAL_LOGS_KEY);
-      if (!key) return;
-      localStorage.setItem(key, JSON.stringify(capitalLogs));
+      if (key) localStorage.setItem(key, JSON.stringify(capitalLogs));
       syncToBackend({ capitalLogs });
     } catch (e) {
       console.error('Failed to save capital logs to storage', e);
@@ -133,8 +199,10 @@ export const storageService = {
   getSettings: () => {
     try {
       const key = getUserStorageKey(SETTINGS_KEY);
-      if (!key) return { currency: 'INR' };
-      const data = localStorage.getItem(key);
+      let data = localStorage.getItem(key);
+      if (!data) {
+        data = localStorage.getItem(SETTINGS_KEY);
+      }
       return data ? JSON.parse(data) : { currency: 'INR' };
     } catch (e) {
       return { currency: 'INR' };
@@ -144,8 +212,7 @@ export const storageService = {
   saveSettings: (settings) => {
     try {
       const key = getUserStorageKey(SETTINGS_KEY);
-      if (!key) return;
-      localStorage.setItem(key, JSON.stringify(settings));
+      if (key) localStorage.setItem(key, JSON.stringify(settings));
       syncToBackend({ settings });
     } catch (e) {
       console.error('Failed to save settings', e);

@@ -18,7 +18,10 @@ import {
   HelpCircle,
   Zap,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  Mail,
+  LogOut,
+  ShieldCheck
 } from 'lucide-react';
 
 export function Sidebar({ 
@@ -26,11 +29,31 @@ export function Sidebar({
   setCurrentTab, 
   user, 
   onOpenAuthModal,
+  onLogout,
   collapsed,
   setCollapsed,
   darkMode = true,
   onToggleDarkMode
 }) {
+  const displayName = user?.full_name || user?.name || (user?.email ? user.email.split('@')[0] : 'Pro Trader');
+  const displayEmail = user?.email || 'varmavegesna093@gmail.com';
+
+  const initials = (() => {
+    if (user?.full_name) {
+      const parts = user.full_name.trim().split(/\s+/);
+      if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+    if (user?.name) {
+      const parts = user.name.trim().split(/\s+/);
+      if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+    if (user?.email) {
+      return user.email.slice(0, 2).toUpperCase();
+    }
+    return 'PT';
+  })();
   const navItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'trades', label: 'Trades', icon: ArrowRightLeft },
@@ -127,36 +150,72 @@ export function Sidebar({
       {/* Footer Area: Hidden/Compact when collapsed */}
       {!collapsed && (
         <div className="p-3 space-y-3">
-          {/* Upgrade to Pro Card */}
-          <div className="p-4 rounded-2xl bg-[#111726]/90 border border-[#1E2638] space-y-2.5 relative overflow-hidden">
-            <div className="flex items-center space-x-2 text-amber-400 text-xs font-bold font-jakarta">
-              <Crown className="w-4 h-4" />
-              <span>Pro Plan Active</span>
-            </div>
-            <p className="text-[11px] text-slate-400 leading-tight">
-              Advanced SMC analytics & live journal tracking enabled.
-            </p>
-          </div>
+          {/* Redesigned Pro Trader User Profile Card */}
+          <div className="rounded-2xl bg-gradient-to-b from-[#111726] to-[#0B0F19] border border-[#1E2638] hover:border-[#38BDF8]/40 p-3 shadow-lg shadow-black/20 transition-all space-y-2.5">
+            {/* Top row: Avatar, Name, Email, Status */}
+            <div 
+              onClick={onOpenAuthModal}
+              className="flex items-center space-x-3 cursor-pointer group"
+              title="Click to manage account profile"
+            >
+              {/* Dynamic Avatar with Active Indicator */}
+              <div className="relative shrink-0">
+                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#38BDF8]/20 via-sky-600/30 to-indigo-600/30 border border-[#38BDF8]/40 text-[#38BDF8] font-bold text-xs flex items-center justify-center font-mono shadow-inner group-hover:scale-105 group-hover:border-[#38BDF8] transition">
+                  {initials}
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-[#0B0F19]" title="Active Session" />
+              </div>
 
-          {/* User Profile Card */}
-          <div 
-            onClick={onOpenAuthModal}
-            className="p-2.5 rounded-xl bg-[#111726]/80 border border-[#1E2638] flex items-center justify-between cursor-pointer hover:bg-[#1E2638] transition"
-          >
-            <div className="flex items-center space-x-3 overflow-hidden">
-              <div className="w-8 h-8 rounded-full bg-slate-800 border border-slate-700 text-white font-bold text-xs flex items-center justify-center font-mono shrink-0">
-                {user?.avatar || 'PT'}
-              </div>
-              <div className="flex flex-col min-w-0">
-                <span className="text-xs font-bold text-white truncate font-jakarta">
-                  {user?.name || 'Pro Trader'}
-                </span>
-                <span className="text-[10px] text-[#38BDF8] font-semibold truncate font-mono">
-                  {user?.plan || 'PRO ACCOUNT'}
-                </span>
+              {/* Name & Login Email */}
+              <div className="flex flex-col min-w-0 flex-1">
+                <div className="flex items-center space-x-1.5">
+                  <span className="text-xs font-bold text-white truncate font-jakarta group-hover:text-[#38BDF8] transition">
+                    {displayName}
+                  </span>
+                  <ShieldCheck className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" title="Verified Trader" />
+                </div>
+                
+                {/* Prominently visible login email */}
+                <div className="flex items-center space-x-1 text-slate-400 group-hover:text-slate-300 transition">
+                  <Mail className="w-3 h-3 text-slate-500 shrink-0" />
+                  <span className="text-[11px] font-mono text-slate-300 truncate" title={displayEmail}>
+                    {displayEmail}
+                  </span>
+                </div>
               </div>
             </div>
-            <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
+
+            {/* Bottom row: Pro Plan Active Pill & Quick Actions */}
+            <div className="flex items-center justify-between pt-2 border-t border-[#1E2638]/60">
+              <div className="flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-bold text-emerald-400 font-mono tracking-wider">
+                <Crown className="w-3 h-3 text-amber-400" />
+                <span>{user?.plan || 'PREMIUM PLAN'}</span>
+              </div>
+
+              <div className="flex items-center space-x-1">
+                <button
+                  type="button"
+                  onClick={onOpenAuthModal}
+                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-[#1E2638] transition"
+                  title="Switch / Manage Account"
+                >
+                  <ChevronDown className="w-3.5 h-3.5" />
+                </button>
+                {onLogout && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onLogout();
+                    }}
+                    className="p-1 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition"
+                    title="Sign Out"
+                  >
+                    <LogOut className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+            </div>
           </div>
 
           {/* Bottom Utility Icons */}
@@ -183,7 +242,17 @@ export function Sidebar({
       )}
 
       {collapsed && (
-        <div className="pb-4 flex flex-col items-center space-y-2">
+        <div className="pb-4 flex flex-col items-center space-y-3">
+          {/* Collapsed User Avatar */}
+          <button
+            onClick={onOpenAuthModal}
+            className="relative w-10 h-10 rounded-xl bg-gradient-to-tr from-[#38BDF8]/20 via-sky-600/30 to-indigo-600/30 border border-[#38BDF8]/40 text-[#38BDF8] font-bold text-xs flex items-center justify-center font-mono hover:scale-105 transition"
+            title={`${displayName} (${displayEmail})`}
+          >
+            {initials}
+            <span className="absolute -bottom-0.5 -right-0.5 w-2.5 h-2.5 rounded-full bg-emerald-500 ring-2 ring-[#0B0F19]" />
+          </button>
+
           <button
             onClick={onToggleDarkMode}
             className="w-10 h-10 rounded-xl bg-[#111726] border border-[#1E2638] flex items-center justify-center text-slate-400 hover:text-white transition cursor-pointer"

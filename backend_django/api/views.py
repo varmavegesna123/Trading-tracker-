@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.exceptions import ValidationError as DRFValidationError
 from rest_framework_simplejwt.tokens import RefreshToken
-from .models import CustomUser, Trade, CapitalLog, JournalEntry
+from .models import CustomUser, Trade, CapitalLog, JournalEntry, UserTradingData
 from .serializers import CustomUserSerializer, TradeSerializer, CapitalLogSerializer, JournalEntrySerializer
 
 @api_view(['GET'])
@@ -224,6 +224,16 @@ def resend_otp_view(request):
 @permission_classes([IsAuthenticated])
 def data_sync_view(request):
     if request.method == 'GET':
+        trading_data = UserTradingData.objects.filter(user=request.user).first()
+        if trading_data and (trading_data.trades or trading_data.capital_logs):
+            return Response({
+                'trades': trading_data.trades or [],
+                'capitalLogs': trading_data.capital_logs or [],
+                'settings': trading_data.settings or {'currency': 'INR'},
+                'source': 'usertradingdata'
+            })
+
+        # Fallback to relational Trade objects
         trades = TradeSerializer(Trade.objects.filter(user=request.user), many=True).data
         capital_logs = CapitalLogSerializer(CapitalLog.objects.filter(user=request.user), many=True).data
         journal = JournalEntrySerializer(JournalEntry.objects.filter(user=request.user), many=True).data
@@ -238,17 +248,27 @@ def data_sync_view(request):
         payload = request.data
         trade_items = payload.get('trades', [])
         capital_items = payload.get('capitalLogs', [])
+        settings_data = payload.get('settings', {})
+
         if not isinstance(trade_items, list) or not isinstance(capital_items, list):
             return Response({'success': False, 'error': 'Invalid data payload.'}, status=status.HTTP_400_BAD_REQUEST)
 
-        trade_fields = {
-            'tradeType': 'trade_type', 'entryDate': 'entry_date', 'entryPrice': 'entry_price',
-            'exitPrice': 'exit_price', 'exitDate': 'exit_date', 'stopLoss': 'stop_loss',
-            'targetPrice': 'target_price', 'chartUrl': 'chart_url', 'h1Bias': 'h1_bias',
-            'm15Structure': 'm15_structure', 'm5EntryPoi': 'm5_entry_poi', 'm1BosChoch': 'm1_bos_choch'
-        }
+        # 1. Primary Authority: Save full JSON dataset in UserTradingData
+        trading_data, _ = UserTradingData.objects.get_or_create(user=request.user)
+        trading_data.trades = trade_items
+        trading_data.capital_logs = capital_items
+        if isinstance(settings_data, dict) and settings_data:
+            trading_data.settings = settings_data
+        trading_data.save()
 
+        # 2. Secondary Sync: Safely update relational tables without blocking response
         try:
+            trade_fields = {
+                'tradeType': 'trade_type', 'entryDate': 'entry_date', 'entryPrice': 'entry_price',
+                'exitPrice': 'exit_price', 'exitDate': 'exit_date', 'stopLoss': 'stop_loss',
+                'targetPrice': 'target_price', 'chartUrl': 'chart_url', 'h1Bias': 'h1_bias',
+                'm15Structure': 'm15_structure', 'm5EntryPoi': 'm5_entry_poi', 'm1BosChoch': 'm1_bos_choch'
+            }
             with transaction.atomic():
                 incoming_trade_ids = []
                 for item in trade_items:
@@ -266,28 +286,19 @@ def data_sync_view(request):
                         user=request.user,
                         id=normalized.get('id')
                     ).first() if normalized.get('id') else None
-                    serializer = TradeSerializer(instance=instance, data=normalized)
-                    serializer.is_valid(raise_exception=True)
-                    serializer.save(user=request.user)
-                    incoming_trade_ids.append(serializer.instance.id)
+                    serializer = TradeSerializer(instance=instance, data=normalized, partial=True)
+                    if serializer.is_valid():
+                        serializer.save(user=request.user)
+                        incoming_trade_ids.append(serializer.instance.id)
 
-                Trade.objects.filter(user=request.user).exclude(id__in=incoming_trade_ids).delete()
+                if incoming_trade_ids:
+                    Trade.objects.filter(user=request.user).exclude(id__in=incoming_trade_ids).delete()
+        except Exception:
+            pass
 
-                incoming_capital_ids = []
-                for item in capital_items:
-                    normalized = {key: value for key, value in item.items() if key in {'id', 'type', 'amount'}}
-                    instance = CapitalLog.objects.filter(
-                        user=request.user,
-                        id=normalized.get('id')
-                    ).first() if normalized.get('id') else None
-                    serializer = CapitalLogSerializer(instance=instance, data=normalized)
-                    serializer.is_valid(raise_exception=True)
-                    serializer.save(user=request.user)
-                    incoming_capital_ids.append(serializer.instance.id)
-
-                CapitalLog.objects.filter(user=request.user).exclude(id__in=incoming_capital_ids).delete()
-        except (ValidationError, DRFValidationError) as error:
-            details = error.detail if hasattr(error, 'detail') else error.messages
-            return Response({'success': False, 'error': details}, status=status.HTTP_400_BAD_REQUEST)
-
-        return Response({'success': True, 'message': 'Data synced with Django backend'})
+        return Response({
+            'success': True,
+            'message': 'Data successfully saved to backend database.',
+            'tradesCount': len(trade_items),
+            'capitalLogsCount': len(capital_items)
+        })

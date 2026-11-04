@@ -60,6 +60,12 @@ export function App() {
     const loadUserData = async (activeUser) => {
       setUser(activeUser);
       if (activeUser) {
+        // Immediately load any cached trades for this user
+        setTrades(storageService.getTrades());
+        setCapitalLogs(storageService.getCapitalLogs());
+        setSettings(storageService.getSettings());
+
+        // Fetch & sync with backend database
         await storageService.fetchFromBackend();
         if (!isMounted) return;
         setTrades(storageService.getTrades());
@@ -127,6 +133,12 @@ export function App() {
   // Auth Handlers
   const handleAuthSuccess = async (loggedUser) => {
     setUser(loggedUser);
+    // Immediately display any cached trades
+    setTrades(storageService.getTrades());
+    setCapitalLogs(storageService.getCapitalLogs());
+    setSettings(storageService.getSettings());
+
+    // Fetch from backend database
     await storageService.fetchFromBackend();
     setTrades(storageService.getTrades());
     setCapitalLogs(storageService.getCapitalLogs());
@@ -134,6 +146,9 @@ export function App() {
   };
 
   const handleLogout = async () => {
+    try {
+      await storageService.syncNow();
+    } catch (e) {}
     await authService.logout();
     setUser(null);
     setTrades([]);
@@ -258,6 +273,7 @@ export function App() {
           setCurrentTab={setCurrentTab}
           user={user}
           onOpenAuthModal={() => setIsAuthModalOpen(true)}
+          onLogout={handleLogout}
           collapsed={sidebarCollapsed}
           setCollapsed={setSidebarCollapsed}
           darkMode={darkMode}
@@ -279,6 +295,10 @@ export function App() {
               user={user}
               onOpenAuthModal={() => {
                 setIsAuthModalOpen(true);
+                setMobileMenuOpen(false);
+              }}
+              onLogout={() => {
+                handleLogout();
                 setMobileMenuOpen(false);
               }}
               collapsed={false}
