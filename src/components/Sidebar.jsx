@@ -151,7 +151,11 @@ export function Sidebar({
       {!collapsed && (
         <div className="p-3 space-y-3">
           {/* Redesigned Pro Trader User Profile Card (Light & Dark Mode Compatible) */}
-          <div className="rounded-2xl bg-slate-50 dark:bg-gradient-to-b dark:from-[#111726] dark:to-[#0B0F19] border border-slate-200 dark:border-[#1E2638] hover:border-sky-500/40 p-3 shadow-sm dark:shadow-lg dark:shadow-black/20 transition-all space-y-2.5">
+          <div className={`rounded-2xl p-3.5 transition-all space-y-2.5 border ${
+            darkMode 
+              ? 'bg-gradient-to-b from-[#111726] to-[#0B0F19] border-[#1E2638] hover:border-sky-500/40 shadow-lg shadow-black/20' 
+              : 'bg-white border-slate-200 hover:border-sky-500/40 shadow-sm'
+          }`}>
             {/* Top row: Avatar, Name, Email, Status */}
             <div 
               onClick={onOpenAuthModal}
@@ -160,25 +164,37 @@ export function Sidebar({
             >
               {/* Dynamic Avatar with Active Indicator */}
               <div className="relative shrink-0">
-                <div className="w-10 h-10 rounded-xl bg-sky-500/10 dark:bg-gradient-to-tr dark:from-[#38BDF8]/20 dark:via-sky-600/30 dark:to-indigo-600/30 border border-sky-500/30 dark:border-[#38BDF8]/40 text-sky-600 dark:text-[#38BDF8] font-bold text-xs flex items-center justify-center font-mono shadow-inner group-hover:scale-105 group-hover:border-[#38BDF8] transition">
+                <div className={`w-10 h-10 rounded-xl font-bold text-xs flex items-center justify-center font-mono shadow-inner group-hover:scale-105 transition border ${
+                  darkMode 
+                    ? 'bg-gradient-to-tr from-[#38BDF8]/20 via-sky-600/30 to-indigo-600/30 border-[#38BDF8]/40 text-[#38BDF8] group-hover:border-[#38BDF8]' 
+                    : 'bg-sky-50 border-sky-200 text-sky-600 group-hover:border-sky-400'
+                }`}>
                   {initials}
                 </div>
-                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#0B0F19]" title="Active Session" />
+                <span className={`absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ${
+                  darkMode ? 'ring-[#0B0F19]' : 'ring-white'
+                }`} title="Active Session" />
               </div>
 
               {/* Name & Login Email */}
               <div className="flex flex-col min-w-0 flex-1">
                 <div className="flex items-center space-x-1.5">
-                  <span className="text-xs font-bold text-slate-800 dark:text-white truncate font-jakarta group-hover:text-sky-600 dark:group-hover:text-[#38BDF8] transition">
+                  <span className={`text-xs font-bold truncate font-jakarta transition ${
+                    darkMode ? 'text-white group-hover:text-[#38BDF8]' : 'text-slate-900 group-hover:text-sky-600'
+                  }`}>
                     {displayName}
                   </span>
-                  <ShieldCheck className="w-3.5 h-3.5 text-sky-500 dark:text-[#38BDF8] shrink-0" title="Verified Trader" />
+                  <ShieldCheck className={`w-3.5 h-3.5 shrink-0 ${darkMode ? 'text-[#38BDF8]' : 'text-sky-500'}`} title="Verified Trader" />
                 </div>
                 
                 {/* Prominently visible login email */}
-                <div className="flex items-center space-x-1 text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition">
-                  <Mail className="w-3 h-3 text-slate-400 dark:text-slate-500 shrink-0" />
-                  <span className="text-[11px] font-mono text-slate-600 dark:text-slate-300 truncate" title={displayEmail}>
+                <div className={`flex items-center space-x-1 transition ${
+                  darkMode ? 'text-slate-400 group-hover:text-slate-300' : 'text-slate-500 group-hover:text-slate-700'
+                }`}>
+                  <Mail className={`w-3 h-3 shrink-0 ${darkMode ? 'text-slate-500' : 'text-slate-400'}`} />
+                  <span className={`text-[11px] font-mono truncate ${
+                    darkMode ? 'text-slate-300' : 'text-slate-600'
+                  }`} title={displayEmail}>
                     {displayEmail}
                   </span>
                 </div>
@@ -186,9 +202,15 @@ export function Sidebar({
             </div>
 
             {/* Bottom row: Pro Plan Active Pill & Quick Actions */}
-            <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-[#1E2638]/60">
-              <div className="flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 font-mono tracking-wider">
-                <Crown className="w-3 h-3 text-amber-500 dark:text-amber-400" />
+            <div className={`flex items-center justify-between pt-2 border-t ${
+              darkMode ? 'border-[#1E2638]/60' : 'border-slate-100'
+            }`}>
+              <div className={`flex items-center space-x-1 px-2 py-0.5 rounded-full text-[10px] font-bold font-mono tracking-wider border ${
+                darkMode 
+                  ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-400' 
+                  : 'bg-emerald-50 border-emerald-200 text-emerald-700'
+              }`}>
+                <Crown className={`w-3 h-3 ${darkMode ? 'text-amber-400' : 'text-amber-500'}`} />
                 <span>{user?.plan || 'PREMIUM PLAN'}</span>
               </div>
 
@@ -196,7 +218,11 @@ export function Sidebar({
                 <button
                   type="button"
                   onClick={onOpenAuthModal}
-                  className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-[#1E2638] transition"
+                  className={`p-1 rounded-lg transition ${
+                    darkMode 
+                      ? 'text-slate-400 hover:text-white hover:bg-[#1E2638]' 
+                      : 'text-slate-400 hover:text-slate-700 hover:bg-slate-100'
+                  }`}
                   title="Switch / Manage Account"
                 >
                   <ChevronDown className="w-3.5 h-3.5" />
@@ -208,7 +234,11 @@ export function Sidebar({
                       e.stopPropagation();
                       onLogout();
                     }}
-                    className="p-1 rounded-lg text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition"
+                    className={`p-1 rounded-lg transition ${
+                      darkMode 
+                        ? 'text-slate-400 hover:text-rose-400 hover:bg-rose-500/10' 
+                        : 'text-slate-400 hover:text-rose-600 hover:bg-rose-50'
+                    }`}
                     title="Sign Out"
                   >
                     <LogOut className="w-3.5 h-3.5" />
@@ -219,20 +249,26 @@ export function Sidebar({
           </div>
 
           {/* Bottom Utility Icons */}
-          <div className="flex items-center justify-between pt-2 border-t border-[#1E2638]/50 text-slate-400 text-xs px-1">
+          <div className={`flex items-center justify-between pt-2 border-t text-xs px-1 ${
+            darkMode ? 'border-[#1E2638]/50 text-slate-400' : 'border-slate-200 text-slate-500'
+          }`}>
             <button 
               onClick={onToggleDarkMode}
-              className="p-1.5 rounded-lg hover:text-white hover:bg-[#111726] transition flex items-center space-x-2 cursor-pointer"
+              className={`p-1.5 rounded-lg transition flex items-center space-x-2 cursor-pointer ${
+                darkMode ? 'hover:text-white hover:bg-[#111726]' : 'hover:text-slate-900 hover:bg-slate-100'
+              }`}
               title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
             >
               {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-sky-500" />}
-              <span className="text-[11px] font-semibold text-slate-300">
+              <span className={`text-[11px] font-semibold ${darkMode ? 'text-slate-300' : 'text-slate-700'}`}>
                 {darkMode ? 'Light Theme' : 'Dark Theme'}
               </span>
             </button>
 
             <button 
-              className="p-1.5 rounded-lg hover:text-white hover:bg-[#111726] transition cursor-pointer"
+              className={`p-1.5 rounded-lg transition cursor-pointer ${
+                darkMode ? 'hover:text-white hover:bg-[#111726]' : 'hover:text-slate-900 hover:bg-slate-100'
+              }`}
               title="Help & Documentation"
             >
               <HelpCircle className="w-4 h-4" />

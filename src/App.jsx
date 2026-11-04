@@ -453,6 +453,7 @@ export function App() {
         tradeToEdit={tradeToEdit}
         initialConfluences={initialConfluences}
         currency={settings.currency}
+        darkMode={darkMode}
       />
 
       <PreTradeChecklistModal

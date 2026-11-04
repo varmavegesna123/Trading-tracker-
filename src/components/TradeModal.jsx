@@ -38,7 +38,7 @@ function formatShortDate(dateStr) {
   return `${day} ${month} ${year}`;
 }
 
-function CustomGlassDateTimePicker({ value, onChange, onClose }) {
+function CustomGlassDateTimePicker({ value, onChange, onClose, isDark = true }) {
   const dateObj = useMemo(() => {
     if (!value) return new Date();
     const parsed = new Date(value);
@@ -85,26 +85,36 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
   };
 
   return (
-    <div className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 z-50 p-4 bg-white dark:bg-[#0B0F19] rounded-2xl border border-slate-200 dark:border-[#1E2638] shadow-2xl space-y-3 w-72 font-sans text-slate-800 dark:text-slate-100">
-      <div className="flex items-center justify-between text-xs font-bold text-slate-900 dark:text-white font-jakarta pb-2 border-b border-slate-200 dark:border-[#1E2638]">
+    <div className={`absolute left-0 sm:right-0 sm:left-auto top-full mt-2 z-50 p-4 rounded-2xl border shadow-2xl space-y-3 w-72 font-sans ${
+      isDark ? 'bg-[#0B0F19] border-[#1E2638] text-slate-100' : 'bg-white border-slate-200 text-slate-800'
+    }`}>
+      <div className={`flex items-center justify-between text-xs font-bold font-jakarta pb-2 border-b ${
+        isDark ? 'border-[#1E2638] text-white' : 'border-slate-200 text-slate-900'
+      }`}>
         <button
           type="button"
           onClick={() => setViewDate(new Date(currentYear, currentMonth - 1, 1))}
-          className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1E2638] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition cursor-pointer"
+          className={`p-1 rounded-lg transition cursor-pointer ${
+            isDark ? 'hover:bg-[#1E2638] text-slate-400 hover:text-white' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'
+          }`}
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
-        <span className="font-mono text-sky-600 dark:text-sky-400 font-bold">{monthLabel}</span>
+        <span className={`font-mono font-bold ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>{monthLabel}</span>
         <button
           type="button"
           onClick={() => setViewDate(new Date(currentYear, currentMonth + 1, 1))}
-          className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1E2638] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition cursor-pointer"
+          className={`p-1 rounded-lg transition cursor-pointer ${
+            isDark ? 'hover:bg-[#1E2638] text-slate-400 hover:text-white' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-900'
+          }`}
         >
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase font-mono">
+      <div className={`grid grid-cols-7 gap-1 text-center text-[10px] font-bold uppercase font-mono ${
+        isDark ? 'text-slate-500' : 'text-slate-400'
+      }`}>
         <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
       </div>
 
@@ -122,10 +132,10 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
               onClick={() => handleSelectDay(cell.fullDate)}
               className={`h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition cursor-pointer ${
                 isSelected
-                  ? 'bg-sky-500 text-white dark:text-slate-950 font-extrabold shadow-sm'
+                  ? 'bg-sky-500 text-white font-extrabold shadow-sm'
                   : isToday
-                  ? 'bg-sky-50 dark:bg-[#1E2638] text-sky-600 dark:text-sky-400 font-bold border border-sky-300 dark:border-sky-500/40'
-                  : 'bg-slate-50 dark:bg-[#111726] text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1E2638]'
+                  ? isDark ? 'bg-[#1E2638] text-sky-400 font-bold border border-sky-500/40' : 'bg-sky-50 text-sky-600 font-bold border border-sky-300'
+                  : isDark ? 'bg-[#111726] text-slate-300 hover:bg-[#1E2638]' : 'bg-slate-50 text-slate-700 hover:bg-slate-100'
               }`}
             >
               {cell.dayNum}
@@ -134,9 +144,11 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
         })}
       </div>
 
-      <div className="pt-2 border-t border-slate-200 dark:border-[#1E2638] flex items-center justify-between text-xs font-mono">
+      <div className={`pt-2 border-t flex items-center justify-between text-xs font-mono ${
+        isDark ? 'border-[#1E2638]' : 'border-slate-200'
+      }`}>
         <div className="flex items-center space-x-1.5">
-          <span className="text-slate-500 dark:text-slate-400 text-[10px] font-medium uppercase font-jakarta">Time:</span>
+          <span className={`text-[10px] font-medium uppercase font-jakarta ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Time:</span>
           <input
             type="text"
             maxLength={2}
@@ -149,7 +161,9 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
               const num = Math.min(Math.max(parseInt(e.target.value) || 0, 0), 23);
               handleTimeChange(String(num).padStart(2, '0'), selectedMinStr);
             }}
-            className="w-11 py-1 bg-slate-50 dark:bg-[#111726] text-slate-900 dark:text-white text-center text-xs rounded-lg border border-slate-200 dark:border-[#1E2638] font-bold font-mono focus:outline-none focus:border-sky-500"
+            className={`w-11 py-1 text-center text-xs rounded-lg border font-bold font-mono focus:outline-none focus:border-sky-500 ${
+              isDark ? 'bg-[#111726] text-white border-[#1E2638]' : 'bg-slate-50 text-slate-900 border-slate-200'
+            }`}
           />
           <span className="text-slate-400 font-bold font-mono">:</span>
           <input
@@ -164,14 +178,16 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
               const num = Math.min(Math.max(parseInt(e.target.value) || 0, 0), 59);
               handleTimeChange(selectedHourStr, String(num).padStart(2, '0'));
             }}
-            className="w-11 py-1 bg-slate-50 dark:bg-[#111726] text-slate-900 dark:text-white text-center text-xs rounded-lg border border-slate-200 dark:border-[#1E2638] font-bold font-mono focus:outline-none focus:border-sky-500"
+            className={`w-11 py-1 text-center text-xs rounded-lg border font-bold font-mono focus:outline-none focus:border-sky-500 ${
+              isDark ? 'bg-[#111726] text-white border-[#1E2638]' : 'bg-slate-50 text-slate-900 border-slate-200'
+            }`}
           />
         </div>
 
         <button
           type="button"
           onClick={onClose}
-          className="px-3.5 py-1 bg-sky-500 hover:bg-sky-400 text-white dark:text-slate-950 text-[11px] font-bold rounded-lg shadow-sm transition cursor-pointer"
+          className="px-3.5 py-1 bg-sky-500 hover:bg-sky-400 text-white font-bold text-[11px] rounded-lg shadow-sm transition cursor-pointer"
         >
           Apply
         </button>
@@ -187,9 +203,15 @@ export function TradeModal({
   onDelete,
   tradeToEdit = null, 
   initialConfluences = null,
-  currency = 'USD' 
+  currency = 'USD',
+  darkMode = true 
 }) {
   const [step, setStep] = useState(1);
+
+  // Auto-detect dark mode if prop is passed or document html class has 'dark'
+  const isDark = typeof darkMode === 'boolean' 
+    ? darkMode 
+    : (typeof document !== 'undefined' && document.documentElement.classList.contains('dark'));
 
   // Form State
   const [direction, setDirection] = useState('LONG');
@@ -666,10 +688,14 @@ export function TradeModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/40 dark:bg-black/80 backdrop-blur-md overflow-y-auto font-sans">
-      <div className="bg-white dark:bg-[#0B0F17] rounded-2xl max-w-5xl w-full max-h-[92vh] overflow-y-auto border border-slate-200 dark:border-[#1E2638] shadow-2xl text-slate-800 dark:text-slate-100 p-5 sm:p-6 space-y-4 custom-scrollbar">
+    <div className={`fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 backdrop-blur-md overflow-y-auto font-sans ${
+      isDark ? 'bg-black/80' : 'bg-slate-900/40'
+    }`}>
+      <div className={`rounded-2xl max-w-5xl w-full max-h-[92vh] overflow-y-auto border shadow-2xl p-5 sm:p-6 space-y-4 custom-scrollbar ${
+        isDark ? 'bg-[#0B0F17] border-[#1E2638] text-slate-100' : 'bg-white border-slate-200 text-slate-800'
+      }`}>
         
-        {/* Top Header: Responsive to Light & Dark Theme */}
+        {/* Top Header */}
         <div className="flex items-center justify-between pb-1">
           <div className="flex items-center space-x-3">
             <button
@@ -678,17 +704,23 @@ export function TradeModal({
                 if (step > 1) setStep(step - 1);
                 else onClose();
               }}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#111724] border border-slate-200 dark:border-[#1E2638] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700 transition cursor-pointer"
+              className={`p-2 rounded-xl border transition cursor-pointer ${
+                isDark 
+                  ? 'bg-[#111724] border-[#1E2638] text-slate-400 hover:text-white hover:border-slate-700' 
+                  : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300'
+              }`}
               title="Go Back"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
 
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight font-jakarta">
+              <h2 className={`text-base sm:text-lg font-bold tracking-tight font-jakarta ${
+                isDark ? 'text-white' : 'text-slate-900'
+              }`}>
                 {tradeToEdit ? 'Edit Trade' : 'New Trade'}
               </h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400 font-normal">
+              <p className={`text-xs font-normal ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                 Log a trade with plan, risk and execution details.
               </p>
             </div>
@@ -699,7 +731,11 @@ export function TradeModal({
               <button
                 type="button"
                 onClick={handleDeleteInternal}
-                className="p-2 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition cursor-pointer"
+                className={`p-2 rounded-xl border transition cursor-pointer ${
+                  isDark 
+                    ? 'bg-rose-500/10 border-rose-500/20 text-rose-400 hover:bg-rose-500/20' 
+                    : 'bg-rose-50 border-rose-200 text-rose-600 hover:bg-rose-100'
+                }`}
                 title="Delete Trade Execution"
               >
                 <Trash2 className="w-4 h-4" />
@@ -709,7 +745,11 @@ export function TradeModal({
             <button
               type="button"
               onClick={handleSaveDraft}
-              className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#111724] border border-slate-200 dark:border-[#1E2638] text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-medium hover:border-slate-300 dark:hover:border-slate-700 transition cursor-pointer"
+              className={`hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl border text-xs font-medium transition cursor-pointer ${
+                isDark 
+                  ? 'bg-[#111724] border-[#1E2638] text-slate-300 hover:text-white hover:border-slate-700' 
+                  : 'bg-slate-100 border-slate-200 text-slate-700 hover:text-slate-900 hover:border-slate-300'
+              }`}
             >
               <FileText className="w-3.5 h-3.5 text-slate-400" />
               <span>Save Draft</span>
@@ -718,15 +758,21 @@ export function TradeModal({
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#111724] border border-slate-200 dark:border-[#1E2638] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700 transition cursor-pointer"
+              className={`p-2 rounded-xl border transition cursor-pointer ${
+                isDark 
+                  ? 'bg-[#111724] border-[#1E2638] text-slate-400 hover:text-white hover:border-slate-700' 
+                  : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300'
+              }`}
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Stepper (Light & Dark Theme Compatible) */}
-        <div className="flex items-center justify-center space-x-2 sm:space-x-4 py-2 border-y border-slate-200 dark:border-[#1E2638]/60 text-xs">
+        {/* Stepper */}
+        <div className={`flex items-center justify-center space-x-2 sm:space-x-4 py-2 border-y text-xs ${
+          isDark ? 'border-[#1E2638]/60' : 'border-slate-200'
+        }`}>
           <button
             type="button"
             onClick={() => setStep(1)}
@@ -734,19 +780,21 @@ export function TradeModal({
           >
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold transition ${
               step === 1
-                ? 'bg-sky-500 text-white dark:text-slate-950 shadow-sm'
-                : 'bg-slate-100 dark:bg-[#111724] border border-slate-200 dark:border-[#1E2638] text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-white'
+                ? 'bg-sky-500 text-white font-bold shadow-sm'
+                : isDark ? 'bg-[#111724] border border-[#1E2638] text-slate-400 group-hover:text-white' : 'bg-slate-100 border border-slate-200 text-slate-500 group-hover:text-slate-900'
             }`}>
               1
             </span>
             <span className={`text-xs ${
-              step === 1 ? 'font-bold text-slate-900 dark:text-white' : 'font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-300'
+              step === 1 
+                ? isDark ? 'font-bold text-white' : 'font-bold text-slate-900' 
+                : isDark ? 'font-medium text-slate-400 group-hover:text-slate-300' : 'font-medium text-slate-500 group-hover:text-slate-800'
             }`}>
               Order & Levels
             </span>
           </button>
 
-          <div className="w-8 sm:w-16 h-px bg-slate-200 dark:bg-[#1E2638]" />
+          <div className={`w-8 sm:w-16 h-px ${isDark ? 'bg-[#1E2638]' : 'bg-slate-200'}`} />
 
           <button
             type="button"
@@ -755,19 +803,21 @@ export function TradeModal({
           >
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold transition ${
               step === 2
-                ? 'bg-sky-500 text-white dark:text-slate-950 shadow-sm'
-                : 'bg-slate-100 dark:bg-[#111724] border border-slate-200 dark:border-[#1E2638] text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-white'
+                ? 'bg-sky-500 text-white font-bold shadow-sm'
+                : isDark ? 'bg-[#111724] border border-[#1E2638] text-slate-400 group-hover:text-white' : 'bg-slate-100 border border-slate-200 text-slate-500 group-hover:text-slate-900'
             }`}>
               2
             </span>
             <span className={`text-xs ${
-              step === 2 ? 'font-bold text-slate-900 dark:text-white' : 'font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-300'
+              step === 2 
+                ? isDark ? 'font-bold text-white' : 'font-bold text-slate-900' 
+                : isDark ? 'font-medium text-slate-400 group-hover:text-slate-300' : 'font-medium text-slate-500 group-hover:text-slate-800'
             }`}>
               Trade Plan & Confluences
             </span>
           </button>
 
-          <div className="w-8 sm:w-16 h-px bg-slate-200 dark:bg-[#1E2638]" />
+          <div className={`w-8 sm:w-16 h-px ${isDark ? 'bg-[#1E2638]' : 'bg-slate-200'}`} />
 
           <button
             type="button"
@@ -776,13 +826,15 @@ export function TradeModal({
           >
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold transition ${
               step === 3
-                ? 'bg-sky-500 text-white dark:text-slate-950 shadow-sm'
-                : 'bg-slate-100 dark:bg-[#111724] border border-slate-200 dark:border-[#1E2638] text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-white'
+                ? 'bg-sky-500 text-white font-bold shadow-sm'
+                : isDark ? 'bg-[#111724] border border-[#1E2638] text-slate-400 group-hover:text-white' : 'bg-slate-100 border border-slate-200 text-slate-500 group-hover:text-slate-900'
             }`}>
               3
             </span>
             <span className={`text-xs ${
-              step === 3 ? 'font-bold text-slate-900 dark:text-white' : 'font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-300'
+              step === 3 
+                ? isDark ? 'font-bold text-white' : 'font-bold text-slate-900' 
+                : isDark ? 'font-medium text-slate-400 group-hover:text-slate-300' : 'font-medium text-slate-500 group-hover:text-slate-800'
             }`}>
               Review & Save
             </span>
@@ -792,7 +844,7 @@ export function TradeModal({
         {/* 2-Column Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           
-          {/* LEFT COLUMN: Main Form Inputs */}
+          {/* LEFT COLUMN: Main Controls */}
           <div className="lg:col-span-8 space-y-4">
 
             {/* STEP 1: Order & Levels */}
@@ -803,17 +855,19 @@ export function TradeModal({
                   
                   {/* Trade Direction */}
                   <div className="md:col-span-4">
-                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1.5 font-jakarta">
+                    <label className={`block text-[11px] font-medium mb-1.5 font-jakarta ${
+                      isDark ? 'text-slate-400' : 'text-slate-600'
+                    }`}>
                       Trade Direction
                     </label>
                     <div className="grid grid-cols-2 gap-1.5">
                       <button
                         type="button"
                         onClick={() => setDirection('LONG')}
-                        className={`h-9 px-2 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center space-x-1 ${
+                        className={`h-9 px-2 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center space-x-1 border ${
                           direction === 'LONG'
-                            ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/40 shadow-sm'
-                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
+                            ? isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/40 shadow-sm' : 'bg-emerald-50 text-emerald-700 border-emerald-300 shadow-sm'
+                            : isDark ? 'bg-[#0E1320] text-slate-400 border-[#1E2638] hover:text-slate-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                         }`}
                       >
                         <span>↑ Buy / Long</span>
@@ -821,10 +875,10 @@ export function TradeModal({
                       <button
                         type="button"
                         onClick={() => setDirection('SHORT')}
-                        className={`h-9 px-2 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center space-x-1 ${
+                        className={`h-9 px-2 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center space-x-1 border ${
                           direction === 'SHORT'
-                            ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-500/40 shadow-sm'
-                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
+                            ? isDark ? 'bg-rose-500/10 text-rose-400 border-rose-500/40 shadow-sm' : 'bg-rose-50 text-rose-700 border-rose-300 shadow-sm'
+                            : isDark ? 'bg-[#0E1320] text-slate-400 border-[#1E2638] hover:text-slate-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                         }`}
                       >
                         <span>↓ Sell / Short</span>
@@ -834,17 +888,19 @@ export function TradeModal({
 
                   {/* Order Type */}
                   <div className="md:col-span-4">
-                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1.5 font-jakarta">
+                    <label className={`block text-[11px] font-medium mb-1.5 font-jakarta ${
+                      isDark ? 'text-slate-400' : 'text-slate-600'
+                    }`}>
                       Order Type
                     </label>
                     <div className="grid grid-cols-3 gap-1.5">
                       <button
                         type="button"
                         onClick={() => setOrderType('Limit')}
-                        className={`h-9 px-1 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center ${
+                        className={`h-9 px-1 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center border ${
                           orderType === 'Limit'
-                            ? 'bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-300 dark:border-sky-500/40 shadow-sm'
-                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
+                            ? isDark ? 'bg-sky-500/10 text-sky-400 border-sky-500/40' : 'bg-sky-50 text-sky-700 border-sky-300'
+                            : isDark ? 'bg-[#0E1320] text-slate-400 border-[#1E2638] hover:text-slate-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                         }`}
                       >
                         Limit
@@ -852,10 +908,10 @@ export function TradeModal({
                       <button
                         type="button"
                         onClick={() => setOrderType('Market')}
-                        className={`h-9 px-1 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center ${
+                        className={`h-9 px-1 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center border ${
                           orderType === 'Market'
-                            ? 'bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-300 dark:border-sky-500/40 shadow-sm'
-                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
+                            ? isDark ? 'bg-sky-500/10 text-sky-400 border-sky-500/40' : 'bg-sky-50 text-sky-700 border-sky-300'
+                            : isDark ? 'bg-[#0E1320] text-slate-400 border-[#1E2638] hover:text-slate-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                         }`}
                       >
                         Market
@@ -863,10 +919,10 @@ export function TradeModal({
                       <button
                         type="button"
                         onClick={() => setOrderType('Stop')}
-                        className={`h-9 px-1 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center ${
+                        className={`h-9 px-1 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center border ${
                           orderType === 'Stop'
-                            ? 'bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-300 dark:border-sky-500/40 shadow-sm'
-                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
+                            ? isDark ? 'bg-sky-500/10 text-sky-400 border-sky-500/40' : 'bg-sky-50 text-sky-700 border-sky-300'
+                            : isDark ? 'bg-[#0E1320] text-slate-400 border-[#1E2638] hover:text-slate-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                         }`}
                       >
                         Stop
@@ -876,17 +932,19 @@ export function TradeModal({
 
                   {/* Trade Status */}
                   <div className="md:col-span-4">
-                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1.5 font-jakarta">
+                    <label className={`block text-[11px] font-medium mb-1.5 font-jakarta ${
+                      isDark ? 'text-slate-400' : 'text-slate-600'
+                    }`}>
                       Trade Status
                     </label>
                     <div className="grid grid-cols-2 gap-1.5">
                       <button
                         type="button"
                         onClick={() => setStatus('OPEN')}
-                        className={`h-9 px-2 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center whitespace-nowrap ${
+                        className={`h-9 px-2 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center whitespace-nowrap border ${
                           status === 'OPEN'
-                            ? 'bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-300 dark:border-sky-500/40 shadow-sm'
-                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
+                            ? isDark ? 'bg-sky-500/10 text-sky-400 border-sky-500/40 shadow-sm' : 'bg-sky-50 text-sky-700 border-sky-300 shadow-sm'
+                            : isDark ? 'bg-[#0E1320] text-slate-400 border-[#1E2638] hover:text-slate-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                         }`}
                       >
                         Open Position
@@ -894,10 +952,10 @@ export function TradeModal({
                       <button
                         type="button"
                         onClick={() => setStatus('CLOSED')}
-                        className={`h-9 px-2 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center whitespace-nowrap ${
+                        className={`h-9 px-2 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center whitespace-nowrap border ${
                           status === 'CLOSED'
-                            ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/40 shadow-sm'
-                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
+                            ? isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/40 shadow-sm' : 'bg-emerald-50 text-emerald-700 border-emerald-300 shadow-sm'
+                            : isDark ? 'bg-[#0E1320] text-slate-400 border-[#1E2638] hover:text-slate-200' : 'bg-white text-slate-600 border-slate-200 hover:bg-slate-50'
                         }`}
                       >
                         Closed Trade
@@ -910,10 +968,14 @@ export function TradeModal({
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {/* Instrument / Symbol */}
                   <div>
-                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1.5 font-jakarta">
+                    <label className={`block text-[11px] font-medium mb-1.5 font-jakarta ${
+                      isDark ? 'text-slate-400' : 'text-slate-600'
+                    }`}>
                       Instrument / Symbol *
                     </label>
-                    <div className="relative flex items-center bg-slate-50 dark:bg-[#0E1320] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
+                    <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
+                      isDark ? 'bg-[#0E1320] border-[#1E2638] hover:border-slate-700 focus-within:border-sky-500' : 'bg-white border-slate-200 hover:border-slate-300 focus-within:border-sky-500'
+                    }`}>
                       <CryptoIcon symbol={symbol || 'BTC'} className="w-4 h-4 mr-2 shrink-0" />
                       <input
                         type="text"
@@ -927,10 +989,14 @@ export function TradeModal({
                           else if (upper.includes('ETH')) setContractSize('0.01');
                           else if (upper.includes('SOL')) setContractSize('0.1');
                         }}
-                        className="w-full bg-transparent text-slate-900 dark:text-white text-xs font-bold focus:outline-none font-mono uppercase placeholder:text-slate-400 dark:placeholder:text-slate-600"
+                        className={`w-full bg-transparent text-xs font-bold focus:outline-none font-mono uppercase ${
+                          isDark ? 'text-white placeholder:text-slate-600' : 'text-slate-900 placeholder:text-slate-400'
+                        }`}
                         required
                       />
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0 pointer-events-none" />
+                      <ChevronDown className={`w-3.5 h-3.5 shrink-0 pointer-events-none ${
+                        isDark ? 'text-slate-500' : 'text-slate-400'
+                      }`} />
                       <datalist id="trademodal-binance-pairs">
                         {BINANCE_POPULAR_PAIRS.map(p => (
                           <option key={p.symbol} value={p.symbol}>{p.name + ' (' + p.coin + ')'}</option>
@@ -941,43 +1007,55 @@ export function TradeModal({
 
                   {/* Exchange */}
                   <div>
-                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1.5 font-jakarta">
+                    <label className={`block text-[11px] font-medium mb-1.5 font-jakarta ${
+                      isDark ? 'text-slate-400' : 'text-slate-600'
+                    }`}>
                       Exchange
                     </label>
-                    <div className="relative flex items-center bg-slate-50 dark:bg-[#0E1320] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
+                    <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
+                      isDark ? 'bg-[#0E1320] border-[#1E2638] hover:border-slate-700 focus-within:border-sky-500' : 'bg-white border-slate-200 hover:border-slate-300 focus-within:border-sky-500'
+                    }`}>
                       <span className="text-sky-500 text-xs mr-2 select-none">❖</span>
                       <select
                         value={exchange}
                         onChange={(e) => setExchange(e.target.value)}
-                        className="w-full bg-transparent text-slate-900 dark:text-white text-xs font-medium focus:outline-none cursor-pointer appearance-none"
+                        className={`w-full bg-transparent text-xs font-medium focus:outline-none cursor-pointer appearance-none ${
+                          isDark ? 'text-white' : 'text-slate-900'
+                        }`}
                       >
-                        <option value="Delta Exchange" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">Delta Exchange</option>
-                        <option value="Binance" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">Binance</option>
-                        <option value="Bybit" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">Bybit</option>
-                        <option value="OKX" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">OKX</option>
-                        <option value="Coinbase" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">Coinbase</option>
-                        <option value="NSE" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">NSE (India)</option>
+                        <option value="Delta Exchange" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Delta Exchange</option>
+                        <option value="Binance" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Binance</option>
+                        <option value="Bybit" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Bybit</option>
+                        <option value="OKX" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>OKX</option>
+                        <option value="Coinbase" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Coinbase</option>
+                        <option value="NSE" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>NSE (India)</option>
                       </select>
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0 pointer-events-none" />
+                      <ChevronDown className={`w-3.5 h-3.5 shrink-0 pointer-events-none ${
+                        isDark ? 'text-slate-500' : 'text-slate-400'
+                      }`} />
                     </div>
                   </div>
 
                   {/* Execution Date */}
                   <div>
-                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1.5 font-jakarta">
+                    <label className={`block text-[11px] font-medium mb-1.5 font-jakarta ${
+                      isDark ? 'text-slate-400' : 'text-slate-600'
+                    }`}>
                       Execution Date
                     </label>
                     <div className="relative">
                       <button
                         type="button"
                         onClick={() => setShowEntryDatePicker(!showEntryDatePicker)}
-                        className="w-full px-3 h-10 bg-slate-50 hover:bg-slate-100 dark:bg-[#0E1320] dark:hover:bg-[#151D30] text-slate-800 dark:text-slate-200 text-xs font-medium rounded-xl border border-slate-200 dark:border-[#1E2638] hover:border-slate-300 dark:hover:border-slate-700 focus:outline-none flex items-center justify-between cursor-pointer transition"
+                        className={`w-full px-3 h-10 text-xs font-medium rounded-xl border focus:outline-none flex items-center justify-between cursor-pointer transition ${
+                          isDark ? 'bg-[#0E1320] hover:bg-[#151D30] text-slate-200 border-[#1E2638] hover:border-slate-700' : 'bg-white hover:bg-slate-50 text-slate-800 border-slate-200 hover:border-slate-300'
+                        }`}
                       >
                         <div className="flex items-center space-x-2">
                           <Calendar className="w-3.5 h-3.5 text-sky-500 shrink-0" />
                           <span>{formatShortDate(entryDate)}</span>
                         </div>
-                        <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
+                        <ChevronDown className={`w-3.5 h-3.5 shrink-0 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                       </button>
 
                       {showEntryDatePicker && (
@@ -985,31 +1063,36 @@ export function TradeModal({
                           value={entryDate}
                           onChange={(val) => setEntryDate(val)}
                           onClose={() => setShowEntryDatePicker(false)}
+                          isDark={isDark}
                         />
                       )}
                     </div>
                   </div>
                 </div>
 
-                {/* Section 1: Capital & Position Sizing */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-3">
+                {/* Section 1: Capital & Position Sizing Card */}
+                <div className={`p-4 rounded-2xl border space-y-3 ${
+                  isDark ? 'bg-[#0D121F]/80 border-[#1E2638]' : 'bg-[#F8FAFC] border-slate-200'
+                }`}>
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-1.5 text-xs font-semibold text-slate-800 dark:text-slate-200 font-jakarta">
+                    <div className={`flex items-center space-x-1.5 text-xs font-semibold font-jakarta ${
+                      isDark ? 'text-slate-200' : 'text-slate-800'
+                    }`}>
                       <span>Capital & Position Sizing</span>
-                      <Info className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 cursor-pointer hover:text-slate-600 dark:hover:text-slate-300" title="Margin, capacity and leverage sizing details" />
+                      <Info className={`w-3.5 h-3.5 cursor-pointer ${isDark ? 'text-slate-500 hover:text-slate-300' : 'text-slate-400 hover:text-slate-600'}`} title="Margin, capacity and leverage sizing details" />
                     </div>
 
                     <div className="flex items-center space-x-1">
-                      <span className="text-[11px] text-slate-500 dark:text-slate-400 mr-1">Quick Size:</span>
+                      <span className={`text-[11px] mr-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Quick Size:</span>
                       {[10, 25, 50, 75, 100].map(pct => (
                         <button
                           key={pct}
                           type="button"
                           onClick={() => handlePercentageMargin(pct)}
-                          className={`px-2 py-0.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                          className={`px-2 py-0.5 rounded-lg text-xs font-medium transition cursor-pointer border ${
                             selectedQuickSize === pct
-                              ? 'bg-sky-500 text-white dark:text-slate-950 font-bold shadow-sm'
-                              : 'bg-white dark:bg-[#111726] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-[#1E2638]'
+                              ? 'bg-sky-500 text-white font-bold shadow-sm border-sky-500'
+                              : isDark ? 'bg-[#111726] text-slate-400 hover:text-white border-[#1E2638]' : 'bg-white text-slate-600 hover:text-slate-900 border-slate-200'
                           }`}
                         >
                           {pct}%
@@ -1021,89 +1104,117 @@ export function TradeModal({
                   {/* 4 Clean Columns */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
+                      <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
+                        isDark ? 'text-slate-400' : 'text-slate-600'
+                      }`}>
                         Starting Capital (₹)
                       </label>
-                      <div className="relative flex items-center bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
-                        <span className="text-slate-400 dark:text-slate-500 text-xs mr-1 select-none">₹</span>
+                      <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
+                        isDark ? 'bg-[#0B0F19] border-[#1E2638] focus-within:border-sky-500 hover:border-slate-700' : 'bg-white border-slate-200 focus-within:border-sky-500 hover:border-slate-300'
+                      }`}>
+                        <span className={`text-xs mr-1 select-none ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>₹</span>
                         <input
                           type="number"
                           step="any"
                           value={startingCapital}
                           onChange={(e) => setStartingCapital(e.target.value)}
-                          className="w-full bg-transparent text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none"
+                          className={`w-full bg-transparent font-mono text-xs font-medium focus:outline-none ${
+                            isDark ? 'text-white' : 'text-slate-900'
+                          }`}
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
+                      <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
+                        isDark ? 'text-slate-400' : 'text-slate-600'
+                      }`}>
                         Margin Used (₹)
                       </label>
-                      <div className="relative flex items-center bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
-                        <span className="text-slate-400 dark:text-slate-500 text-xs mr-1 select-none">₹</span>
+                      <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
+                        isDark ? 'bg-[#0B0F19] border-[#1E2638] focus-within:border-sky-500 hover:border-slate-700' : 'bg-white border-slate-200 focus-within:border-sky-500 hover:border-slate-300'
+                      }`}>
+                        <span className={`text-xs mr-1 select-none ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>₹</span>
                         <input
                           type="number"
                           step="any"
                           value={marginUsed}
                           onChange={(e) => setMarginUsed(e.target.value)}
-                          className="w-full bg-transparent text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none"
+                          className={`w-full bg-transparent font-mono text-xs font-medium focus:outline-none ${
+                            isDark ? 'text-white' : 'text-slate-900'
+                          }`}
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
+                      <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
+                        isDark ? 'text-slate-400' : 'text-slate-600'
+                      }`}>
                         Available Balance (₹)
                       </label>
-                      <div className="flex items-center bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 text-emerald-600 dark:text-emerald-400 font-mono text-xs font-semibold">
+                      <div className={`flex items-center rounded-xl border px-3 h-10 font-mono text-xs font-semibold ${
+                        isDark ? 'bg-[#0B0F19] border-[#1E2638] text-emerald-400' : 'bg-white border-slate-200 text-emerald-600'
+                      }`}>
                         <span>₹ {calculationSummary.availableBalance >= 0 ? calculationSummary.availableBalance.toLocaleString('en-IN') : '0'}</span>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
+                      <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
+                        isDark ? 'text-slate-400' : 'text-slate-600'
+                      }`}>
                         Leverage
                       </label>
-                      <div className="relative flex items-center bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
+                      <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
+                        isDark ? 'bg-[#0B0F19] border-[#1E2638] focus-within:border-sky-500 hover:border-slate-700' : 'bg-white border-slate-200 focus-within:border-sky-500 hover:border-slate-300'
+                      }`}>
                         <select
                           value={leverage}
                           onChange={(e) => setLeverage(e.target.value)}
-                          className="w-full bg-transparent text-slate-900 dark:text-white text-xs font-medium focus:outline-none cursor-pointer appearance-none"
+                          className={`w-full bg-transparent text-xs font-medium focus:outline-none cursor-pointer appearance-none ${
+                            isDark ? 'text-white' : 'text-slate-900'
+                          }`}
                         >
-                          <option value="1" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">1x</option>
-                          <option value="5" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">5x</option>
-                          <option value="10" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">10x</option>
-                          <option value="20" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">20x</option>
-                          <option value="25" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">25x</option>
-                          <option value="50" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">50x</option>
-                          <option value="75" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">75x</option>
-                          <option value="100" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">100x</option>
+                          <option value="1" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>1x</option>
+                          <option value="5" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>5x</option>
+                          <option value="10" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>10x</option>
+                          <option value="20" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>20x</option>
+                          <option value="25" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>25x</option>
+                          <option value="50" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>50x</option>
+                          <option value="75" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>75x</option>
+                          <option value="100" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>100x</option>
                         </select>
-                        <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0 pointer-events-none" />
+                        <ChevronDown className={`w-3.5 h-3.5 shrink-0 pointer-events-none ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                       </div>
                     </div>
                   </div>
 
                   {/* Sub-strip */}
-                  <div className="flex flex-wrap items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200 dark:border-[#1E2638]/60">
+                  <div className={`flex flex-wrap items-center justify-between text-xs pt-1 border-t ${
+                    isDark ? 'border-[#1E2638]/60 text-slate-400' : 'border-slate-200 text-slate-500'
+                  }`}>
                     <div>
-                      Capacity: <span className="text-sky-600 dark:text-sky-400 font-medium">{formatINR(calculationSummary.capacityNotionalINR)}</span> <span className="text-slate-400 dark:text-slate-500 text-[11px]">(Margin × Leverage)</span>
+                      Capacity: <span className={`font-medium ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>{formatINR(calculationSummary.capacityNotionalINR)}</span> <span className="text-[11px] opacity-70">(Margin × Leverage)</span>
                     </div>
                     <div className="text-[11px]">
-                      Contract: <span className="text-slate-700 dark:text-slate-300 font-medium">1 Lot = {contractSize} {symbol.split('/')[0] || 'BTC'}</span> · 1 USDT = <span className="text-slate-700 dark:text-slate-300 font-medium">₹{usdtRate}</span>
+                      Contract: <span className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>1 Lot = {contractSize} {symbol.split('/')[0] || 'BTC'}</span> · 1 USDT = <span className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>₹{usdtRate}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Section 2: Order Levels & Position Sizing */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-3">
+                {/* Section 2: Order Levels & Position Sizing Card */}
+                <div className={`p-4 rounded-2xl border space-y-3 ${
+                  isDark ? 'bg-[#0D121F]/80 border-[#1E2638]' : 'bg-[#F8FAFC] border-slate-200'
+                }`}>
                   <div className="flex items-center justify-between">
-                    <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 font-jakarta">
+                    <div className={`text-xs font-semibold font-jakarta ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
                       Order Levels & Position Sizing
                     </div>
 
-                    <label className="flex items-center space-x-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium cursor-pointer">
+                    <label className={`flex items-center space-x-1.5 text-xs font-medium cursor-pointer ${
+                      isDark ? 'text-slate-300' : 'text-slate-600'
+                    }`}>
                       <input
                         type="checkbox"
                         checked={hasBracketOrder}
@@ -1111,14 +1222,16 @@ export function TradeModal({
                         className="rounded accent-sky-500 cursor-pointer"
                       />
                       <span>TP / SL Bracket</span>
-                      <Info className="w-3 h-3 text-slate-400 dark:text-slate-500" />
+                      <Info className={`w-3 h-3 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
                     </label>
                   </div>
 
                   {/* Row 1: 4 Price Inputs */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
+                      <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
+                        isDark ? 'text-slate-400' : 'text-slate-600'
+                      }`}>
                         Entry Price *
                       </label>
                       <input
@@ -1127,13 +1240,17 @@ export function TradeModal({
                         placeholder="77406"
                         value={entryPrice}
                         onChange={(e) => setEntryPrice(e.target.value)}
-                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
+                        className={`w-full px-3 h-10 rounded-xl border font-mono text-xs font-medium focus:outline-none focus:border-sky-500 transition ${
+                          isDark ? 'bg-[#0B0F19] border-[#1E2638] text-white hover:border-slate-700' : 'bg-white border-slate-200 text-slate-900 hover:border-slate-300'
+                        }`}
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-rose-600 dark:text-rose-400 mb-1 font-jakarta">
+                      <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
+                        isDark ? 'text-rose-400' : 'text-rose-600'
+                      }`}>
                         Stop Loss (SL)
                       </label>
                       <input
@@ -1142,12 +1259,16 @@ export function TradeModal({
                         placeholder="77250"
                         value={stopLoss}
                         onChange={(e) => setStopLoss(e.target.value)}
-                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-rose-600 dark:text-rose-300 font-mono text-xs font-medium focus:outline-none focus:border-rose-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
+                        className={`w-full px-3 h-10 rounded-xl border font-mono text-xs font-medium focus:outline-none focus:border-rose-500 transition ${
+                          isDark ? 'bg-[#0B0F19] border-[#1E2638] text-rose-300 hover:border-slate-700' : 'bg-white border-slate-200 text-rose-600 hover:border-slate-300'
+                        }`}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-emerald-600 dark:text-emerald-400 mb-1 font-jakarta">
+                      <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
+                        isDark ? 'text-emerald-400' : 'text-emerald-600'
+                      }`}>
                         Take Profit (TP)
                       </label>
                       <input
@@ -1156,12 +1277,16 @@ export function TradeModal({
                         placeholder="77874"
                         value={targetPrice}
                         onChange={(e) => setTargetPrice(e.target.value)}
-                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-emerald-600 dark:text-emerald-300 font-mono text-xs font-medium focus:outline-none focus:border-emerald-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
+                        className={`w-full px-3 h-10 rounded-xl border font-mono text-xs font-medium focus:outline-none focus:border-emerald-500 transition ${
+                          isDark ? 'bg-[#0B0F19] border-[#1E2638] text-emerald-300 hover:border-slate-700' : 'bg-white border-slate-200 text-emerald-600 hover:border-slate-300'
+                        }`}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
+                      <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
+                        isDark ? 'text-slate-400' : 'text-slate-600'
+                      }`}>
                         Actual Exit Price
                       </label>
                       <input
@@ -1170,7 +1295,9 @@ export function TradeModal({
                         placeholder="77485"
                         value={exitPrice}
                         onChange={(e) => setExitPrice(e.target.value)}
-                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
+                        className={`w-full px-3 h-10 rounded-xl border font-mono text-xs font-medium focus:outline-none focus:border-sky-500 transition ${
+                          isDark ? 'bg-[#0B0F19] border-[#1E2638] text-white hover:border-slate-700' : 'bg-white border-slate-200 text-slate-900 hover:border-slate-300'
+                        }`}
                       />
                     </div>
                   </div>
@@ -1179,14 +1306,18 @@ export function TradeModal({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 font-jakarta">
+                        <label className={`block text-[11px] font-medium font-jakarta ${
+                          isDark ? 'text-slate-400' : 'text-slate-600'
+                        }`}>
                           Order Size in Lots *
                         </label>
-                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
+                        <span className={`text-[10px] font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
                           = {calculationSummary.qty.toFixed(6)} {symbol.split('/')[0] || 'BTC'}
                         </span>
                       </div>
-                      <div className="relative flex items-center bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
+                      <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
+                        isDark ? 'bg-[#0B0F19] border-[#1E2638] focus-within:border-sky-500 hover:border-slate-700' : 'bg-white border-slate-200 focus-within:border-sky-500 hover:border-slate-300'
+                      }`}>
                         <input
                           type="number"
                           step="any"
@@ -1200,10 +1331,14 @@ export function TradeModal({
                               setIsManualQuantity(false);
                             }
                           }}
-                          className="w-full bg-transparent text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none pr-10"
+                          className={`w-full bg-transparent font-mono text-xs font-medium focus:outline-none pr-10 ${
+                            isDark ? 'text-white' : 'text-slate-900'
+                          }`}
                           required
                         />
-                        <span className="text-slate-400 dark:text-slate-500 text-xs font-medium pointer-events-none select-none">
+                        <span className={`text-xs font-medium pointer-events-none select-none ${
+                          isDark ? 'text-slate-500' : 'text-slate-400'
+                        }`}>
                           Lots
                         </span>
                       </div>
@@ -1211,7 +1346,9 @@ export function TradeModal({
 
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 font-jakarta">
+                        <label className={`block text-[11px] font-medium font-jakarta ${
+                          isDark ? 'text-slate-400' : 'text-slate-600'
+                        }`}>
                           Dynamic Risk Target (₹)
                         </label>
                         {calculationSummary.hasSL && calculationSummary.recommendedRiskLots > 0 && (
@@ -1223,20 +1360,26 @@ export function TradeModal({
                               setQuantity(parseFloat((calculationSummary.recommendedRiskLots * c).toFixed(6)).toString());
                               setIsManualQuantity(false);
                             }}
-                            className="text-[10px] text-sky-600 dark:text-sky-400 hover:underline font-medium cursor-pointer"
+                            className={`text-[10px] font-medium cursor-pointer hover:underline ${
+                              isDark ? 'text-sky-400' : 'text-sky-600'
+                            }`}
                           >
                             Apply {calculationSummary.recommendedRiskLots} Lots
                           </button>
                         )}
                       </div>
-                      <div className="relative flex items-center bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
-                        <span className="text-slate-400 dark:text-slate-500 text-xs mr-1 select-none">₹</span>
+                      <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
+                        isDark ? 'bg-[#0B0F19] border-[#1E2638] focus-within:border-sky-500 hover:border-slate-700' : 'bg-white border-slate-200 focus-within:border-sky-500 hover:border-slate-300'
+                      }`}>
+                        <span className={`text-xs mr-1 select-none ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>₹</span>
                         <input
                           type="number"
                           step="any"
                           value={targetRiskINR}
                           onChange={(e) => setTargetRiskINR(e.target.value)}
-                          className="w-full bg-transparent text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none"
+                          className={`w-full bg-transparent font-mono text-xs font-medium focus:outline-none ${
+                            isDark ? 'text-white' : 'text-slate-900'
+                          }`}
                         />
                       </div>
                     </div>
@@ -1245,7 +1388,9 @@ export function TradeModal({
                   {/* Row 3: Exchange Realized P&L, Trading Fees, Funding Fees */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
+                      <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
+                        isDark ? 'text-slate-400' : 'text-slate-600'
+                      }`}>
                         Exchange Realized P&L (₹)
                       </label>
                       <input
@@ -1254,12 +1399,16 @@ export function TradeModal({
                         placeholder="-100"
                         value={manualRealizedPnL}
                         onChange={(e) => setManualRealizedPnL(e.target.value)}
-                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
+                        className={`w-full px-3 h-10 rounded-xl border font-mono text-xs font-medium focus:outline-none focus:border-sky-500 transition ${
+                          isDark ? 'bg-[#0B0F19] border-[#1E2638] text-white hover:border-slate-700' : 'bg-white border-slate-200 text-slate-900 hover:border-slate-300'
+                        }`}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
+                      <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
+                        isDark ? 'text-slate-400' : 'text-slate-600'
+                      }`}>
                         Trading Fees (₹)
                       </label>
                       <input
@@ -1268,12 +1417,16 @@ export function TradeModal({
                         placeholder="0.00"
                         value={tradingFees}
                         onChange={(e) => setTradingFees(e.target.value)}
-                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
+                        className={`w-full px-3 h-10 rounded-xl border font-mono text-xs font-medium focus:outline-none focus:border-sky-500 transition ${
+                          isDark ? 'bg-[#0B0F19] border-[#1E2638] text-white hover:border-slate-700' : 'bg-white border-slate-200 text-slate-900 hover:border-slate-300'
+                        }`}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
+                      <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
+                        isDark ? 'text-slate-400' : 'text-slate-600'
+                      }`}>
                         Funding Fees (₹)
                       </label>
                       <input
@@ -1282,7 +1435,9 @@ export function TradeModal({
                         placeholder="0.00"
                         value={fundingFees}
                         onChange={(e) => setFundingFees(e.target.value)}
-                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
+                        className={`w-full px-3 h-10 rounded-xl border font-mono text-xs font-medium focus:outline-none focus:border-sky-500 transition ${
+                          isDark ? 'bg-[#0B0F19] border-[#1E2638] text-white hover:border-slate-700' : 'bg-white border-slate-200 text-slate-900 hover:border-slate-300'
+                        }`}
                       />
                     </div>
                   </div>
@@ -1293,64 +1448,76 @@ export function TradeModal({
             {/* STEP 2: Trade Plan & Confluences */}
             {step === 2 && (
               <div className="space-y-4">
-                {/* Confluences Card */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-3">
-                  <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 font-jakarta">
+                <div className={`p-4 rounded-2xl border space-y-3 ${
+                  isDark ? 'bg-[#0D121F]/80 border-[#1E2638]' : 'bg-[#F8FAFC] border-slate-200'
+                }`}>
+                  <div className={`text-xs font-semibold font-jakarta ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
                     SMC Confluence Checklist
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638] cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 transition">
+                    <label className={`flex items-center space-x-2.5 p-3 rounded-xl border cursor-pointer transition ${
+                      isDark ? 'bg-[#0B0F19] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
+                    }`}>
                       <input
                         type="checkbox"
                         checked={h1Bias}
                         onChange={(e) => setH1Bias(e.target.checked)}
                         className="rounded accent-sky-500 cursor-pointer"
                       />
-                      <span className="font-medium text-slate-700 dark:text-slate-200">1H HTF Directional Bias</span>
+                      <span className={`font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>1H HTF Directional Bias</span>
                     </label>
 
-                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638] cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 transition">
+                    <label className={`flex items-center space-x-2.5 p-3 rounded-xl border cursor-pointer transition ${
+                      isDark ? 'bg-[#0B0F19] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
+                    }`}>
                       <input
                         type="checkbox"
                         checked={m15Structure}
                         onChange={(e) => setM15Structure(e.target.checked)}
                         className="rounded accent-sky-500 cursor-pointer"
                       />
-                      <span className="font-medium text-slate-700 dark:text-slate-200">15m Market Structure Shift / FVG</span>
+                      <span className={`font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>15m Market Structure Shift / FVG</span>
                     </label>
 
-                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638] cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 transition">
+                    <label className={`flex items-center space-x-2.5 p-3 rounded-xl border cursor-pointer transition ${
+                      isDark ? 'bg-[#0B0F19] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
+                    }`}>
                       <input
                         type="checkbox"
                         checked={m5EntryPoi}
                         onChange={(e) => setM5EntryPoi(e.target.checked)}
                         className="rounded accent-sky-500 cursor-pointer"
                       />
-                      <span className="font-medium text-slate-700 dark:text-slate-200">5m Entry POI / Mitigation</span>
+                      <span className={`font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>5m Entry POI / Mitigation</span>
                     </label>
 
-                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638] cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 transition">
+                    <label className={`flex items-center space-x-2.5 p-3 rounded-xl border cursor-pointer transition ${
+                      isDark ? 'bg-[#0B0F19] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
+                    }`}>
                       <input
                         type="checkbox"
                         checked={m1BosChoch}
                         onChange={(e) => setM1BosChoch(e.target.checked)}
                         className="rounded accent-sky-500 cursor-pointer"
                       />
-                      <span className="font-medium text-slate-700 dark:text-slate-200">1m LTF Trigger (CHOCH / BOS)</span>
+                      <span className={`font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>1m LTF Trigger (CHOCH / BOS)</span>
                     </label>
                   </div>
                 </div>
 
-                {/* Strategy Selector */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-2">
-                  <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 font-jakarta">
+                <div className={`p-4 rounded-2xl border space-y-2 ${
+                  isDark ? 'bg-[#0D121F]/80 border-[#1E2638]' : 'bg-[#F8FAFC] border-slate-200'
+                }`}>
+                  <label className={`block text-[11px] font-medium font-jakarta ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                     Trading Strategy / Setup Model
                   </label>
                   <select
                     value={strategy}
                     onChange={(e) => setStrategy(e.target.value)}
-                    className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white text-xs rounded-xl border border-slate-200 dark:border-[#1E2638] font-medium focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700 cursor-pointer"
+                    className={`w-full px-3 h-10 text-xs rounded-xl border font-medium focus:outline-none focus:border-sky-500 cursor-pointer ${
+                      isDark ? 'bg-[#0B0F19] text-white border-[#1E2638] hover:border-slate-700' : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
+                    }`}
                   >
                     <option value="SMC Order Block">SMC Order Block</option>
                     <option value="Liquidity Sweep">Liquidity Sweep / Raid</option>
@@ -1361,20 +1528,27 @@ export function TradeModal({
                   </select>
                 </div>
 
-                {/* Upload Screenshot */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-2">
-                  <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 font-jakarta">
+                <div className={`p-4 rounded-2xl border space-y-2 ${
+                  isDark ? 'bg-[#0D121F]/80 border-[#1E2638]' : 'bg-[#F8FAFC] border-slate-200'
+                }`}>
+                  <label className={`block text-[11px] font-medium font-jakarta ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                     Upload Setup Screenshot (Local File)
                   </label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleFileUpload}
-                    className="w-full text-xs text-slate-500 dark:text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 dark:file:bg-[#1E2638] file:text-sky-600 dark:file:text-sky-400 hover:file:bg-slate-200 dark:hover:file:bg-slate-700 cursor-pointer"
+                    className={`w-full text-xs file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold cursor-pointer ${
+                      isDark 
+                        ? 'text-slate-400 file:bg-[#1E2638] file:text-sky-400 hover:file:bg-slate-700' 
+                        : 'text-slate-500 file:bg-slate-100 file:text-sky-600 hover:file:bg-slate-200'
+                    }`}
                   />
 
                   {chartUrl && (
-                    <div className="mt-2 relative rounded-xl overflow-hidden border border-slate-200 dark:border-[#1E2638] h-32 bg-slate-100 dark:bg-[#0B0F19]">
+                    <div className={`mt-2 relative rounded-xl overflow-hidden border h-32 ${
+                      isDark ? 'border-[#1E2638] bg-[#0B0F19]' : 'border-slate-200 bg-slate-100'
+                    }`}>
                       <img src={chartUrl} alt="Setup Chart" className="w-full h-full object-cover" />
                       <button
                         type="button"
@@ -1387,9 +1561,10 @@ export function TradeModal({
                   )}
                 </div>
 
-                {/* Notes */}
-                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-2">
-                  <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 font-jakarta">
+                <div className={`p-4 rounded-2xl border space-y-2 ${
+                  isDark ? 'bg-[#0D121F]/80 border-[#1E2638]' : 'bg-[#F8FAFC] border-slate-200'
+                }`}>
+                  <label className={`block text-[11px] font-medium font-jakarta ${isDark ? 'text-slate-400' : 'text-slate-600'}`}>
                     Notes & Execution Rationale
                   </label>
                   <textarea
@@ -1397,7 +1572,9 @@ export function TradeModal({
                     placeholder="Enter setup observations, confluence reasons, emotions, or market context..."
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="w-full p-3 bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white text-xs rounded-xl border border-slate-200 dark:border-[#1E2638] focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700"
+                    className={`w-full p-3 text-xs rounded-xl border focus:outline-none focus:border-sky-500 ${
+                      isDark ? 'bg-[#0B0F19] text-white border-[#1E2638] hover:border-slate-700' : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
+                    }`}
                   />
                 </div>
               </div>
@@ -1406,49 +1583,55 @@ export function TradeModal({
             {/* STEP 3: Review & Save */}
             {step === 3 && (
               <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-4">
-                  <div className="flex items-center space-x-2 text-xs font-semibold text-slate-800 dark:text-slate-200 font-jakarta">
+                <div className={`p-4 rounded-2xl border space-y-4 ${
+                  isDark ? 'bg-[#0D121F]/80 border-[#1E2638]' : 'bg-[#F8FAFC] border-slate-200'
+                }`}>
+                  <div className={`flex items-center space-x-2 text-xs font-semibold font-jakarta ${
+                    isDark ? 'text-slate-200' : 'text-slate-800'
+                  }`}>
                     <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                     <span>Review Execution Summary</span>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs font-mono">
-                    <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638]">
-                      <span className="text-slate-500 dark:text-slate-400 text-[10px] block uppercase">Instrument</span>
-                      <span className="text-slate-900 dark:text-white font-bold text-sm">{symbol}</span>
+                    <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#0B0F19] border-[#1E2638]' : 'bg-white border-slate-200'}`}>
+                      <span className={`text-[10px] block uppercase ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Instrument</span>
+                      <span className={`font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>{symbol}</span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638]">
-                      <span className="text-slate-500 dark:text-slate-400 text-[10px] block uppercase">Direction & Type</span>
-                      <span className={`font-bold text-sm ${direction === 'LONG' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                    <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#0B0F19] border-[#1E2638]' : 'bg-white border-slate-200'}`}>
+                      <span className={`text-[10px] block uppercase ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Direction & Type</span>
+                      <span className={`font-bold text-sm ${direction === 'LONG' ? isDark ? 'text-emerald-400' : 'text-emerald-600' : isDark ? 'text-rose-400' : 'text-rose-600'}`}>
                         {direction} • {orderType}
                       </span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638]">
-                      <span className="text-slate-500 dark:text-slate-400 text-[10px] block uppercase">Position Lots</span>
-                      <span className="text-slate-900 dark:text-white font-bold text-sm">{orderLots} Lots</span>
+                    <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#0B0F19] border-[#1E2638]' : 'bg-white border-slate-200'}`}>
+                      <span className={`text-[10px] block uppercase ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Position Lots</span>
+                      <span className={`font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>{orderLots} Lots</span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638]">
-                      <span className="text-slate-500 dark:text-slate-400 text-[10px] block uppercase">Entry Price</span>
-                      <span className="text-slate-900 dark:text-white font-bold text-sm">{entryPrice}</span>
+                    <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#0B0F19] border-[#1E2638]' : 'bg-white border-slate-200'}`}>
+                      <span className={`text-[10px] block uppercase ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Entry Price</span>
+                      <span className={`font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>{entryPrice}</span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638]">
-                      <span className="text-slate-500 dark:text-slate-400 text-[10px] block uppercase">Stop Loss</span>
-                      <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">{stopLoss || '--'}</span>
+                    <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#0B0F19] border-[#1E2638]' : 'bg-white border-slate-200'}`}>
+                      <span className={`text-[10px] block uppercase ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Stop Loss</span>
+                      <span className={`font-bold text-sm ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>{stopLoss || '--'}</span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638]">
-                      <span className="text-slate-500 dark:text-slate-400 text-[10px] block uppercase">Take Profit</span>
-                      <span className="text-emerald-600 dark:text-emerald-400 font-bold text-sm">{targetPrice || '--'}</span>
+                    <div className={`p-3 rounded-xl border ${isDark ? 'bg-[#0B0F19] border-[#1E2638]' : 'bg-white border-slate-200'}`}>
+                      <span className={`text-[10px] block uppercase ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Take Profit</span>
+                      <span className={`font-bold text-sm ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>{targetPrice || '--'}</span>
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638] flex items-center justify-between text-xs font-mono">
-                    <span className="text-slate-600 dark:text-slate-400">Calculated Realized Net P&L:</span>
-                    <span className={`text-base font-bold ${calculationSummary.realizedNetPnL >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+                  <div className={`p-3 rounded-xl border flex items-center justify-between text-xs font-mono ${
+                    isDark ? 'bg-[#0B0F19] border-[#1E2638]' : 'bg-white border-slate-200'
+                  }`}>
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>Calculated Realized Net P&L:</span>
+                    <span className={`text-base font-bold ${calculationSummary.realizedNetPnL >= 0 ? isDark ? 'text-emerald-400' : 'text-emerald-600' : isDark ? 'text-rose-400' : 'text-rose-600'}`}>
                       {calculationSummary.realizedNetPnL >= 0 ? '+' : ''}{formatINR(calculationSummary.realizedNetPnL)}
                     </span>
                   </div>
@@ -1460,18 +1643,20 @@ export function TradeModal({
 
           {/* RIGHT COLUMN: Summary Ticket */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="bg-slate-50/90 dark:bg-[#0D121F]/90 border border-slate-200 dark:border-[#1E2638] rounded-2xl p-4 sm:p-5 space-y-4">
+            <div className={`rounded-2xl p-4 sm:p-5 space-y-4 border ${
+              isDark ? 'bg-[#0D121F]/90 border-[#1E2638]' : 'bg-[#F8FAFC] border-slate-200'
+            }`}>
               
               {/* Trade Overview */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 font-jakarta">
+                  <div className={`text-xs font-semibold font-jakarta ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
                     Trade Overview
                   </div>
-                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold tracking-wider ${
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold tracking-wider border ${
                     direction === 'LONG'
-                      ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30'
-                      : 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-500/30'
+                      ? isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                      : isDark ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' : 'bg-rose-50 text-rose-700 border-rose-200'
                   }`}>
                     {direction} • {orderType.toUpperCase()}
                   </span>
@@ -1479,59 +1664,65 @@ export function TradeModal({
 
                 <div className="space-y-2 text-xs font-mono">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500 dark:text-slate-400">Symbol</span>
-                    <span className="text-slate-900 dark:text-white font-semibold flex items-center space-x-1.5">
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Symbol</span>
+                    <span className={`font-semibold flex items-center space-x-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       <CryptoIcon symbol={symbol || 'BTC'} className="w-3.5 h-3.5" />
                       <span>{symbol || 'BTC/USDT'}</span>
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500 dark:text-slate-400">Exchange</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">{exchange}</span>
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Exchange</span>
+                    <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>{exchange}</span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500 dark:text-slate-400">Leverage</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">{leverage}x</span>
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Leverage</span>
+                    <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>{leverage}x</span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500 dark:text-slate-400">Order Size</span>
-                    <span className="text-slate-900 dark:text-white font-semibold">
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Order Size</span>
+                    <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       {orderLots || 14} Lots ({calculationSummary.qty.toFixed(6)} {symbol.split('/')[0] || 'BTC'})
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="h-px bg-slate-200 dark:bg-[#1E2638]/70" />
+              <div className={`h-px ${isDark ? 'bg-[#1E2638]/70' : 'bg-slate-200'}`} />
 
               {/* Risk & Reward */}
               <div className="space-y-3">
-                <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 font-jakarta">
+                <div className={`text-xs font-semibold font-jakarta ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
                   Risk & Reward
                 </div>
 
-                {/* 3 Stat Cards: Risk, Reward, R:R */}
+                {/* 3 Stat Cards */}
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="p-2.5 rounded-xl bg-white dark:bg-[#090D16] border border-slate-200 dark:border-[#1E2638] text-center shadow-xs">
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block mb-1">Risk (₹)</span>
-                    <span className="text-sm font-bold text-rose-600 dark:text-rose-400 font-mono">
+                  <div className={`p-2.5 rounded-xl border text-center ${
+                    isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
+                  }`}>
+                    <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Risk (₹)</span>
+                    <span className={`text-sm font-bold font-mono ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>
                       {calculationSummary.hasSL ? Math.round(calculationSummary.grossLossINR) : (targetRiskINR || '100')}
                     </span>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-white dark:bg-[#090D16] border border-slate-200 dark:border-[#1E2638] text-center shadow-xs">
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block mb-1">Reward (₹)</span>
-                    <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 font-mono">
+                  <div className={`p-2.5 rounded-xl border text-center ${
+                    isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
+                  }`}>
+                    <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Reward (₹)</span>
+                    <span className={`text-sm font-bold font-mono ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
                       {calculationSummary.hasTP ? Math.round(calculationSummary.grossProfitINR) : '468'}
                     </span>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-white dark:bg-[#090D16] border border-slate-200 dark:border-[#1E2638] text-center shadow-xs">
-                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block mb-1">R:R</span>
-                    <span className="text-sm font-bold text-sky-600 dark:text-sky-400 font-mono">
+                  <div className={`p-2.5 rounded-xl border text-center ${
+                    isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
+                  }`}>
+                    <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>R:R</span>
+                    <span className={`text-sm font-bold font-mono ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>
                       {calculationSummary.rrRatioStr !== '--' ? calculationSummary.rrRatioStr : '1 : 4.68'}
                     </span>
                   </div>
@@ -1540,29 +1731,31 @@ export function TradeModal({
                 {/* Level Detail Breakdown */}
                 <div className="space-y-1.5 text-xs font-mono pt-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500 dark:text-slate-400">• Entry</span>
-                    <span className="text-slate-800 dark:text-white font-semibold">
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Entry</span>
+                    <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                       {Number(entryPrice || 77406).toLocaleString()}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500 dark:text-slate-400">• Stop Loss</span>
-                    <span className="text-rose-600 dark:text-rose-400 font-semibold">
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Stop Loss</span>
+                    <span className={`font-semibold ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>
                       {Number(stopLoss || 77250).toLocaleString()} ({entryPrice && stopLoss ? (((parseFloat(stopLoss) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100).toFixed(2) : '-0.20'}%)
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500 dark:text-slate-400">• Take Profit</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Take Profit</span>
+                    <span className={`font-semibold ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
                       {Number(targetPrice || 77874).toLocaleString()} (+{entryPrice && targetPrice ? (((parseFloat(targetPrice) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100).toFixed(2) : '0.60'}%)
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between pt-1 border-t border-slate-200 dark:border-[#1E2638]/60">
-                    <span className="text-slate-500 dark:text-slate-400">• Est. P&L (₹)</span>
-                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">
+                  <div className={`flex items-center justify-between pt-1 border-t ${
+                    isDark ? 'border-[#1E2638]/60' : 'border-slate-200'
+                  }`}>
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Est. P&L (₹)</span>
+                    <span className={`font-bold ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
                       +{calculationSummary.hasTP ? calculationSummary.grossProfitINR.toFixed(2) : '468.00'}
                     </span>
                   </div>
@@ -1571,31 +1764,26 @@ export function TradeModal({
                 {/* Visual Level Gauge / Gradient Slider */}
                 <div className="pt-2">
                   <div className="relative h-1.5 rounded-full bg-gradient-to-r from-rose-500 via-sky-400 to-emerald-500 my-4">
-                    {/* SL Marker */}
                     <div className="absolute left-0 -top-1 w-3.5 h-3.5 rounded-full bg-rose-500 ring-4 ring-rose-500/20" />
-                    
-                    {/* Entry Marker */}
                     <div className="absolute left-1/2 -translate-x-1/2 -top-1 w-3.5 h-3.5 rounded-full bg-sky-400 ring-4 ring-sky-500/20" />
-                    
-                    {/* TP Marker */}
                     <div className="absolute right-0 -top-1 w-3.5 h-3.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20" />
                   </div>
 
                   {/* Marker Labels */}
                   <div className="flex items-center justify-between text-[10px] font-mono">
                     <div className="text-left">
-                      <span className="block font-semibold text-rose-600 dark:text-rose-400">SL</span>
-                      <span className="block text-rose-600 dark:text-rose-400 font-medium">{Number(stopLoss || 77250).toLocaleString()}</span>
+                      <span className={`block font-semibold ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>SL</span>
+                      <span className={isDark ? 'text-rose-400' : 'text-rose-600'}>{Number(stopLoss || 77250).toLocaleString()}</span>
                     </div>
 
                     <div className="text-center">
-                      <span className="block font-semibold text-slate-700 dark:text-slate-300">Entry</span>
-                      <span className="block text-slate-900 dark:text-white font-medium">{Number(entryPrice || 77406).toLocaleString()}</span>
+                      <span className={`block font-semibold ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>Entry</span>
+                      <span className={isDark ? 'text-white' : 'text-slate-900'}>{Number(entryPrice || 77406).toLocaleString()}</span>
                     </div>
 
                     <div className="text-right">
-                      <span className="block font-semibold text-emerald-600 dark:text-emerald-400">TP</span>
-                      <span className="block text-emerald-600 dark:text-emerald-400 font-medium">{Number(targetPrice || 77874).toLocaleString()}</span>
+                      <span className={`block font-semibold ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>TP</span>
+                      <span className={isDark ? 'text-emerald-400' : 'text-emerald-600'}>{Number(targetPrice || 77874).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -1608,11 +1796,17 @@ export function TradeModal({
         </div>
 
         {/* Footer Bar */}
-        <div className="pt-3 border-t border-slate-200 dark:border-[#1E2638] flex items-center justify-between">
+        <div className={`pt-3 border-t flex items-center justify-between ${
+          isDark ? 'border-[#1E2638]' : 'border-slate-200'
+        }`}>
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#111724] dark:hover:bg-[#151D30] border border-slate-200 dark:border-[#1E2638] hover:border-slate-300 dark:hover:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium text-xs transition cursor-pointer"
+            className={`px-4 py-2 rounded-xl border font-medium text-xs transition cursor-pointer ${
+              isDark 
+                ? 'bg-[#111724] hover:bg-[#151D30] border-[#1E2638] hover:border-slate-700 text-slate-400 hover:text-white' 
+                : 'bg-slate-100 hover:bg-slate-200 border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900'
+            }`}
           >
             Cancel
           </button>
@@ -1621,7 +1815,11 @@ export function TradeModal({
             <button
               type="button"
               onClick={handleSaveDraft}
-              className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#111724] dark:hover:bg-[#151D30] border border-slate-200 dark:border-[#1E2638] hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium text-xs transition cursor-pointer"
+              className={`flex items-center space-x-1.5 px-3.5 py-2 rounded-xl border font-medium text-xs transition cursor-pointer ${
+                isDark 
+                  ? 'bg-[#111724] hover:bg-[#151D30] border-[#1E2638] hover:border-slate-700 text-slate-300 hover:text-white' 
+                  : 'bg-slate-100 hover:bg-slate-200 border-slate-200 hover:border-slate-300 text-slate-700 hover:text-slate-900'
+              }`}
             >
               <FileText className="w-3.5 h-3.5 text-slate-400" />
               <span>Save Draft</span>
@@ -1631,7 +1829,7 @@ export function TradeModal({
               <button
                 type="button"
                 onClick={() => setStep(step + 1)}
-                className="flex items-center space-x-1.5 px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white dark:text-slate-950 font-bold text-xs transition shadow-sm cursor-pointer"
+                className="flex items-center space-x-1.5 px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs transition shadow-sm cursor-pointer"
               >
                 <span>Continue</span>
                 <ArrowRight className="w-4 h-4" />
@@ -1640,7 +1838,7 @@ export function TradeModal({
               <button
                 type="button"
                 onClick={handleSaveInternal}
-                className="flex items-center space-x-1.5 px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white dark:text-slate-950 font-bold text-xs transition shadow-sm cursor-pointer"
+                className="flex items-center space-x-1.5 px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white font-bold text-xs transition shadow-sm cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 <span>Save Trade</span>
