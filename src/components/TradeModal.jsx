@@ -222,25 +222,25 @@ export function TradeModal({
   const [showEntryDatePicker, setShowEntryDatePicker] = useState(false);
   
   // Capital & Leverage State
-  const [startingCapital, setStartingCapital] = useState('2000');
-  const [marginUsed, setMarginUsed] = useState('2000');
+  const [startingCapital, setStartingCapital] = useState('');
+  const [marginUsed, setMarginUsed] = useState('');
   const [leverage, setLeverage] = useState('25');
-  const [selectedQuickSize, setSelectedQuickSize] = useState(25);
+  const [selectedQuickSize, setSelectedQuickSize] = useState(null);
   const [contractSize, setContractSize] = useState('0.001');
   const [usdtRate, setUsdtRate] = useState('90');
 
   // Order Levels & Risk Management State
   const [hasBracketOrder, setHasBracketOrder] = useState(true);
-  const [entryPrice, setEntryPrice] = useState('77406');
-  const [stopLoss, setStopLoss] = useState('77250');
-  const [targetPrice, setTargetPrice] = useState('77874');
-  const [exitPrice, setExitPrice] = useState('77485');
-  const [orderLots, setOrderLots] = useState('14');
-  const [targetRiskINR, setTargetRiskINR] = useState('100');
-  const [manualRealizedPnL, setManualRealizedPnL] = useState('-100');
-  const [tradingFees, setTradingFees] = useState('0.00');
-  const [fundingFees, setFundingFees] = useState('0.00');
-  const [quantity, setQuantity] = useState('0.014');
+  const [entryPrice, setEntryPrice] = useState('');
+  const [stopLoss, setStopLoss] = useState('');
+  const [targetPrice, setTargetPrice] = useState('');
+  const [exitPrice, setExitPrice] = useState('');
+  const [orderLots, setOrderLots] = useState('');
+  const [targetRiskINR, setTargetRiskINR] = useState('');
+  const [manualRealizedPnL, setManualRealizedPnL] = useState('');
+  const [tradingFees, setTradingFees] = useState('');
+  const [fundingFees, setFundingFees] = useState('');
+  const [quantity, setQuantity] = useState('');
   const [isManualQuantity, setIsManualQuantity] = useState(false);
 
   // Confluences & Details
@@ -262,18 +262,18 @@ export function TradeModal({
       setExchange(tradeToEdit.exchange || 'Delta Exchange');
       setSymbol(tradeToEdit.symbol || 'BTC/USDT');
       setEntryDate(tradeToEdit.entryDate ? tradeToEdit.entryDate.slice(0, 16) : new Date().toISOString().slice(0, 16));
-      setEntryPrice(tradeToEdit.entryPrice !== undefined && tradeToEdit.entryPrice !== null ? String(tradeToEdit.entryPrice) : '77406');
-      setQuantity(tradeToEdit.quantity !== undefined && tradeToEdit.quantity !== null ? String(tradeToEdit.quantity) : '0.014');
+      setEntryPrice(tradeToEdit.entryPrice !== undefined && tradeToEdit.entryPrice !== null ? String(tradeToEdit.entryPrice) : '');
+      setQuantity(tradeToEdit.quantity !== undefined && tradeToEdit.quantity !== null ? String(tradeToEdit.quantity) : '');
       setStatus(tradeToEdit.status || 'CLOSED');
-      setExitPrice(tradeToEdit.exitPrice !== undefined && tradeToEdit.exitPrice !== null ? String(tradeToEdit.exitPrice) : '77485');
-      setManualRealizedPnL(tradeToEdit.actualRealizedPnL !== undefined && tradeToEdit.actualRealizedPnL !== null ? String(tradeToEdit.actualRealizedPnL) : '-100');
-      setStopLoss(tradeToEdit.stopLoss !== undefined && tradeToEdit.stopLoss !== null ? String(tradeToEdit.stopLoss) : '77250');
+      setExitPrice(tradeToEdit.exitPrice !== undefined && tradeToEdit.exitPrice !== null ? String(tradeToEdit.exitPrice) : '');
+      setManualRealizedPnL(tradeToEdit.actualRealizedPnL !== undefined && tradeToEdit.actualRealizedPnL !== null ? String(tradeToEdit.actualRealizedPnL) : '');
+      setStopLoss(tradeToEdit.stopLoss !== undefined && tradeToEdit.stopLoss !== null ? String(tradeToEdit.stopLoss) : '');
       setTargetPrice(
         tradeToEdit.targetPrice !== undefined && tradeToEdit.targetPrice !== null ? String(tradeToEdit.targetPrice) :
-        tradeToEdit.takeProfit !== undefined && tradeToEdit.takeProfit !== null ? String(tradeToEdit.takeProfit) : '77874'
+        tradeToEdit.takeProfit !== undefined && tradeToEdit.takeProfit !== null ? String(tradeToEdit.takeProfit) : ''
       );
-      setTradingFees(tradeToEdit.tradingFees !== undefined && tradeToEdit.tradingFees !== null ? String(tradeToEdit.tradingFees) : '0.00');
-      setFundingFees(tradeToEdit.fundingFees !== undefined && tradeToEdit.fundingFees !== null ? String(tradeToEdit.fundingFees) : '0.00');
+      setTradingFees(tradeToEdit.tradingFees !== undefined && tradeToEdit.tradingFees !== null ? String(tradeToEdit.tradingFees) : '');
+      setFundingFees(tradeToEdit.fundingFees !== undefined && tradeToEdit.fundingFees !== null ? String(tradeToEdit.fundingFees) : '');
       setUsdtRate(tradeToEdit.usdtRate !== undefined && tradeToEdit.usdtRate !== null ? String(tradeToEdit.usdtRate) : '90');
       setIsManualQuantity(Boolean(tradeToEdit.isManualQuantity));
       setStrategy(tradeToEdit.strategy || 'SMC Order Block');
@@ -286,14 +286,14 @@ export function TradeModal({
       setLtfTrigger(tradeToEdit.ltfTrigger || 'CHOCH');
       setStartingCapital(
         tradeToEdit.startingCapital !== undefined && tradeToEdit.startingCapital !== null ? String(tradeToEdit.startingCapital) :
-        tradeToEdit.capital !== undefined && tradeToEdit.capital !== null ? String(tradeToEdit.capital) : '2000'
+        tradeToEdit.capital !== undefined && tradeToEdit.capital !== null ? String(tradeToEdit.capital) : ''
       );
       setLeverage(
         tradeToEdit.leverage !== undefined && tradeToEdit.leverage !== null ? String(tradeToEdit.leverage) : '25'
       );
       setMarginUsed(
         tradeToEdit.marginUsed !== undefined && tradeToEdit.marginUsed !== null ? String(tradeToEdit.marginUsed) :
-        tradeToEdit.margin !== undefined && tradeToEdit.margin !== null ? String(tradeToEdit.margin) : '2000'
+        tradeToEdit.margin !== undefined && tradeToEdit.margin !== null ? String(tradeToEdit.margin) : ''
       );
       setContractSize(
         tradeToEdit.contractSize !== undefined && tradeToEdit.contractSize !== null ? String(tradeToEdit.contractSize) : '0.001'
@@ -301,10 +301,10 @@ export function TradeModal({
       setOrderLots(
         tradeToEdit.lots !== undefined && tradeToEdit.lots !== null ? String(tradeToEdit.lots) :
         tradeToEdit.orderLots !== undefined && tradeToEdit.orderLots !== null ? String(tradeToEdit.orderLots) :
-        tradeToEdit.contractQuantity !== undefined && tradeToEdit.contractQuantity !== null ? String(tradeToEdit.contractQuantity) : '14'
+        tradeToEdit.contractQuantity !== undefined && tradeToEdit.contractQuantity !== null ? String(tradeToEdit.contractQuantity) : ''
       );
       setTargetRiskINR(
-        tradeToEdit.targetRisk !== undefined && tradeToEdit.targetRisk !== null ? String(tradeToEdit.targetRisk) : '100'
+        tradeToEdit.targetRisk !== undefined && tradeToEdit.targetRisk !== null ? String(tradeToEdit.targetRisk) : ''
       );
       setHasBracketOrder(Boolean(tradeToEdit.hasBracketOrder ?? true));
     } else {
@@ -329,23 +329,23 @@ export function TradeModal({
     setExchange('Delta Exchange');
     setSymbol('BTC/USDT');
     setEntryDate(new Date().toISOString().slice(0, 16));
-    setStartingCapital('2000');
-    setMarginUsed('2000');
+    setStartingCapital('');
+    setMarginUsed('');
     setLeverage('25');
-    setSelectedQuickSize(25);
+    setSelectedQuickSize(null);
     setContractSize('0.001');
     setUsdtRate('90');
     setHasBracketOrder(true);
-    setEntryPrice('77406');
-    setStopLoss('77250');
-    setTargetPrice('77874');
-    setExitPrice('77485');
-    setOrderLots('14');
-    setTargetRiskINR('100');
-    setManualRealizedPnL('-100');
-    setTradingFees('0.00');
-    setFundingFees('0.00');
-    setQuantity('0.014');
+    setEntryPrice('');
+    setStopLoss('');
+    setTargetPrice('');
+    setExitPrice('');
+    setOrderLots('');
+    setTargetRiskINR('');
+    setManualRealizedPnL('');
+    setTradingFees('');
+    setFundingFees('');
+    setQuantity('');
     setIsManualQuantity(false);
     setStrategy('SMC Order Block');
     setNotes('');
@@ -360,6 +360,10 @@ export function TradeModal({
   // Synchronize Lot size to Coin Quantity
   useEffect(() => {
     if (isManualQuantity) return;
+    if (orderLots === '') {
+      setQuantity('');
+      return;
+    }
     const lots = parseFloat(orderLots);
     const cSize = parseFloat(contractSize) || 0.001;
     if (!isNaN(lots) && lots >= 0 && cSize > 0) {
@@ -371,7 +375,8 @@ export function TradeModal({
   // Position Sizing % Shortcuts (10%, 25%, 50%, 75%, 100%)
   const handlePercentageMargin = (pct) => {
     setSelectedQuickSize(pct);
-    const cap = parseFloat(startingCapital) || 2000;
+    const cap = parseFloat(startingCapital);
+    if (!cap || isNaN(cap) || cap <= 0) return;
     const margin = (cap * (pct / 100)).toFixed(0);
     setMarginUsed(margin);
 
@@ -463,8 +468,8 @@ export function TradeModal({
     const balanceAtTP = cap > 0 ? (cap + netProfitINR) : 0;
 
     // 6. Risk / Reward Ratio
-    let rrRatioStr = '1 : 4.68';
-    let rrRatioValue = 4.68;
+    let rrRatioStr = '--';
+    let rrRatioValue = null;
     if (hasSL && hasTP && grossLossINR > 0) {
       rrRatioValue = grossProfitINR / grossLossINR;
       rrRatioStr = `1 : ${rrRatioValue.toFixed(2)}`;
@@ -1113,6 +1118,7 @@ export function TradeModal({
                         <input
                           type="number"
                           step="any"
+                          placeholder="e.g. 2000"
                           value={startingCapital}
                           onChange={(e) => setStartingCapital(e.target.value)}
                           className={`w-full bg-transparent font-mono text-xs font-medium focus:outline-none ${
@@ -1135,6 +1141,7 @@ export function TradeModal({
                         <input
                           type="number"
                           step="any"
+                          placeholder="e.g. 2000"
                           value={marginUsed}
                           onChange={(e) => setMarginUsed(e.target.value)}
                           className={`w-full bg-transparent font-mono text-xs font-medium focus:outline-none ${
@@ -1234,7 +1241,7 @@ export function TradeModal({
                       <input
                         type="number"
                         step="any"
-                        placeholder="77406"
+                        placeholder="e.g. 77406"
                         value={entryPrice}
                         onChange={(e) => setEntryPrice(e.target.value)}
                         className={`w-full px-3 h-10 rounded-xl border font-mono text-xs font-medium focus:outline-none focus:border-sky-500 transition ${
@@ -1253,7 +1260,7 @@ export function TradeModal({
                       <input
                         type="number"
                         step="any"
-                        placeholder="77250"
+                        placeholder="e.g. 77250"
                         value={stopLoss}
                         onChange={(e) => setStopLoss(e.target.value)}
                         className={`w-full px-3 h-10 rounded-xl border font-mono text-xs font-medium focus:outline-none focus:border-rose-500 transition ${
@@ -1271,7 +1278,7 @@ export function TradeModal({
                       <input
                         type="number"
                         step="any"
-                        placeholder="77874"
+                        placeholder="e.g. 77874"
                         value={targetPrice}
                         onChange={(e) => setTargetPrice(e.target.value)}
                         className={`w-full px-3 h-10 rounded-xl border font-mono text-xs font-medium focus:outline-none focus:border-emerald-500 transition ${
@@ -1289,7 +1296,7 @@ export function TradeModal({
                       <input
                         type="number"
                         step="any"
-                        placeholder="77485"
+                        placeholder="e.g. 77485"
                         value={exitPrice}
                         onChange={(e) => setExitPrice(e.target.value)}
                         className={`w-full px-3 h-10 rounded-xl border font-mono text-xs font-medium focus:outline-none focus:border-sky-500 transition ${
@@ -1318,6 +1325,7 @@ export function TradeModal({
                         <input
                           type="number"
                           step="any"
+                          placeholder="e.g. 14"
                           value={orderLots}
                           onChange={(e) => {
                             setOrderLots(e.target.value);
@@ -1372,6 +1380,7 @@ export function TradeModal({
                         <input
                           type="number"
                           step="any"
+                          placeholder="e.g. 100"
                           value={targetRiskINR}
                           onChange={(e) => setTargetRiskINR(e.target.value)}
                           className={`w-full bg-transparent font-mono text-xs font-medium focus:outline-none ${
@@ -1393,7 +1402,7 @@ export function TradeModal({
                       <input
                         type="number"
                         step="any"
-                        placeholder="-100"
+                        placeholder="e.g. -100"
                         value={manualRealizedPnL}
                         onChange={(e) => setManualRealizedPnL(e.target.value)}
                         className={`w-full px-3 h-10 rounded-xl border font-mono text-xs font-medium focus:outline-none focus:border-sky-500 transition ${
@@ -1681,7 +1690,7 @@ export function TradeModal({
                   <div className="flex items-center justify-between">
                     <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Order Size</span>
                     <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                      {orderLots || 14} Lots ({calculationSummary.qty.toFixed(6)} {symbol.split('/')[0] || 'BTC'})
+                      {orderLots ? `${orderLots} Lots (${calculationSummary.qty.toFixed(6)} ${symbol.split('/')[0] || 'BTC'})` : '--'}
                     </span>
                   </div>
                 </div>
@@ -1702,7 +1711,7 @@ export function TradeModal({
                   }`}>
                     <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Risk ({currencySymbol})</span>
                     <span className={`text-sm font-bold font-mono ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>
-                      {calculationSummary.hasSL ? formatVal(calculationSummary.grossLossINR, currency) : formatVal(targetRiskINR || 100, currency)}
+                      {calculationSummary.hasSL ? formatVal(calculationSummary.grossLossINR, currency) : (targetRiskINR ? formatVal(targetRiskINR, currency) : '--')}
                     </span>
                   </div>
 
@@ -1711,7 +1720,7 @@ export function TradeModal({
                   }`}>
                     <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Reward ({currencySymbol})</span>
                     <span className={`text-sm font-bold font-mono ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                      {calculationSummary.hasTP ? formatVal(calculationSummary.grossProfitINR, currency) : formatVal(468, currency)}
+                      {calculationSummary.hasTP ? formatVal(calculationSummary.grossProfitINR, currency) : '--'}
                     </span>
                   </div>
 
@@ -1720,7 +1729,7 @@ export function TradeModal({
                   }`}>
                     <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>R:R</span>
                     <span className={`text-sm font-bold font-mono ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>
-                      {calculationSummary.rrRatioStr !== '--' ? calculationSummary.rrRatioStr : '1 : 4.68'}
+                      {calculationSummary.rrRatioStr}
                     </span>
                   </div>
                 </div>
@@ -1730,21 +1739,21 @@ export function TradeModal({
                   <div className="flex items-center justify-between">
                     <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Entry</span>
                     <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                      {Number(entryPrice || 77406).toLocaleString()}
+                      {entryPrice ? Number(entryPrice).toLocaleString() : '--'}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Stop Loss</span>
                     <span className={`font-semibold ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>
-                      {Number(stopLoss || 77250).toLocaleString()} ({entryPrice && stopLoss ? (((parseFloat(stopLoss) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100).toFixed(2) : '-0.20'}%)
+                      {stopLoss ? `${Number(stopLoss).toLocaleString()} (${entryPrice && stopLoss ? (((parseFloat(stopLoss) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100).toFixed(2) : '0.00'}%)` : '--'}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
                     <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Take Profit</span>
                     <span className={`font-semibold ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                      {Number(targetPrice || 77874).toLocaleString()} (+{entryPrice && targetPrice ? (((parseFloat(targetPrice) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100).toFixed(2) : '0.60'}%)
+                      {targetPrice ? `${Number(targetPrice).toLocaleString()} (+${entryPrice && targetPrice ? (((parseFloat(targetPrice) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100).toFixed(2) : '0.00'}%)` : '--'}
                     </span>
                   </div>
 
@@ -1753,7 +1762,7 @@ export function TradeModal({
                   }`}>
                     <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Est. P&L ({currencySymbol})</span>
                     <span className={`font-bold ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                      +{calculationSummary.hasTP ? formatCurrency(calculationSummary.grossProfitINR, currency) : formatCurrency(468, currency)}
+                      {calculationSummary.hasTP ? `+${formatCurrency(calculationSummary.grossProfitINR, currency)}` : '--'}
                     </span>
                   </div>
                 </div>
@@ -1770,17 +1779,17 @@ export function TradeModal({
                   <div className="flex items-center justify-between text-[10px] font-mono">
                     <div className="text-left">
                       <span className={`block font-semibold ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>SL</span>
-                      <span className={isDark ? 'text-rose-400' : 'text-rose-600'}>{Number(stopLoss || 77250).toLocaleString()}</span>
+                      <span className={isDark ? 'text-rose-400' : 'text-rose-600'}>{stopLoss ? Number(stopLoss).toLocaleString() : '--'}</span>
                     </div>
 
                     <div className="text-center">
                       <span className={`block font-semibold ${isDark ? 'text-slate-300' : 'text-slate-600'}`}>Entry</span>
-                      <span className={isDark ? 'text-white' : 'text-slate-900'}>{Number(entryPrice || 77406).toLocaleString()}</span>
+                      <span className={isDark ? 'text-white' : 'text-slate-900'}>{entryPrice ? Number(entryPrice).toLocaleString() : '--'}</span>
                     </div>
 
                     <div className="text-right">
                       <span className={`block font-semibold ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>TP</span>
-                      <span className={isDark ? 'text-emerald-400' : 'text-emerald-600'}>{Number(targetPrice || 77874).toLocaleString()}</span>
+                      <span className={isDark ? 'text-emerald-400' : 'text-emerald-600'}>{targetPrice ? Number(targetPrice).toLocaleString() : '--'}</span>
                     </div>
                   </div>
                 </div>

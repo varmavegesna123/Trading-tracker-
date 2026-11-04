@@ -28,17 +28,17 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
   // Delta Futures State
   const [direction, setDirection] = useState('SHORT');
   const [orderType, setOrderType] = useState('Limit');
-  const [startingCapital, setStartingCapital] = useState('2000');
+  const [startingCapital, setStartingCapital] = useState('');
   const [leverage, setLeverage] = useState('25');
-  const [marginUsed, setMarginUsed] = useState('2000');
+  const [marginUsed, setMarginUsed] = useState('');
   const [contractSize, setContractSize] = useState('0.001'); // 1 lot = 0.001 BTC
-  const [orderLots, setOrderLots] = useState('14');
-  const [entryPrice, setEntryPrice] = useState('77406');
-  const [stopLoss, setStopLoss] = useState('77485');
-  const [targetPrice, setTargetPrice] = useState('77200');
-  const [targetRiskINR, setTargetRiskINR] = useState('100');
+  const [orderLots, setOrderLots] = useState('');
+  const [entryPrice, setEntryPrice] = useState('');
+  const [stopLoss, setStopLoss] = useState('');
+  const [targetPrice, setTargetPrice] = useState('');
+  const [targetRiskINR, setTargetRiskINR] = useState('');
   const [usdtRate, setUsdtRate] = useState('90');
-  const [tradingFees, setTradingFees] = useState('0');
+  const [tradingFees, setTradingFees] = useState('');
 
   // Equity Calculator State
   const [accountCapital, setAccountCapital] = useState(totalEquity || 50000);
@@ -380,6 +380,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
                   </label>
                   <input
                     type="number"
+                    placeholder="e.g. 2000"
                     value={startingCapital}
                     onChange={(e) => setStartingCapital(e.target.value)}
                     className="w-full px-2.5 py-1.5 bg-[#0B0F19] text-white text-xs font-mono font-bold rounded-xl border border-[#1E2638] focus:outline-none focus:border-[#38BDF8]"
@@ -392,6 +393,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
                   </label>
                   <input
                     type="number"
+                    placeholder="e.g. 2000"
                     value={marginUsed}
                     onChange={(e) => setMarginUsed(e.target.value)}
                     className="w-full px-2.5 py-1.5 bg-[#0B0F19] text-white text-xs font-mono font-bold rounded-xl border border-[#1E2638] focus:outline-none focus:border-[#38BDF8]"
@@ -449,6 +451,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
                   <input
                     type="number"
                     step="any"
+                    placeholder="e.g. 14"
                     value={orderLots}
                     onChange={(e) => setOrderLots(e.target.value)}
                     className="w-full px-2.5 py-1.5 bg-[#0B0F19] text-white text-xs font-mono font-bold rounded-xl border border-[#1E2638] focus:outline-none focus:border-[#38BDF8]"
@@ -491,6 +494,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
                 <input
                   type="number"
                   step="any"
+                  placeholder="e.g. 77406"
                   value={entryPrice}
                   onChange={(e) => setEntryPrice(e.target.value)}
                   className="w-full px-2.5 py-1.5 bg-[#111726] text-white text-xs font-mono font-bold rounded-xl border border-[#1E2638] focus:outline-none focus:border-[#38BDF8]"
@@ -504,6 +508,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
                 <input
                   type="number"
                   step="any"
+                  placeholder="e.g. 77250"
                   value={stopLoss}
                   onChange={(e) => setStopLoss(e.target.value)}
                   className="w-full px-2.5 py-1.5 bg-[#111726] text-white text-xs font-mono font-bold rounded-xl border border-[#1E2638] focus:outline-none focus:border-rose-400"
@@ -517,6 +522,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
                 <input
                   type="number"
                   step="any"
+                  placeholder="e.g. 77874"
                   value={targetPrice}
                   onChange={(e) => setTargetPrice(e.target.value)}
                   className="w-full px-2.5 py-1.5 bg-[#111726] text-white text-xs font-mono font-bold rounded-xl border border-[#1E2638] focus:outline-none focus:border-emerald-400"
