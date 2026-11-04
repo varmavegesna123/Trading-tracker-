@@ -3,28 +3,30 @@ import {
   X, 
   ArrowLeft, 
   ArrowRight, 
-  Upload, 
-  Check, 
   Zap, 
-  Image as ImageIcon,
   Trash2,
   Calendar,
-  CheckSquare,
   Coins,
   Calculator,
   Target,
   ChevronLeft,
   ChevronRight,
   ChevronDown,
-  Wallet,
   Scale,
-  Sliders,
   Percent,
   ShieldAlert,
   Layers,
   Crosshair,
-  Activity
+  Activity,
+  Database,
+  Info,
+  FileText,
+  Upload,
+  Check,
+  CheckCircle2
 } from 'lucide-react';
+import { CryptoIcon, BINANCE_POPULAR_PAIRS } from '../utils/cryptoIcons';
+import { formatCurrency, formatPercent } from '../utils/formatters';
 
 function formatINR(val) {
   const num = Number(val);
@@ -37,17 +39,15 @@ function formatINR(val) {
   });
   return `${isNegative ? '-' : ''}₹${formatted}`;
 }
-import { CryptoIcon, BINANCE_POPULAR_PAIRS } from '../utils/cryptoIcons';
-import { formatCurrency, formatPercent, calculateTradePnL, calculateRiskReward } from '../utils/formatters';
 
-function formatDateDisplay(dateStr) {
-  if (!dateStr) return 'Select Date & Time';
-  const parts = dateStr.split('T');
-  const d = parts[0] || dateStr;
-  const time = parts[1] || '10:00';
-  const [y, m, day] = d.split('-');
-  if (!y || !m || !day) return dateStr;
-  return `${day} - ${m} - ${y} ${time.slice(0, 5)}`;
+function formatShortDate(dateStr) {
+  if (!dateStr) return '03 Nov 2026';
+  const d = new Date(dateStr);
+  if (isNaN(d.getTime())) return dateStr;
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = d.toLocaleString('en-US', { month: 'short' });
+  const year = d.getFullYear();
+  return `${day} ${month} ${year}`;
 }
 
 function CustomGlassDateTimePicker({ value, onChange, onClose }) {
@@ -97,7 +97,7 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
   };
 
   return (
-    <div className="absolute right-0 top-full mt-2 z-50 p-4 bg-[#0B0F19] rounded-2xl border border-[#1E2638] shadow-2xl space-y-3 w-72 font-sans text-slate-100">
+    <div className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 z-50 p-4 bg-[#0B0F19] rounded-2xl border border-[#1E2638] shadow-2xl space-y-3 w-72 font-sans text-slate-100">
       <div className="flex items-center justify-between text-xs font-bold text-white font-jakarta pb-2 border-b border-[#1E2638]">
         <button
           type="button"
@@ -106,7 +106,7 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
-        <span className="font-mono text-[#38BDF8] font-extrabold">{monthLabel}</span>
+        <span className="font-mono text-[#00c8ff] font-extrabold">{monthLabel}</span>
         <button
           type="button"
           onClick={() => setViewDate(new Date(currentYear, currentMonth + 1, 1))}
@@ -134,9 +134,9 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
               onClick={() => handleSelectDay(cell.fullDate)}
               className={`h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition cursor-pointer ${
                 isSelected
-                  ? 'bg-[#38BDF8] text-white font-extrabold shadow-md shadow-sky-500/30 ring-2 ring-sky-400/50'
+                  ? 'bg-[#00c8ff] text-slate-950 font-extrabold shadow-md shadow-sky-500/30'
                   : isToday
-                  ? 'bg-[#1E2638] text-[#38BDF8] font-bold border border-[#38BDF8]/40'
+                  ? 'bg-[#1E2638] text-[#00c8ff] font-bold border border-[#00c8ff]/40'
                   : 'bg-[#111726] text-slate-300 hover:bg-[#1E2638]'
               }`}
             >
@@ -161,7 +161,7 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
               const num = Math.min(Math.max(parseInt(e.target.value) || 0, 0), 23);
               handleTimeChange(String(num).padStart(2, '0'), selectedMinStr);
             }}
-            className="w-11 py-1 bg-[#111726] text-white text-center text-xs rounded-lg border border-[#1E2638] font-bold font-mono focus:outline-none focus:border-[#38BDF8]"
+            className="w-11 py-1 bg-[#111726] text-white text-center text-xs rounded-lg border border-[#1E2638] font-bold font-mono focus:outline-none focus:border-[#00c8ff]"
           />
           <span className="text-slate-400 font-bold font-mono">:</span>
           <input
@@ -176,14 +176,14 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
               const num = Math.min(Math.max(parseInt(e.target.value) || 0, 0), 59);
               handleTimeChange(selectedHourStr, String(num).padStart(2, '0'));
             }}
-            className="w-11 py-1 bg-[#111726] text-white text-center text-xs rounded-lg border border-[#1E2638] font-bold font-mono focus:outline-none focus:border-[#38BDF8]"
+            className="w-11 py-1 bg-[#111726] text-white text-center text-xs rounded-lg border border-[#1E2638] font-bold font-mono focus:outline-none focus:border-[#00c8ff]"
           />
         </div>
 
         <button
           type="button"
           onClick={onClose}
-          className="px-3.5 py-1 bg-gradient-to-r from-[#38BDF8] to-[#0284C7] text-white text-[11px] font-extrabold rounded-lg shadow-sm hover:from-[#0284C7] hover:to-[#0369A1] transition cursor-pointer"
+          className="px-3.5 py-1 bg-gradient-to-r from-[#00c8ff] to-[#0284C7] text-slate-950 text-[11px] font-extrabold rounded-lg shadow-sm transition cursor-pointer"
         >
           Apply
         </button>
@@ -204,44 +204,42 @@ export function TradeModal({
   const [step, setStep] = useState(1);
 
   // Form State
-  const [tradeType, setTradeType] = useState('Intraday');
-  const [orderType, setOrderType] = useState('Limit');
   const [direction, setDirection] = useState('LONG');
+  const [orderType, setOrderType] = useState('Limit');
+  const [status, setStatus] = useState('CLOSED');
+  const [tradeType, setTradeType] = useState('Intraday');
   const [market, setMarket] = useState('Crypto');
   const [exchange, setExchange] = useState('Delta Exchange');
-  const [symbol, setSymbol] = useState('');
+  const [symbol, setSymbol] = useState('BTC/USDT');
   const [entryDate, setEntryDate] = useState(new Date().toISOString().slice(0, 16));
   const [showEntryDatePicker, setShowEntryDatePicker] = useState(false);
-  const [entryPrice, setEntryPrice] = useState('');
-  const [quantity, setQuantity] = useState('0.014');
   
-  // Delta Exchange Contract & Lot Sizing State
-  const [contractSize, setContractSize] = useState('0.001');
-  const [orderLots, setOrderLots] = useState('14');
-  const [targetRiskINR, setTargetRiskINR] = useState('100');
-  const [hasBracketOrder, setHasBracketOrder] = useState(true);
-
   // Capital & Leverage State
   const [startingCapital, setStartingCapital] = useState('2000');
-  const [leverage, setLeverage] = useState('25');
   const [marginUsed, setMarginUsed] = useState('2000');
-  
-  // Execution Levels & Risk Management State
-  const [status, setStatus] = useState('CLOSED');
-  const [exitPrice, setExitPrice] = useState('');
-  const [manualRealizedPnL, setManualRealizedPnL] = useState('');
-  const [exitDate, setExitDate] = useState(new Date().toISOString().slice(0, 10));
-  const [stopLoss, setStopLoss] = useState('');
-  const [targetPrice, setTargetPrice] = useState('');
-  const [tradingFees, setTradingFees] = useState('');
-  const [fundingFees, setFundingFees] = useState('');
+  const [leverage, setLeverage] = useState('25');
+  const [selectedQuickSize, setSelectedQuickSize] = useState(25);
+  const [contractSize, setContractSize] = useState('0.001');
   const [usdtRate, setUsdtRate] = useState('90');
+
+  // Order Levels & Risk Management State
+  const [hasBracketOrder, setHasBracketOrder] = useState(true);
+  const [entryPrice, setEntryPrice] = useState('77406');
+  const [stopLoss, setStopLoss] = useState('77250');
+  const [targetPrice, setTargetPrice] = useState('77874');
+  const [exitPrice, setExitPrice] = useState('77485');
+  const [orderLots, setOrderLots] = useState('14');
+  const [targetRiskINR, setTargetRiskINR] = useState('100');
+  const [manualRealizedPnL, setManualRealizedPnL] = useState('-100');
+  const [tradingFees, setTradingFees] = useState('0.00');
+  const [fundingFees, setFundingFees] = useState('0.00');
+  const [quantity, setQuantity] = useState('0.014');
   const [isManualQuantity, setIsManualQuantity] = useState(false);
+
+  // Confluences & Details
   const [strategy, setStrategy] = useState('SMC Order Block');
   const [notes, setNotes] = useState('');
   const [chartUrl, setChartUrl] = useState('');
-
-  // SMC Confluences
   const [h1Bias, setH1Bias] = useState(false);
   const [m15Structure, setM15Structure] = useState(false);
   const [m5EntryPoi, setM5EntryPoi] = useState(false);
@@ -255,21 +253,20 @@ export function TradeModal({
       setDirection(tradeToEdit.direction || 'LONG');
       setMarket(tradeToEdit.market || 'Crypto');
       setExchange(tradeToEdit.exchange || 'Delta Exchange');
-      setSymbol(tradeToEdit.symbol || '');
+      setSymbol(tradeToEdit.symbol || 'BTC/USDT');
       setEntryDate(tradeToEdit.entryDate ? tradeToEdit.entryDate.slice(0, 16) : new Date().toISOString().slice(0, 16));
-      setEntryPrice(tradeToEdit.entryPrice !== undefined && tradeToEdit.entryPrice !== null ? String(tradeToEdit.entryPrice) : '');
-      setQuantity(tradeToEdit.quantity !== undefined && tradeToEdit.quantity !== null ? String(tradeToEdit.quantity) : '');
+      setEntryPrice(tradeToEdit.entryPrice !== undefined && tradeToEdit.entryPrice !== null ? String(tradeToEdit.entryPrice) : '77406');
+      setQuantity(tradeToEdit.quantity !== undefined && tradeToEdit.quantity !== null ? String(tradeToEdit.quantity) : '0.014');
       setStatus(tradeToEdit.status || 'CLOSED');
-      setExitPrice(tradeToEdit.exitPrice !== undefined && tradeToEdit.exitPrice !== null ? String(tradeToEdit.exitPrice) : '');
-      setManualRealizedPnL(tradeToEdit.actualRealizedPnL !== undefined && tradeToEdit.actualRealizedPnL !== null ? String(tradeToEdit.actualRealizedPnL) : '');
-      setExitDate(tradeToEdit.exitDate || new Date().toISOString().slice(0, 10));
-      setStopLoss(tradeToEdit.stopLoss !== undefined && tradeToEdit.stopLoss !== null ? String(tradeToEdit.stopLoss) : '');
+      setExitPrice(tradeToEdit.exitPrice !== undefined && tradeToEdit.exitPrice !== null ? String(tradeToEdit.exitPrice) : '77485');
+      setManualRealizedPnL(tradeToEdit.actualRealizedPnL !== undefined && tradeToEdit.actualRealizedPnL !== null ? String(tradeToEdit.actualRealizedPnL) : '-100');
+      setStopLoss(tradeToEdit.stopLoss !== undefined && tradeToEdit.stopLoss !== null ? String(tradeToEdit.stopLoss) : '77250');
       setTargetPrice(
         tradeToEdit.targetPrice !== undefined && tradeToEdit.targetPrice !== null ? String(tradeToEdit.targetPrice) :
-        tradeToEdit.takeProfit !== undefined && tradeToEdit.takeProfit !== null ? String(tradeToEdit.takeProfit) : ''
+        tradeToEdit.takeProfit !== undefined && tradeToEdit.takeProfit !== null ? String(tradeToEdit.takeProfit) : '77874'
       );
-      setTradingFees(tradeToEdit.tradingFees !== undefined && tradeToEdit.tradingFees !== null ? String(tradeToEdit.tradingFees) : '');
-      setFundingFees(tradeToEdit.fundingFees !== undefined && tradeToEdit.fundingFees !== null ? String(tradeToEdit.fundingFees) : '');
+      setTradingFees(tradeToEdit.tradingFees !== undefined && tradeToEdit.tradingFees !== null ? String(tradeToEdit.tradingFees) : '0.00');
+      setFundingFees(tradeToEdit.fundingFees !== undefined && tradeToEdit.fundingFees !== null ? String(tradeToEdit.fundingFees) : '0.00');
       setUsdtRate(tradeToEdit.usdtRate !== undefined && tradeToEdit.usdtRate !== null ? String(tradeToEdit.usdtRate) : '90');
       setIsManualQuantity(Boolean(tradeToEdit.isManualQuantity));
       setStrategy(tradeToEdit.strategy || 'SMC Order Block');
@@ -302,7 +299,7 @@ export function TradeModal({
       setTargetRiskINR(
         tradeToEdit.targetRisk !== undefined && tradeToEdit.targetRisk !== null ? String(tradeToEdit.targetRisk) : '100'
       );
-      setHasBracketOrder(Boolean(tradeToEdit.hasBracketOrder ?? (tradeToEdit.stopLoss || tradeToEdit.targetPrice)));
+      setHasBracketOrder(Boolean(tradeToEdit.hasBracketOrder ?? true));
     } else {
       resetForm();
       if (initialConfluences) {
@@ -317,31 +314,31 @@ export function TradeModal({
   }, [tradeToEdit, initialConfluences, isOpen]);
 
   const resetForm = () => {
-    setTradeType('Intraday');
-    setOrderType('Limit');
     setDirection('LONG');
+    setOrderType('Limit');
+    setStatus('CLOSED');
+    setTradeType('Intraday');
     setMarket('Crypto');
     setExchange('Delta Exchange');
-    setSymbol('');
+    setSymbol('BTC/USDT');
     setEntryDate(new Date().toISOString().slice(0, 16));
-    setEntryPrice('');
-    setQuantity('0.014');
     setStartingCapital('2000');
-    setLeverage('25');
     setMarginUsed('2000');
+    setLeverage('25');
+    setSelectedQuickSize(25);
     setContractSize('0.001');
+    setUsdtRate('90');
+    setHasBracketOrder(true);
+    setEntryPrice('77406');
+    setStopLoss('77250');
+    setTargetPrice('77874');
+    setExitPrice('77485');
     setOrderLots('14');
     setTargetRiskINR('100');
-    setHasBracketOrder(true);
-    setStatus('CLOSED');
-    setExitPrice('');
-    setManualRealizedPnL('');
-    setExitDate(new Date().toISOString().slice(0, 10));
-    setStopLoss('');
-    setTargetPrice('');
-    setTradingFees('');
-    setFundingFees('');
-    setUsdtRate('90');
+    setManualRealizedPnL('-100');
+    setTradingFees('0.00');
+    setFundingFees('0.00');
+    setQuantity('0.014');
     setIsManualQuantity(false);
     setStrategy('SMC Order Block');
     setNotes('');
@@ -353,7 +350,7 @@ export function TradeModal({
     setLtfTrigger('CHOCH');
   };
 
-  // Synchronize Lot size to Coin Quantity (Delta Exchange Contract sizing)
+  // Synchronize Lot size to Coin Quantity
   useEffect(() => {
     if (isManualQuantity) return;
     const lots = parseFloat(orderLots);
@@ -366,6 +363,7 @@ export function TradeModal({
 
   // Position Sizing % Shortcuts (10%, 25%, 50%, 75%, 100%)
   const handlePercentageMargin = (pct) => {
+    setSelectedQuickSize(pct);
     const cap = parseFloat(startingCapital) || 2000;
     const margin = (cap * (pct / 100)).toFixed(0);
     setMarginUsed(margin);
@@ -385,16 +383,6 @@ export function TradeModal({
         setQuantity(parseFloat((lotsCapacity * cSize).toFixed(6)).toString());
         setIsManualQuantity(false);
       }
-    }
-  };
-
-  // Dynamic Risk Sizer: 1-click apply recommended lots based on target risk
-  const handleApplyRiskLots = (calculatedLots) => {
-    if (calculatedLots > 0) {
-      setOrderLots(String(calculatedLots));
-      const cSize = parseFloat(contractSize) || 0.001;
-      setQuantity(parseFloat((calculatedLots * cSize).toFixed(6)).toString());
-      setIsManualQuantity(false);
     }
   };
 
@@ -422,9 +410,7 @@ export function TradeModal({
     const capacityNotionalINR = margin * lev;
     const availableBalance = cap - margin;
 
-    // Actual Notional based on Lots & Contract Size:
-    // Position Notional = Number of Lots × Contract Size × Entry Price
-    const lotsNotionalUSDT = qty * entry; // = lots * cSize * entry
+    const lotsNotionalUSDT = qty * entry;
     const lotsNotionalINR = lotsNotionalUSDT * rate;
     const requiredMarginINR = lev > 0 ? (lotsNotionalINR / lev) : 0;
 
@@ -443,9 +429,7 @@ export function TradeModal({
       hasTP = tpDiff > 0;
     }
 
-    // 3. Dynamic Risk-Based Lot Sizing (e.g. Target Risk = ₹100)
-    // Loss per lot in USDT = slDiff * contractSize
-    // Loss per lot in INR = Loss per lot in USDT * USDT Rate
+    // 3. Dynamic Risk-Based Lot Sizing
     let lossPerLotUSDT = 0;
     let lossPerLotINR = 0;
     let recommendedRiskLots = 0;
@@ -458,8 +442,6 @@ export function TradeModal({
     }
 
     // 4. Stop Loss Estimated Loss
-    // For LONG: Quantity * (Entry - SL)
-    // For SHORT: Quantity * (SL - Entry)
     const rawGrossLossUSDT = hasSL && qty > 0 ? (qty * slDiff) : 0;
     const grossLossINR = rawGrossLossUSDT * rate;
     const netLossINR = grossLossINR + totalFees;
@@ -467,8 +449,6 @@ export function TradeModal({
     const balanceAtSL = cap > 0 ? (cap - netLossINR) : 0;
 
     // 5. Take Profit Estimated Profit
-    // For LONG: Quantity * (TP - Entry)
-    // For SHORT: Quantity * (Entry - TP)
     const rawGrossProfitUSDT = hasTP && qty > 0 ? (qty * tpDiff) : 0;
     const grossProfitINR = rawGrossProfitUSDT * rate;
     const netProfitINR = grossProfitINR - totalFees;
@@ -476,8 +456,8 @@ export function TradeModal({
     const balanceAtTP = cap > 0 ? (cap + netProfitINR) : 0;
 
     // 6. Risk / Reward Ratio
-    let rrRatioStr = '--';
-    let rrRatioValue = null;
+    let rrRatioStr = '1 : 4.68';
+    let rrRatioValue = 4.68;
     if (hasSL && hasTP && grossLossINR > 0) {
       rrRatioValue = grossProfitINR / grossLossINR;
       rrRatioStr = `1 : ${rrRatioValue.toFixed(2)}`;
@@ -497,7 +477,6 @@ export function TradeModal({
       realizedNetPnLINR = realizedGrossPnLINR - totalFees;
     }
 
-    // If manual exchange-reported realized P&L is provided (e.g. -100), honor it directly
     const hasManualRealized = manualRealizedPnL !== '' && !isNaN(parseFloat(manualRealizedPnL));
     if (hasManualRealized) {
       realizedNetPnLINR = parseFloat(manualRealizedPnL);
@@ -654,7 +633,7 @@ export function TradeModal({
       status: status || 'CLOSED',
       exitPrice: status === 'CLOSED' ? parsedExit : null,
       actualExitPrice: status === 'CLOSED' ? parsedExit : null,
-      exitDate: status === 'CLOSED' ? (exitDate || new Date().toISOString().slice(0, 10)) : null,
+      exitDate: status === 'CLOSED' ? new Date().toISOString().slice(0, 10) : null,
       stopLoss: stopLoss !== '' && !isNaN(parseFloat(stopLoss)) ? parseFloat(stopLoss) : null,
       targetPrice: targetPrice !== '' && !isNaN(parseFloat(targetPrice)) ? parseFloat(targetPrice) : null,
       takeProfit: targetPrice !== '' && !isNaN(parseFloat(targetPrice)) ? parseFloat(targetPrice) : null,
@@ -698,6 +677,10 @@ export function TradeModal({
     onClose();
   };
 
+  const handleSaveDraft = () => {
+    handleSaveInternal();
+  };
+
   const handleDeleteInternal = () => {
     if (tradeToEdit && onDelete) {
       if (confirm(`Are you sure you want to delete trade execution for ${tradeToEdit.symbol}?`)) {
@@ -708,33 +691,44 @@ export function TradeModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md overflow-y-auto font-sans">
-      <div className="bg-[#0B0F19] rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto border border-[#1E2638] shadow-2xl transform transition-all text-slate-100 p-5 sm:p-6 space-y-4 custom-scrollbar">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-950/80 backdrop-blur-md overflow-y-auto font-sans">
+      <div className="bg-[#0B0F19] rounded-2xl max-w-5xl w-full max-h-[92vh] overflow-y-auto border border-[#1E2638] shadow-2xl text-slate-100 p-5 sm:p-6 space-y-4 custom-scrollbar">
         
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <button
-            type="button"
-            onClick={() => {
-              if (step === 2) setStep(1);
-              else onClose();
-            }}
-            className="p-2 rounded-xl bg-[#111726] border border-[#1E2638] text-slate-400 hover:text-white hover:bg-[#1E2638] transition"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
+        {/* Top Header: Back Arrow, Icon, Title & Subtitle, Right Actions */}
+        <div className="flex items-center justify-between pb-1">
+          <div className="flex items-center space-x-3">
+            <button
+              type="button"
+              onClick={() => {
+                if (step > 1) setStep(step - 1);
+                else onClose();
+              }}
+              className="p-2 rounded-xl bg-[#111726] border border-[#1E2638] text-slate-400 hover:text-white hover:bg-[#1E2638] transition cursor-pointer"
+              title="Go Back"
+            >
+              <ArrowLeft className="w-4 h-4" />
+            </button>
 
-          <h2 className="text-xl font-extrabold text-[#38BDF8] tracking-tight font-jakarta flex items-center space-x-2">
-            <Coins className="w-5 h-5 text-[#38BDF8]" />
-            <span>{tradeToEdit ? 'Edit Execution Record' : 'New Entry'}</span>
-          </h2>
+            <div className="w-9 h-9 rounded-xl bg-[#00c8ff]/10 border border-[#00c8ff]/30 flex items-center justify-center text-[#00c8ff] shadow-inner">
+              <Zap className="w-4 h-4" />
+            </div>
+
+            <div>
+              <h2 className="text-base sm:text-lg font-bold text-white tracking-tight font-jakarta flex items-center space-x-2">
+                <span>{tradeToEdit ? 'Edit Trade' : 'New Trade'}</span>
+              </h2>
+              <p className="text-[11px] sm:text-xs text-slate-400">
+                Log a trade with plan, risk and execution details.
+              </p>
+            </div>
+          </div>
 
           <div className="flex items-center space-x-2">
             {tradeToEdit && (
               <button
                 type="button"
                 onClick={handleDeleteInternal}
-                className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500/20 transition"
+                className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500/20 transition cursor-pointer"
                 title="Delete Trade Execution"
               >
                 <Trash2 className="w-4 h-4" />
@@ -743,168 +737,219 @@ export function TradeModal({
 
             <button
               type="button"
-              onClick={onClose}
-              className="p-2 rounded-xl bg-[#111726] border border-[#1E2638] text-slate-400 hover:text-white hover:bg-[#1E2638] transition"
+              onClick={handleSaveDraft}
+              className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#111726] border border-[#1E2638] text-slate-300 hover:text-white text-xs font-semibold hover:border-slate-600 transition cursor-pointer"
             >
-              <X className="w-5 h-5" />
+              <FileText className="w-3.5 h-3.5 text-slate-400" />
+              <span>Save Draft</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={onClose}
+              className="p-2 rounded-xl bg-[#111726] border border-[#1E2638] text-slate-400 hover:text-white hover:bg-[#1E2638] transition cursor-pointer"
+            >
+              <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* Clean Step Navigation Tabs */}
-        <div className="flex items-center space-x-2 border-b border-[#1E2638] pb-3">
+        {/* 3-Step Stepper Header */}
+        <div className="flex items-center justify-center space-x-2 sm:space-x-4 py-2 border-y border-[#1E2638]/70 text-xs">
+          {/* Step 1 */}
           <button
             type="button"
             onClick={() => setStep(1)}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold font-mono transition cursor-pointer flex items-center space-x-1.5 ${
-              step === 1
-                ? 'bg-[#38BDF8] text-slate-950 shadow-md shadow-sky-500/20'
-                : 'text-slate-400 hover:text-white hover:bg-[#111726]'
-            }`}
+            className="flex items-center space-x-2 cursor-pointer group"
           >
-            <span>1. Order Details & Levels</span>
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-extrabold transition ${
+              step === 1
+                ? 'bg-[#00c8ff] text-slate-950 shadow-md shadow-sky-500/30 ring-2 ring-[#00c8ff]/30'
+                : 'bg-[#111726] border border-[#1E2638] text-slate-400 group-hover:text-white'
+            }`}>
+              1
+            </span>
+            <span className={`font-jakarta text-xs ${
+              step === 1 ? 'font-bold text-white' : 'font-medium text-slate-400 group-hover:text-slate-300'
+            }`}>
+              Order & Levels
+            </span>
           </button>
+
+          <div className="w-8 sm:w-16 h-[1px] bg-[#1E2638]" />
+
+          {/* Step 2 */}
           <button
             type="button"
-            onClick={() => {
-              const effQty = calculationSummary.qty || parseFloat(quantity);
-              if (!symbol || !entryPrice || (!quantity && (!effQty || effQty <= 0))) {
-                alert('Please fill in Symbol, Entry Price, and Quantity (or Lots) before proceeding.');
-                return;
-              }
-              setStep(2);
-            }}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold font-mono transition cursor-pointer flex items-center space-x-1.5 ${
-              step === 2
-                ? 'bg-[#38BDF8] text-slate-950 shadow-md shadow-sky-500/20'
-                : 'text-slate-400 hover:text-white hover:bg-[#111726]'
-            }`}
+            onClick={() => setStep(2)}
+            className="flex items-center space-x-2 cursor-pointer group"
           >
-            <span>2. Trade Plan & Confluences</span>
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-extrabold transition ${
+              step === 2
+                ? 'bg-[#00c8ff] text-slate-950 shadow-md shadow-sky-500/30 ring-2 ring-[#00c8ff]/30'
+                : 'bg-[#111726] border border-[#1E2638] text-slate-400 group-hover:text-white'
+            }`}>
+              2
+            </span>
+            <span className={`font-jakarta text-xs ${
+              step === 2 ? 'font-bold text-white' : 'font-medium text-slate-400 group-hover:text-slate-300'
+            }`}>
+              Trade Plan & Confluences
+            </span>
+          </button>
+
+          <div className="w-8 sm:w-16 h-[1px] bg-[#1E2638]" />
+
+          {/* Step 3 */}
+          <button
+            type="button"
+            onClick={() => setStep(3)}
+            className="flex items-center space-x-2 cursor-pointer group"
+          >
+            <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-extrabold transition ${
+              step === 3
+                ? 'bg-[#00c8ff] text-slate-950 shadow-md shadow-sky-500/30 ring-2 ring-[#00c8ff]/30'
+                : 'bg-[#111726] border border-[#1E2638] text-slate-400 group-hover:text-white'
+            }`}>
+              3
+            </span>
+            <span className={`font-jakarta text-xs ${
+              step === 3 ? 'font-bold text-white' : 'font-medium text-slate-400 group-hover:text-slate-300'
+            }`}>
+              Review & Save
+            </span>
           </button>
         </div>
 
-        <div className="space-y-3.5">
+        {/* 2-Column Grid Layout */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           
-          {/* STEP 1: TRADE DETAILS & EXECUTION */}
-          {step === 1 && (
-            <div className="space-y-3.5">
-              
-              {/* 1. TOP CONTROL BAR: DIRECTION, ORDER TYPE, STATUS & ASSET */}
-              <div className="p-3.5 rounded-xl bg-[#111726]/60 border border-[#1E2638]/70 space-y-3">
-                {/* Row 1: Direction, Order Type, and Trade Status */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
-                  {/* Direction: Long / Short */}
-                  <div className="p-1 bg-[#0B0F19] rounded-xl border border-[#1E2638] grid grid-cols-2 gap-1">
-                    <button
-                      type="button"
-                      onClick={() => setDirection('LONG')}
-                      className={`py-1.5 text-xs font-bold font-mono rounded-lg transition cursor-pointer flex items-center justify-center space-x-1 ${
-                        direction === 'LONG'
-                          ? 'bg-[#10B981] text-white shadow-md shadow-emerald-500/20'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      <span>▲ Buy / Long</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setDirection('SHORT')}
-                      className={`py-1.5 text-xs font-bold font-mono rounded-lg transition cursor-pointer flex items-center justify-center space-x-1 ${
-                        direction === 'SHORT'
-                          ? 'bg-[#EF4444] text-white shadow-md shadow-rose-500/20'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      <span>▼ Sell / Short</span>
-                    </button>
+          {/* LEFT COLUMN: Main Form Inputs */}
+          <div className="lg:col-span-8 space-y-4">
+
+            {/* STEP 1: Order & Levels */}
+            {step === 1 && (
+              <>
+                {/* Row 1: Trade Direction, Order Type, Trade Status */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Trade Direction */}
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-400 mb-1.5 font-jakarta">
+                      Trade Direction
+                    </label>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setDirection('LONG')}
+                        className={`py-2 px-2 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center space-x-1 ${
+                          direction === 'LONG'
+                            ? 'bg-[#10B981]/15 text-[#10B981] border border-[#10B981] shadow-sm'
+                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-white'
+                        }`}
+                      >
+                        <span>↑ Buy / Long</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setDirection('SHORT')}
+                        className={`py-2 px-2 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center space-x-1 ${
+                          direction === 'SHORT'
+                            ? 'bg-rose-500/15 text-rose-400 border border-rose-500 shadow-sm'
+                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-white'
+                        }`}
+                      >
+                        <span>↓ Sell / Short</span>
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Order Type: Limit / Market */}
-                  <div className="p-1 bg-[#0B0F19] rounded-xl border border-[#1E2638] grid grid-cols-2 gap-1">
-                    <button
-                      type="button"
-                      onClick={() => setOrderType('Limit')}
-                      className={`py-1.5 text-xs font-bold font-mono rounded-lg transition cursor-pointer ${
-                        orderType === 'Limit'
-                          ? 'bg-[#38BDF8] text-slate-950 shadow-md shadow-sky-500/20 font-extrabold'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      Limit Order
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setOrderType('Market')}
-                      className={`py-1.5 text-xs font-bold font-mono rounded-lg transition cursor-pointer ${
-                        orderType === 'Market'
-                          ? 'bg-[#38BDF8] text-slate-950 shadow-md shadow-sky-500/20 font-extrabold'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      Market Order
-                    </button>
+                  {/* Order Type */}
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-400 mb-1.5 font-jakarta">
+                      Order Type
+                    </label>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setOrderType('Limit')}
+                        className={`py-2 px-1 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center space-x-1 ${
+                          orderType === 'Limit'
+                            ? 'bg-[#00c8ff]/10 text-[#00c8ff] border border-[#00c8ff]'
+                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-white'
+                        }`}
+                      >
+                        <span>🎯 Limit</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setOrderType('Market')}
+                        className={`py-2 px-1 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center space-x-1 ${
+                          orderType === 'Market'
+                            ? 'bg-[#00c8ff]/10 text-[#00c8ff] border border-[#00c8ff]'
+                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-white'
+                        }`}
+                      >
+                        <span>⚡ Market</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setOrderType('Stop')}
+                        className={`py-2 px-1 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center space-x-1 ${
+                          orderType === 'Stop'
+                            ? 'bg-[#00c8ff]/10 text-[#00c8ff] border border-[#00c8ff]'
+                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-white'
+                        }`}
+                      >
+                        <span>⏹ Stop</span>
+                      </button>
+                    </div>
                   </div>
 
-                  {/* Trade Status: Closed / Open */}
-                  <div className="p-1 bg-[#0B0F19] rounded-xl border border-[#1E2638] grid grid-cols-2 gap-1">
-                    <button
-                      type="button"
-                      onClick={() => setStatus('CLOSED')}
-                      className={`py-1.5 text-xs font-bold font-mono rounded-lg transition cursor-pointer ${
-                        status === 'CLOSED'
-                          ? 'bg-[#10B981] text-white shadow-sm'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      Closed Trade
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setStatus('OPEN')}
-                      className={`py-1.5 text-xs font-bold font-mono rounded-lg transition cursor-pointer ${
-                        status === 'OPEN'
-                          ? 'bg-[#8B5CF6] text-white shadow-sm'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      Open Position
-                    </button>
+                  {/* Trade Status */}
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-400 mb-1.5 font-jakarta">
+                      Trade Status
+                    </label>
+                    <div className="grid grid-cols-2 gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setStatus('OPEN')}
+                        className={`py-2 px-2 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center space-x-1 ${
+                          status === 'OPEN'
+                            ? 'bg-purple-500/15 text-purple-400 border border-purple-500 shadow-sm'
+                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-white'
+                        }`}
+                      >
+                        <span>○ Open Position</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setStatus('CLOSED')}
+                        className={`py-2 px-2 text-xs font-bold rounded-xl transition cursor-pointer flex items-center justify-center space-x-1 ${
+                          status === 'CLOSED'
+                            ? 'bg-[#10B981]/15 text-[#10B981] border border-[#10B981] shadow-sm'
+                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-white'
+                        }`}
+                      >
+                        <span>✓ Closed Trade</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
 
-                {/* Row 2: Symbol with Quick Chips, Exchange & Date */}
-                <div className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-end">
-                  {/* Symbol & Quick Pairs */}
-                  <div className="sm:col-span-6 space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase font-mono">
-                        Instrument / Symbol *
-                      </label>
-                      <div className="flex items-center space-x-1">
-                        {['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'BNB/USDT', 'XRP/USDT'].map(p => (
-                          <button
-                            key={p}
-                            type="button"
-                            onClick={() => selectCryptoPair(p)}
-                            className={`px-1.5 py-0.5 rounded text-[9px] font-mono font-bold transition cursor-pointer border ${
-                              symbol === p
-                                ? 'bg-[#38BDF8] text-slate-950 border-[#38BDF8]'
-                                : 'bg-[#0B0F19] text-slate-400 border-[#1E2638] hover:text-white'
-                            }`}
-                          >
-                            {p.split('/')[0]}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-
-                    <div className="relative flex items-center bg-[#0B0F19] rounded-xl border border-[#1E2638] px-3 py-1 focus-within:border-[#38BDF8]">
+                {/* Row 2: Instrument / Symbol, Exchange, Execution Date */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                  {/* Instrument / Symbol */}
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-400 mb-1.5 font-jakarta">
+                      Instrument / Symbol *
+                    </label>
+                    <div className="relative flex items-center bg-[#0E1320] rounded-xl border border-[#1E2638] px-3 py-2 focus-within:border-[#00c8ff]">
                       <CryptoIcon symbol={symbol || 'BTC'} className="w-4 h-4 mr-2 shrink-0" />
                       <input
                         type="text"
                         list="trademodal-binance-pairs"
-                        placeholder="e.g. BTC/USDT"
+                        placeholder="BTC/USDT"
                         value={symbol}
                         onChange={(e) => {
                           setSymbol(e.target.value);
@@ -913,9 +958,10 @@ export function TradeModal({
                           else if (upper.includes('ETH')) setContractSize('0.01');
                           else if (upper.includes('SOL')) setContractSize('0.1');
                         }}
-                        className="w-full bg-transparent text-white text-xs py-1 font-bold focus:outline-none font-mono uppercase placeholder:text-slate-600"
+                        className="w-full bg-transparent text-white text-xs font-bold focus:outline-none font-mono uppercase"
                         required
                       />
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0 pointer-events-none" />
                       <datalist id="trademodal-binance-pairs">
                         {BINANCE_POPULAR_PAIRS.map(p => (
                           <option key={p.symbol} value={p.symbol}>{p.name + ' (' + p.coin + ')'}</option>
@@ -925,38 +971,44 @@ export function TradeModal({
                   </div>
 
                   {/* Exchange */}
-                  <div className="sm:col-span-3 space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase font-mono">
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-400 mb-1.5 font-jakarta">
                       Exchange
                     </label>
-                    <select
-                      value={exchange}
-                      onChange={(e) => setExchange(e.target.value)}
-                      className="w-full px-3 py-2 bg-[#0B0F19] text-white text-xs rounded-xl border border-[#1E2638] font-mono font-bold focus:outline-none focus:border-[#38BDF8] cursor-pointer"
-                    >
-                      <option value="Delta Exchange">Delta Exchange</option>
-                      <option value="Binance">Binance</option>
-                      <option value="Bybit">Bybit</option>
-                      <option value="OKX">OKX</option>
-                      <option value="Coinbase">Coinbase</option>
-                      <option value="NSE">NSE (India)</option>
-                    </select>
+                    <div className="relative flex items-center bg-[#0E1320] rounded-xl border border-[#1E2638] px-3 py-2 focus-within:border-[#00c8ff]">
+                      <span className="text-[#00c8ff] font-bold text-xs mr-2">❖</span>
+                      <select
+                        value={exchange}
+                        onChange={(e) => setExchange(e.target.value)}
+                        className="w-full bg-transparent text-white text-xs font-bold font-mono focus:outline-none cursor-pointer appearance-none"
+                      >
+                        <option value="Delta Exchange" className="bg-[#0B0F19]">Delta Exchange</option>
+                        <option value="Binance" className="bg-[#0B0F19]">Binance</option>
+                        <option value="Bybit" className="bg-[#0B0F19]">Bybit</option>
+                        <option value="OKX" className="bg-[#0B0F19]">OKX</option>
+                        <option value="Coinbase" className="bg-[#0B0F19]">Coinbase</option>
+                        <option value="NSE" className="bg-[#0B0F19]">NSE (India)</option>
+                      </select>
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0 pointer-events-none" />
+                    </div>
                   </div>
 
-                  {/* Date & Time */}
-                  <div className="sm:col-span-3 space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase font-mono">
+                  {/* Execution Date */}
+                  <div>
+                    <label className="block text-[11px] font-medium text-slate-400 mb-1.5 font-jakarta">
                       Execution Date
                     </label>
                     <div className="relative">
                       <button
                         type="button"
                         onClick={() => setShowEntryDatePicker(!showEntryDatePicker)}
-                        className="w-full px-3 py-2 bg-[#0B0F19] hover:bg-[#1E2638] text-[#38BDF8] text-[11px] font-bold rounded-xl border border-[#1E2638] hover:border-[#38BDF8] focus:outline-none font-mono text-center flex items-center justify-between cursor-pointer transition"
+                        className="w-full px-3 py-2 bg-[#0E1320] hover:bg-[#151D30] text-slate-200 text-xs font-bold rounded-xl border border-[#1E2638] hover:border-[#00c8ff] focus:outline-none font-mono flex items-center justify-between cursor-pointer transition"
                       >
-                        <Calendar className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" />
-                        <span className="truncate">{formatDateDisplay(entryDate).split(' ')[0]}</span>
-                        <ChevronDown className="w-3 h-3 text-slate-400 shrink-0" />
+                        <div className="flex items-center space-x-2">
+                          <Calendar className="w-3.5 h-3.5 text-[#00c8ff] shrink-0" />
+                          <span>{formatShortDate(entryDate)}</span>
+                        </div>
+                        <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
                       </button>
 
                       {showEntryDatePicker && (
@@ -969,636 +1021,671 @@ export function TradeModal({
                     </div>
                   </div>
                 </div>
-              </div>
 
-              {/* 2. CAPITAL, MARGIN & LEVERAGE (UNIFIED STRIP) */}
-              <div className="p-3.5 rounded-xl bg-[#111726]/60 border border-[#1E2638]/70 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#38BDF8] flex items-center space-x-1.5 font-mono">
-                    <Wallet className="w-3.5 h-3.5" />
-                    <span>CAPITAL & MARGIN SIZING</span>
-                  </span>
-
-                  {/* Quick Sizing Buttons */}
-                  <div className="flex items-center space-x-1">
-                    <span className="text-[9px] text-slate-500 font-mono mr-1">Quick Size:</span>
-                    {[10, 25, 50, 75, 100].map(pct => (
-                      <button
-                        key={pct}
-                        type="button"
-                        onClick={() => handlePercentageMargin(pct)}
-                        className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-[#0B0F19] text-slate-300 hover:text-[#38BDF8] hover:bg-[#1E2638] border border-[#1E2638] transition cursor-pointer"
-                        title={`Use ${pct}% of Starting Capital`}
-                      >
-                        {pct}%
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* 4 Columns: Capital, Margin Used, Available Balance, Leverage */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase font-mono">
-                      Starting Capital (₹)
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-mono font-bold select-none">
-                        ₹
-                      </span>
-                      <input
-                        type="number"
-                        step="any"
-                        placeholder="2000"
-                        value={startingCapital}
-                        onChange={(e) => setStartingCapital(e.target.value)}
-                        className="w-full pl-7 pr-3 py-1.5 bg-[#0B0F19] text-white text-xs rounded-xl border border-[#1E2638] font-mono font-bold focus:outline-none focus:border-[#38BDF8]"
-                      />
+                {/* Section 1: Capital & Position Sizing (i) */}
+                <div className="p-4 rounded-2xl bg-[#0E1320]/70 border border-[#1E2638] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-1.5 text-xs font-bold text-white font-jakarta">
+                      <Database className="w-4 h-4 text-[#00c8ff]" />
+                      <span className="text-[#00c8ff]">Capital & Position Sizing</span>
+                      <Info className="w-3.5 h-3.5 text-slate-500 cursor-pointer" title="Margin, capacity and leverage sizing details" />
                     </div>
-                  </div>
 
-                  <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase font-mono">
-                      Margin Used (₹)
-                    </label>
-                    <div className="relative">
-                      <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-mono font-bold select-none">
-                        ₹
-                      </span>
-                      <input
-                        type="number"
-                        step="any"
-                        placeholder="2000"
-                        value={marginUsed}
-                        onChange={(e) => setMarginUsed(e.target.value)}
-                        className="w-full pl-7 pr-3 py-1.5 bg-[#0B0F19] text-white text-xs rounded-xl border border-[#1E2638] font-mono font-bold focus:outline-none focus:border-[#38BDF8]"
-                      />
-                    </div>
-                  </div>
-
-                  <div className="space-y-1">
-                    <label className="block text-[10px] font-bold text-slate-400 uppercase font-mono">
-                      Available Balance (₹)
-                    </label>
-                    <div className={`w-full px-3 py-1.5 bg-[#0B0F19] text-xs rounded-xl border border-[#1E2638] font-mono font-black flex items-center justify-between ${
-                      calculationSummary.availableBalance < 0 ? 'text-rose-400' : 'text-[#10B981]'
-                    }`}>
-                      <span>{formatINR(calculationSummary.availableBalance)}</span>
-                    </div>
-                  </div>
-
-                  {/* Leverage with Presets */}
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase font-mono">
-                        Leverage
-                      </label>
-                      <span className="text-[9px] text-[#38BDF8] font-mono font-bold">{leverage}x</span>
-                    </div>
                     <div className="flex items-center space-x-1">
-                      {[10, 25, 50].map(lev => (
+                      <span className="text-[11px] text-slate-400 mr-1 font-mono">Quick Size:</span>
+                      {[10, 25, 50, 75, 100].map(pct => (
                         <button
-                          key={lev}
+                          key={pct}
                           type="button"
-                          onClick={() => setLeverage(String(lev))}
-                          className={`px-1.5 py-1 rounded-lg text-[10px] font-mono font-bold border cursor-pointer transition flex-1 ${
-                            String(leverage) === String(lev)
-                              ? 'bg-[#38BDF8] text-slate-950 border-[#38BDF8]'
-                              : 'bg-[#0B0F19] text-slate-400 border-[#1E2638] hover:text-white'
+                          onClick={() => handlePercentageMargin(pct)}
+                          className={`px-2 py-0.5 rounded-lg text-xs font-mono font-bold transition cursor-pointer ${
+                            selectedQuickSize === pct
+                              ? 'bg-[#00c8ff] text-slate-950 font-extrabold shadow-sm'
+                              : 'bg-[#111726] text-slate-300 hover:text-white border border-[#1E2638]'
                           }`}
                         >
-                          {lev}x
+                          {pct}%
                         </button>
                       ))}
-                      <input
-                        type="number"
-                        min="1"
-                        max="100"
-                        value={leverage}
-                        onChange={(e) => setLeverage(e.target.value)}
-                        className="w-12 py-1 bg-[#0B0F19] text-white text-[11px] font-mono font-bold rounded-lg border border-[#1E2638] text-center focus:outline-none focus:border-[#38BDF8]"
-                      />
                     </div>
                   </div>
-                </div>
 
-                {/* Sub-strip: Capacity & Contract Specification */}
-                <div className="flex flex-wrap items-center justify-between text-[10px] font-mono pt-1 border-t border-[#1E2638]/60 text-slate-400">
-                  <div className="flex items-center space-x-1.5">
-                    <Scale className="w-3 h-3 text-[#38BDF8]" />
-                    <span>Capacity: <strong className="text-[#38BDF8]">{formatINR(calculationSummary.capacityNotionalINR)}</strong> (Margin × Leverage)</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <span>Contract: <strong className="text-white">1 Lot = {contractSize} {symbol.split('/')[0] || 'BTC'}</strong></span>
-                    <span>1 USDT = <strong className="text-white">₹{usdtRate}</strong></span>
-                  </div>
-                </div>
-              </div>
-
-              {/* 3. ORDER LEVELS, LOT SIZING & DYNAMIC RISK SIZER */}
-              <div className="p-3.5 rounded-xl bg-[#111726]/60 border border-[#1E2638]/70 space-y-3">
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#38BDF8] flex items-center space-x-1.5 font-mono">
-                    <Target className="w-3.5 h-3.5" />
-                    <span>ORDER LEVELS & POSITION SIZING</span>
-                  </span>
-
-                  <label className="flex items-center space-x-1 text-[10px] font-mono text-slate-300 cursor-pointer bg-[#0B0F19] px-2 py-0.5 rounded-lg border border-[#1E2638] select-none">
-                    <input
-                      type="checkbox"
-                      checked={hasBracketOrder}
-                      onChange={(e) => setHasBracketOrder(e.target.checked)}
-                      className="rounded accent-[#38BDF8] cursor-pointer"
-                    />
-                    <span>TP / SL Bracket</span>
-                  </label>
-                </div>
-
-                {/* Core Levels: Entry Price, Stop Loss, Take Profit, Exit Price */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-between">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase font-mono">
-                        Entry Price *
+                  {/* 4 Columns: Starting Capital, Margin Used, Available Balance, Leverage */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                        Starting Capital (₹)
                       </label>
-                      <span className="text-[9px] text-[#38BDF8] font-mono font-bold">{orderType}</span>
-                    </div>
-                    <input
-                      type="number"
-                      step="any"
-                      placeholder="e.g. 77406"
-                      value={entryPrice}
-                      onChange={(e) => setEntryPrice(e.target.value)}
-                      className="w-full px-3 py-1.5 bg-[#0B0F19] text-white text-xs rounded-xl border border-[#1E2638] font-mono font-bold focus:outline-none focus:border-[#38BDF8]"
-                      required
-                    />
-                  </div>
-
-                  {hasBracketOrder && (
-                    <>
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between">
-                          <label className="block text-[10px] font-bold text-rose-400 uppercase font-mono">
-                            Stop Loss (SL)
-                          </label>
-                          {calculationSummary.slDiff > 0 && (
-                            <span className="text-[9px] text-slate-400 font-mono">{calculationSummary.slDiff.toFixed(1)} pts</span>
-                          )}
-                        </div>
-                        <input
-                          type="number"
-                          step="any"
-                          placeholder={direction === 'LONG' ? 'e.g. 77250' : 'e.g. 77485'}
-                          value={stopLoss}
-                          onChange={(e) => setStopLoss(e.target.value)}
-                          className="w-full px-3 py-1.5 bg-[#0B0F19] text-white text-xs rounded-xl border border-[#1E2638] font-mono font-bold focus:outline-none focus:border-rose-500/60"
-                        />
-                      </div>
-
-                      <div className="space-y-1">
-                        <div className="flex items-center justify-between">
-                          <label className="block text-[10px] font-bold text-emerald-400 uppercase font-mono">
-                            Take Profit (TP)
-                          </label>
-                          {calculationSummary.tpDiff > 0 && (
-                            <span className="text-[9px] text-slate-400 font-mono">{calculationSummary.tpDiff.toFixed(1)} pts</span>
-                          )}
-                        </div>
-                        <input
-                          type="number"
-                          step="any"
-                          placeholder={direction === 'LONG' ? 'e.g. 77874' : 'e.g. 77200'}
-                          value={targetPrice}
-                          onChange={(e) => setTargetPrice(e.target.value)}
-                          className="w-full px-3 py-1.5 bg-[#0B0F19] text-white text-xs rounded-xl border border-[#1E2638] font-mono font-bold focus:outline-none focus:border-emerald-500/60"
-                        />
-                      </div>
-                    </>
-                  )}
-
-                  {/* Actual Exit Price (Only shown when Closed) */}
-                  {status === 'CLOSED' ? (
-                    <div className="space-y-1">
-                      <div className="flex items-center justify-between">
-                        <label className="block text-[10px] font-bold text-slate-400 uppercase font-mono">
-                          Actual Exit Price
-                        </label>
-                        <span className="text-[9px] text-[#10B981] font-mono">Closed</span>
-                      </div>
-                      <input
-                        type="number"
-                        step="any"
-                        placeholder="e.g. 77485"
-                        value={exitPrice}
-                        onChange={(e) => setExitPrice(e.target.value)}
-                        className="w-full px-3 py-1.5 bg-[#0B0F19] text-white text-xs rounded-xl border border-[#1E2638] font-mono font-bold focus:outline-none focus:border-[#38BDF8]"
-                      />
-                    </div>
-                  ) : (
-                    <div className="space-y-1">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase font-mono">
-                        Position State
-                      </label>
-                      <div className="px-3 py-1.5 bg-[#0B0F19] text-purple-400 text-xs rounded-xl border border-[#1E2638] font-mono font-bold">
-                        Open & Active
-                      </div>
-                    </div>
-                  )}
-                </div>
-
-                {/* Sizing & Dynamic Risk Control Strip */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-1 border-t border-[#1E2638]/60">
-                  {/* Order Size in Lots */}
-                  <div className="p-2.5 rounded-xl bg-[#0B0F19] border border-[#1E2638] space-y-1">
-                    <div className="flex items-center justify-between">
-                      <label className="block text-[10px] font-bold text-slate-400 uppercase font-mono">
-                        Order Size in Lots *
-                      </label>
-                      <span className="text-[10px] text-emerald-400 font-mono font-bold">
-                        = {calculationSummary.qty.toFixed(6)} {symbol.split('/')[0] || 'BTC'}
-                      </span>
-                    </div>
-                    <div className="relative">
-                      <input
-                        type="number"
-                        step="any"
-                        min="1"
-                        placeholder="14"
-                        value={orderLots}
-                        onChange={(e) => {
-                          setOrderLots(e.target.value);
-                          const l = parseFloat(e.target.value);
-                          const c = parseFloat(contractSize) || 0.001;
-                          if (!isNaN(l) && l >= 0) {
-                            setQuantity(parseFloat((l * c).toFixed(6)).toString());
-                            setIsManualQuantity(false);
-                          }
-                        }}
-                        className="w-full px-3 py-1.5 bg-[#111726] text-white text-xs rounded-lg border border-[#1E2638] font-mono font-bold focus:outline-none focus:border-[#38BDF8]"
-                      />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-[11px] font-mono font-bold pointer-events-none">
-                        Lots
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Dynamic Risk Target Sizer */}
-                  <div className="p-2.5 rounded-xl bg-[#0B0F19] border border-[#1E2638] space-y-1">
-                    <div className="flex items-center justify-between">
-                      <label className="block text-[10px] font-bold text-rose-400 uppercase font-mono flex items-center space-x-1">
-                        <Crosshair className="w-3 h-3 text-rose-400" />
-                        <span>Dynamic Risk Target (₹)</span>
-                      </label>
-                      {calculationSummary.hasSL && calculationSummary.recommendedRiskLots > 0 && (
-                        <button
-                          type="button"
-                          onClick={() => handleApplyRiskLots(calculationSummary.recommendedRiskLots)}
-                          className="px-2 py-0.5 bg-[#38BDF8] hover:bg-sky-400 text-slate-950 font-extrabold text-[9px] rounded font-mono transition cursor-pointer"
-                        >
-                          Apply {calculationSummary.recommendedRiskLots} Lots
-                        </button>
-                      )}
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      <div className="relative w-28 shrink-0">
-                        <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-mono font-bold">
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold font-mono text-xs">
                           ₹
                         </span>
                         <input
                           type="number"
                           step="any"
-                          placeholder="100"
-                          value={targetRiskINR}
-                          onChange={(e) => setTargetRiskINR(e.target.value)}
-                          className="w-full pl-6 pr-2 py-1.5 bg-[#111726] text-white text-xs rounded-lg border border-[#1E2638] font-mono font-bold focus:outline-none focus:border-rose-400"
+                          value={startingCapital}
+                          onChange={(e) => setStartingCapital(e.target.value)}
+                          className="w-full pl-7 pr-3 py-2 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono font-bold text-xs focus:outline-none focus:border-[#00c8ff]"
                         />
                       </div>
-                      <div className="text-[10px] font-mono text-slate-400 truncate">
-                        {calculationSummary.hasSL && calculationSummary.slDiff > 0 ? (
-                          <span>Max: <strong className="text-white">{calculationSummary.recommendedRiskLots} Lots</strong> ({ (calculationSummary.recommendedRiskLots * (parseFloat(contractSize) || 0.001)).toFixed(3) } BTC)</span>
-                        ) : (
-                          <span className="text-slate-500 italic">Enter SL to size</span>
-                        )}
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                        Margin Used (₹)
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold font-mono text-xs">
+                          ₹
+                        </span>
+                        <input
+                          type="number"
+                          step="any"
+                          value={marginUsed}
+                          onChange={(e) => setMarginUsed(e.target.value)}
+                          className="w-full pl-7 pr-3 py-2 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono font-bold text-xs focus:outline-none focus:border-[#00c8ff]"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                        Available Balance (₹)
+                      </label>
+                      <div className="w-full px-3 py-2 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-emerald-400 font-mono font-bold text-xs flex items-center">
+                        <span>₹ {calculationSummary.availableBalance >= 0 ? calculationSummary.availableBalance.toLocaleString('en-IN') : '0'}</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                        Leverage
+                      </label>
+                      <div className="relative flex items-center bg-[#0B0F19] rounded-xl border border-[#1E2638] px-3 py-2 focus-within:border-[#00c8ff]">
+                        <select
+                          value={leverage}
+                          onChange={(e) => setLeverage(e.target.value)}
+                          className="w-full bg-transparent text-white text-xs font-bold font-mono focus:outline-none cursor-pointer appearance-none"
+                        >
+                          <option value="1" className="bg-[#0B0F19]">1x</option>
+                          <option value="5" className="bg-[#0B0F19]">5x</option>
+                          <option value="10" className="bg-[#0B0F19]">10x</option>
+                          <option value="20" className="bg-[#0B0F19]">20x</option>
+                          <option value="25" className="bg-[#0B0F19]">25x</option>
+                          <option value="50" className="bg-[#0B0F19]">50x</option>
+                          <option value="75" className="bg-[#0B0F19]">75x</option>
+                          <option value="100" className="bg-[#0B0F19]">100x</option>
+                        </select>
+                        <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0 pointer-events-none" />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Sub-strip: Capacity & Contract Specification */}
+                  <div className="flex flex-wrap items-center justify-between text-xs font-mono pt-1 text-slate-400">
+                    <div className="flex items-center space-x-1 text-[#00c8ff]">
+                      <Scale className="w-3.5 h-3.5" />
+                      <span>Capacity: <strong>{formatINR(calculationSummary.capacityNotionalINR)}</strong> (Margin × Leverage)</span>
+                    </div>
+                    <div>
+                      <span>Contract: <strong className="text-slate-300">1 Lot = {contractSize} {symbol.split('/')[0] || 'BTC'}</strong> | 1 USDT = <strong className="text-slate-300">₹{usdtRate}</strong></span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section 2: Order Levels & Position Sizing */}
+                <div className="p-4 rounded-2xl bg-[#0E1320]/70 border border-[#1E2638] space-y-3">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-1.5 text-xs font-bold text-white font-jakarta">
+                      <Target className="w-4 h-4 text-[#00c8ff]" />
+                      <span className="text-[#00c8ff]">Order Levels & Position Sizing</span>
+                    </div>
+
+                    <label className="flex items-center space-x-1.5 text-xs text-slate-300 font-medium cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={hasBracketOrder}
+                        onChange={(e) => setHasBracketOrder(e.target.checked)}
+                        className="rounded accent-[#00c8ff] cursor-pointer"
+                      />
+                      <span>TP / SL Bracket</span>
+                      <Info className="w-3 h-3 text-slate-500" />
+                    </label>
+                  </div>
+
+                  {/* Row 1: Entry, Stop Loss, Take Profit, Actual Exit Price */}
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                        Entry Price *
+                      </label>
+                      <div className="relative">
+                        <Crosshair className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                        <input
+                          type="number"
+                          step="any"
+                          value={entryPrice}
+                          onChange={(e) => setEntryPrice(e.target.value)}
+                          className="w-full pl-8 pr-3 py-2 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono font-bold text-xs focus:outline-none focus:border-[#00c8ff]"
+                          required
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-rose-400 mb-1 font-jakarta">
+                        Stop Loss (SL)
+                      </label>
+                      <div className="relative">
+                        <ShieldAlert className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-rose-400" />
+                        <input
+                          type="number"
+                          step="any"
+                          value={stopLoss}
+                          onChange={(e) => setStopLoss(e.target.value)}
+                          className="w-full pl-8 pr-3 py-2 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono font-bold text-xs focus:outline-none focus:border-rose-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-emerald-400 mb-1 font-jakarta">
+                        Take Profit (TP)
+                      </label>
+                      <div className="relative">
+                        <Target className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-emerald-400" />
+                        <input
+                          type="number"
+                          step="any"
+                          value={targetPrice}
+                          onChange={(e) => setTargetPrice(e.target.value)}
+                          className="w-full pl-8 pr-3 py-2 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono font-bold text-xs focus:outline-none focus:border-emerald-500"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                        Actual Exit Price
+                      </label>
+                      <div className="relative">
+                        <Activity className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                        <input
+                          type="number"
+                          step="any"
+                          value={exitPrice}
+                          onChange={(e) => setExitPrice(e.target.value)}
+                          className="w-full pl-8 pr-3 py-2 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono font-bold text-xs focus:outline-none focus:border-[#00c8ff]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Row 2: Order Size in Lots & Dynamic Risk Target */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                        Order Size in Lots *
+                      </label>
+                      <div className="relative">
+                        <Layers className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                        <input
+                          type="number"
+                          step="any"
+                          value={orderLots}
+                          onChange={(e) => {
+                            setOrderLots(e.target.value);
+                            const l = parseFloat(e.target.value);
+                            const c = parseFloat(contractSize) || 0.001;
+                            if (!isNaN(l) && l >= 0) {
+                              setQuantity(parseFloat((l * c).toFixed(6)).toString());
+                              setIsManualQuantity(false);
+                            }
+                          }}
+                          className="w-full pl-8 pr-14 py-2 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono font-bold text-xs focus:outline-none focus:border-[#00c8ff]"
+                          required
+                        />
+                        <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs font-mono font-semibold pointer-events-none">
+                          Lots
+                        </span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="flex items-center space-x-1 text-[11px] font-medium text-rose-400 mb-1 font-jakarta">
+                        <Target className="w-3 h-3 text-rose-400" />
+                        <span>Dynamic Risk Target</span>
+                        <Info className="w-3 h-3 text-slate-500" />
+                      </label>
+                      <div className="relative">
+                        <span className="absolute left-3 top-1/2 -translate-y-1/2 text-rose-400 font-bold font-mono text-xs">
+                          ₹
+                        </span>
+                        <input
+                          type="number"
+                          step="any"
+                          value={targetRiskINR}
+                          onChange={(e) => setTargetRiskINR(e.target.value)}
+                          className="w-full pl-7 pr-3 py-2 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono font-bold text-xs focus:outline-none focus:border-rose-400"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Row 3: Exchange Realized P&L, Trading Fees, Funding Fees */}
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                        Exchange Realized P&L (₹)
+                      </label>
+                      <div className="relative">
+                        <Activity className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                        <input
+                          type="number"
+                          step="any"
+                          value={manualRealizedPnL}
+                          onChange={(e) => setManualRealizedPnL(e.target.value)}
+                          className="w-full pl-8 pr-3 py-2 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono font-bold text-xs focus:outline-none focus:border-[#00c8ff]"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                        Trading Fees (₹)
+                      </label>
+                      <div className="relative">
+                        <Coins className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                        <input
+                          type="number"
+                          step="any"
+                          value={tradingFees}
+                          onChange={(e) => setTradingFees(e.target.value)}
+                          className="w-full pl-8 pr-3 py-2 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono font-bold text-xs focus:outline-none focus:border-[#00c8ff]"
+                        />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                        Funding Fees (₹)
+                      </label>
+                      <div className="relative">
+                        <Percent className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400" />
+                        <input
+                          type="number"
+                          step="any"
+                          value={fundingFees}
+                          onChange={(e) => setFundingFees(e.target.value)}
+                          className="w-full pl-8 pr-3 py-2 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono font-bold text-xs focus:outline-none focus:border-[#00c8ff]"
+                        />
                       </div>
                     </div>
                   </div>
                 </div>
+              </>
+            )}
 
-                {/* Optional Manual Realized Override & Fees */}
-                {status === 'CLOSED' && (
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 pt-1 border-t border-[#1E2638]/60 text-xs font-mono">
-                    <div>
-                      <label className="block text-[9px] font-bold text-slate-400 uppercase font-mono">
-                        Exchange Realized P&L (₹)
-                      </label>
+            {/* STEP 2: Trade Plan & Confluences */}
+            {step === 2 && (
+              <div className="space-y-4">
+                {/* Confluences Card */}
+                <div className="p-4 rounded-2xl bg-[#0E1320]/70 border border-[#1E2638] space-y-3">
+                  <div className="flex items-center space-x-2 text-xs font-bold text-white font-jakarta">
+                    <Target className="w-4 h-4 text-[#00c8ff]" />
+                    <span className="text-[#00c8ff]">SMC Confluence Checklist</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
+                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638] cursor-pointer hover:border-slate-600 transition">
                       <input
-                        type="number"
-                        step="any"
-                        placeholder="e.g. -100"
-                        value={manualRealizedPnL}
-                        onChange={(e) => setManualRealizedPnL(e.target.value)}
-                        className="w-full px-2.5 py-1 bg-[#0B0F19] text-white text-xs rounded-lg border border-[#1E2638] font-mono font-bold focus:outline-none focus:border-[#38BDF8]"
-                        title="Direct exchange-reported realized P&L"
+                        type="checkbox"
+                        checked={h1Bias}
+                        onChange={(e) => setH1Bias(e.target.checked)}
+                        className="rounded accent-[#00c8ff] cursor-pointer"
                       />
-                    </div>
-                    <div>
-                      <label className="block text-[9px] font-bold text-slate-400 uppercase font-mono">
-                        Trading Fees (₹)
-                      </label>
-                      <input
-                        type="number"
-                        step="any"
-                        placeholder="0.00"
-                        value={tradingFees}
-                        onChange={(e) => setTradingFees(e.target.value)}
-                        className="w-full px-2.5 py-1 bg-[#0B0F19] text-white text-xs rounded-lg border border-[#1E2638] font-mono font-bold focus:outline-none focus:border-[#38BDF8]"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-[9px] font-bold text-slate-400 uppercase font-mono">
-                        Funding Fees (₹)
-                      </label>
-                      <input
-                        type="number"
-                        step="any"
-                        placeholder="0.00"
-                        value={fundingFees}
-                        onChange={(e) => setFundingFees(e.target.value)}
-                        className="w-full px-2.5 py-1 bg-[#0B0F19] text-white text-xs rounded-lg border border-[#1E2638] font-mono font-bold focus:outline-none focus:border-[#38BDF8]"
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* 4. EXECUTION PREVIEW & REALIZED OUTCOME CARD */}
-              <div className="p-3.5 rounded-xl bg-[#0B0F19] border border-[#1E2638] space-y-2.5 font-mono">
-                <div className="flex items-center justify-between pb-1 border-b border-[#1E2638]/70">
-                  <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#38BDF8] flex items-center space-x-1.5 font-mono">
-                    <Activity className="w-3.5 h-3.5 text-[#38BDF8]" />
-                    <span>Order Execution Preview</span>
-                  </span>
-                  <span className="text-[10px] font-mono font-extrabold px-2 py-0.5 rounded-lg bg-[#111726] border border-[#1E2638] text-[#38BDF8]">
-                    R:R {calculationSummary.rrRatioStr}
-                  </span>
-                </div>
-
-                {/* 4-Item Metric Strip */}
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs">
-                  <div className="p-2 rounded-lg bg-[#111726]/70 border border-[#1E2638]">
-                    <span className="text-[9px] text-slate-400 block uppercase">Notional</span>
-                    <span className="text-xs font-black text-white block mt-0.5 truncate">
-                      {formatINR(calculationSummary.lotsNotionalINR)}
-                    </span>
-                    <span className="text-[8px] text-slate-500 block truncate">
-                      ≈ ${calculationSummary.lotsNotionalUSDT.toFixed(2)} USDT
-                    </span>
-                  </div>
-
-                  <div className="p-2 rounded-lg bg-[#111726]/70 border border-[#1E2638]">
-                    <span className="text-[9px] text-slate-400 block uppercase">Required Margin</span>
-                    <span className="text-xs font-black text-[#38BDF8] block mt-0.5 truncate">
-                      {formatINR(calculationSummary.requiredMarginINR)}
-                    </span>
-                    <span className="text-[8px] text-slate-500 block truncate">
-                      At {leverage}x leverage
-                    </span>
-                  </div>
-
-                  <div className="p-2 rounded-lg bg-[#111726]/70 border border-rose-500/20">
-                    <span className="text-[9px] text-rose-400 block uppercase">Est. SL Loss</span>
-                    <span className="text-xs font-black text-rose-400 block mt-0.5 truncate">
-                      {calculationSummary.hasSL ? `-${formatINR(calculationSummary.grossLossINR)}` : '--'}
-                    </span>
-                    <span className="text-[8px] text-slate-400 block truncate">
-                      Bal: {formatINR(calculationSummary.balanceAtSL)}
-                    </span>
-                  </div>
-
-                  <div className="p-2 rounded-lg bg-[#111726]/70 border border-emerald-500/20">
-                    <span className="text-[9px] text-emerald-400 block uppercase">Est. TP Profit</span>
-                    <span className="text-xs font-black text-[#10B981] block mt-0.5 truncate">
-                      {calculationSummary.hasTP ? `+${formatINR(calculationSummary.grossProfitINR)}` : '--'}
-                    </span>
-                    <span className="text-[8px] text-slate-400 block truncate">
-                      Bal: {formatINR(calculationSummary.balanceAtTP)}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Realized Banner if Closed */}
-                {status === 'CLOSED' && (calculationSummary.hasExit || calculationSummary.hasManualRealized) && (
-                  <div className={`p-2.5 rounded-lg border flex items-center justify-between text-xs ${
-                    calculationSummary.realizedNetPnL >= 0
-                      ? 'bg-emerald-950/20 border-emerald-500/30'
-                      : 'bg-rose-950/20 border-rose-500/30'
-                  }`}>
-                    <div className="flex items-center space-x-2">
-                      <Calculator className={`w-4 h-4 ${calculationSummary.realizedNetPnL >= 0 ? 'text-[#10B981]' : 'text-rose-400'}`} />
-                      <span className="text-slate-300">
-                        {calculationSummary.hasManualRealized ? 'Manual Exchange Realized P&L:' : 'Executed Realized Net P&L:'}
-                      </span>
-                      <strong className={`text-sm font-black ${calculationSummary.realizedNetPnL >= 0 ? 'text-[#10B981]' : 'text-rose-400'}`}>
-                        {calculationSummary.realizedNetPnL >= 0 ? '+' : ''}{formatINR(calculationSummary.realizedNetPnL)}
-                      </strong>
-                    </div>
-
-                    <div className="text-right text-slate-300">
-                      <span>Balance After Trade: <strong className="text-white">{formatINR(calculationSummary.balanceAfterTrade)}</strong></span>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-            </div>
-          )}
-
-          {/* STEP 2: TRADE PLAN & CONFLUENCES */}
-          {step === 2 && (
-            <div className="space-y-4">
-              
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-extrabold uppercase text-[#38BDF8] mb-1">
-                    Status
-                  </label>
-                  <div className="p-1 bg-[#111726] rounded-xl border border-[#1E2638] grid grid-cols-2 gap-1">
-                    <button
-                      type="button"
-                      onClick={() => setStatus('CLOSED')}
-                      className={`py-2 text-xs font-bold rounded-lg transition ${
-                        status === 'CLOSED'
-                          ? 'bg-[#10B981] text-white'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      Closed
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setStatus('OPEN')}
-                      className={`py-2 text-xs font-bold rounded-lg transition ${
-                        status === 'OPEN'
-                          ? 'bg-[#8B5CF6] text-white'
-                          : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      Open
-                    </button>
-                  </div>
-                </div>
-
-                {status === 'CLOSED' && (
-                  <div>
-                    <label className="block text-[11px] font-extrabold uppercase text-[#38BDF8] mb-1">
-                      Exit Price
+                      <span className="font-medium text-slate-200">1H HTF Directional Bias</span>
                     </label>
-                    <input
-                      type="number"
-                      step="any"
-                      placeholder="Exit Price (e.g. 68000)"
-                      value={exitPrice}
-                      onChange={(e) => setExitPrice(e.target.value)}
-                      className="w-full px-4 py-2 bg-[#111726] text-white text-xs rounded-xl border border-[#1E2638] font-mono font-bold"
-                    />
+
+                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638] cursor-pointer hover:border-slate-600 transition">
+                      <input
+                        type="checkbox"
+                        checked={m15Structure}
+                        onChange={(e) => setM15Structure(e.target.checked)}
+                        className="rounded accent-[#00c8ff] cursor-pointer"
+                      />
+                      <span className="font-medium text-slate-200">15m Market Structure Shift / FVG</span>
+                    </label>
+
+                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638] cursor-pointer hover:border-slate-600 transition">
+                      <input
+                        type="checkbox"
+                        checked={m5EntryPoi}
+                        onChange={(e) => setM5EntryPoi(e.target.checked)}
+                        className="rounded accent-[#00c8ff] cursor-pointer"
+                      />
+                      <span className="font-medium text-slate-200">5m Entry POI / Mitigation</span>
+                    </label>
+
+                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638] cursor-pointer hover:border-slate-600 transition">
+                      <input
+                        type="checkbox"
+                        checked={m1BosChoch}
+                        onChange={(e) => setM1BosChoch(e.target.checked)}
+                        className="rounded accent-[#00c8ff] cursor-pointer"
+                      />
+                      <span className="font-medium text-slate-200">1m LTF Trigger (CHOCH / BOS)</span>
+                    </label>
                   </div>
-                )}
+                </div>
+
+                {/* Strategy Selector */}
+                <div className="p-4 rounded-2xl bg-[#0E1320]/70 border border-[#1E2638] space-y-2">
+                  <label className="block text-[11px] font-medium text-slate-400 font-jakarta">
+                    Trading Strategy / Setup Model
+                  </label>
+                  <select
+                    value={strategy}
+                    onChange={(e) => setStrategy(e.target.value)}
+                    className="w-full px-3 py-2 bg-[#0B0F19] text-white text-xs rounded-xl border border-[#1E2638] font-mono font-bold focus:outline-none focus:border-[#00c8ff] cursor-pointer"
+                  >
+                    <option value="SMC Order Block">SMC Order Block</option>
+                    <option value="Liquidity Sweep">Liquidity Sweep / Raid</option>
+                    <option value="Fair Value Gap (FVG)">Fair Value Gap (FVG)</option>
+                    <option value="Break of Structure">Break of Structure (BOS)</option>
+                    <option value="Breakout Retest">Breakout Retest</option>
+                    <option value="Range Trading">Range Trading (High/Low)</option>
+                  </select>
+                </div>
+
+                {/* Upload Screenshot */}
+                <div className="p-4 rounded-2xl bg-[#0E1320]/70 border border-[#1E2638] space-y-2">
+                  <label className="block text-[11px] font-medium text-slate-400 font-jakarta">
+                    Upload Setup Screenshot (Local File)
+                  </label>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    onChange={handleFileUpload}
+                    className="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#1E2638] file:text-[#00c8ff] hover:file:bg-slate-700 cursor-pointer"
+                  />
+
+                  {chartUrl && (
+                    <div className="mt-2 relative rounded-xl overflow-hidden border border-[#1E2638] h-32 bg-[#0B0F19]">
+                      <img src={chartUrl} alt="Setup Chart" className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={() => setChartUrl('')}
+                        className="absolute top-2 right-2 p-1.5 rounded-lg bg-rose-600/80 text-white hover:bg-rose-600 transition"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Notes */}
+                <div className="p-4 rounded-2xl bg-[#0E1320]/70 border border-[#1E2638] space-y-2">
+                  <label className="block text-[11px] font-medium text-slate-400 font-jakarta">
+                    Notes & Execution Rationale
+                  </label>
+                  <textarea
+                    rows="3"
+                    placeholder="Enter setup observations, confluence reasons, emotions, or market context..."
+                    value={notes}
+                    onChange={(e) => setNotes(e.target.value)}
+                    className="w-full p-3 bg-[#0B0F19] text-white text-xs rounded-xl border border-[#1E2638] focus:outline-none focus:border-[#00c8ff]"
+                  />
+                </div>
               </div>
+            )}
 
-              {/* SMC Confluences Grid */}
-              <div className="p-3.5 rounded-2xl bg-[#111726] border border-[#1E2638] space-y-2">
-                <span className="text-[11px] font-extrabold uppercase text-[#38BDF8] block">
-                  SMC Confluence Checklist
-                </span>
+            {/* STEP 3: Review & Save */}
+            {step === 3 && (
+              <div className="space-y-4">
+                <div className="p-4 rounded-2xl bg-[#0E1320]/70 border border-[#1E2638] space-y-4">
+                  <div className="flex items-center space-x-2 text-xs font-bold text-white font-jakarta">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                    <span>Review Execution Summary</span>
+                  </div>
 
-                <div className="grid grid-cols-2 gap-2 text-xs">
-                  <label className="flex items-center space-x-2 p-2 rounded-xl bg-[#0B0F19] border border-[#1E2638] cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={h1Bias}
-                      onChange={(e) => setH1Bias(e.target.checked)}
-                      className="rounded bg-slate-800 border-slate-700 text-[#38BDF8]"
-                    />
-                    <span>1H HTF Bias</span>
-                  </label>
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs font-mono">
+                    <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638]">
+                      <span className="text-slate-400 text-[10px] block uppercase">Instrument</span>
+                      <span className="text-white font-bold text-sm">{symbol}</span>
+                    </div>
 
-                  <label className="flex items-center space-x-2 p-2 rounded-xl bg-[#0B0F19] border border-[#1E2638] cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={m15Structure}
-                      onChange={(e) => setM15Structure(e.target.checked)}
-                      className="rounded bg-slate-800 border-slate-700 text-[#38BDF8]"
-                    />
-                    <span>15m MSS / FVG</span>
-                  </label>
+                    <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638]">
+                      <span className="text-slate-400 text-[10px] block uppercase">Direction & Type</span>
+                      <span className={`font-bold text-sm ${direction === 'LONG' ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        {direction} • {orderType}
+                      </span>
+                    </div>
 
-                  <label className="flex items-center space-x-2 p-2 rounded-xl bg-[#0B0F19] border border-[#1E2638] cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={m5EntryPoi}
-                      onChange={(e) => setM5EntryPoi(e.target.checked)}
-                      className="rounded bg-slate-800 border-slate-700 text-[#38BDF8]"
-                    />
-                    <span>5m Entry POI</span>
-                  </label>
+                    <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638]">
+                      <span className="text-slate-400 text-[10px] block uppercase">Position Lots</span>
+                      <span className="text-white font-bold text-sm">{orderLots} Lots</span>
+                    </div>
 
-                  <label className="flex items-center space-x-2 p-2 rounded-xl bg-[#0B0F19] border border-[#1E2638] cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={m1BosChoch}
-                      onChange={(e) => setM1BosChoch(e.target.checked)}
-                      className="rounded bg-slate-800 border-slate-700 text-[#38BDF8]"
-                    />
-                    <span>1m LTF Trigger</span>
-                  </label>
+                    <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638]">
+                      <span className="text-slate-400 text-[10px] block uppercase">Entry Price</span>
+                      <span className="text-white font-bold text-sm">{entryPrice}</span>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638]">
+                      <span className="text-slate-400 text-[10px] block uppercase">Stop Loss</span>
+                      <span className="text-rose-400 font-bold text-sm">{stopLoss || '--'}</span>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638]">
+                      <span className="text-slate-400 text-[10px] block uppercase">Take Profit</span>
+                      <span className="text-emerald-400 font-bold text-sm">{targetPrice || '--'}</span>
+                    </div>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638] flex items-center justify-between text-xs font-mono">
+                    <span className="text-slate-400">Calculated Realized Net P&L:</span>
+                    <span className={`text-base font-extrabold ${calculationSummary.realizedNetPnL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                      {calculationSummary.realizedNetPnL >= 0 ? '+' : ''}{formatINR(calculationSummary.realizedNetPnL)}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+          </div>
+
+          {/* RIGHT COLUMN: Live Trade Overview & Risk/Reward Sidebar */}
+          <div className="lg:col-span-4 space-y-4">
+            <div className="bg-[#0B101D] border border-[#1E2638] rounded-2xl p-4 sm:p-5 space-y-4">
+              
+              {/* Trade Overview */}
+              <div className="space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-2 text-xs font-bold text-white font-jakarta">
+                    <Activity className="w-4 h-4 text-[#00c8ff]" />
+                    <span>Trade Overview</span>
+                  </div>
+                  <span className={`px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold tracking-wider ${
+                    direction === 'LONG'
+                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
+                      : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                  }`}>
+                    {direction} • {orderType.toUpperCase()}
+                  </span>
+                </div>
+
+                <div className="space-y-2 text-xs font-mono">
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Symbol</span>
+                    <span className="text-white font-bold flex items-center space-x-1.5">
+                      <CryptoIcon symbol={symbol || 'BTC'} className="w-3.5 h-3.5" />
+                      <span>{symbol || 'BTC/USDT'}</span>
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Exchange</span>
+                    <span className="text-white font-bold">{exchange}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Leverage</span>
+                    <span className="text-white font-bold">{leverage}x</span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">Order Size</span>
+                    <span className="text-white font-bold">
+                      {orderLots || 14} Lots ({calculationSummary.qty.toFixed(6)} {symbol.split('/')[0] || 'BTC'})
+                    </span>
+                  </div>
                 </div>
               </div>
 
-              {/* Local Photo Upload */}
-              <div>
-                <label className="block text-[11px] font-extrabold uppercase text-[#38BDF8] mb-1">
-                  Upload Setup Screenshot (Local PC File)
-                </label>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleFileUpload}
-                  className="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-[#1E2638] file:text-[#38BDF8] hover:file:bg-slate-700"
-                />
+              <div className="h-[1px] bg-[#1E2638]" />
 
-                {chartUrl && (
-                  <div className="mt-2 relative rounded-xl overflow-hidden border border-[#1E2638] h-28 bg-[#0B0F19]">
-                    <img src={chartUrl} alt="Setup" className="w-full h-full object-cover" />
-                    <button
-                      type="button"
-                      onClick={() => setChartUrl('')}
-                      className="absolute top-2 right-2 p-1 rounded-lg bg-rose-600/80 text-white"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                    </button>
+              {/* Risk & Reward */}
+              <div className="space-y-3">
+                <div className="flex items-center space-x-2 text-xs font-bold text-white font-jakarta">
+                  <Target className="w-4 h-4 text-[#00c8ff]" />
+                  <span>Risk & Reward</span>
+                </div>
+
+                {/* 3 Stat Cards: Risk, Reward, R:R */}
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="p-2.5 rounded-xl bg-[#0E1424] border border-[#1E2638] text-center">
+                    <span className="text-[10px] text-rose-400 font-bold block mb-1">Risk (₹)</span>
+                    <span className="text-sm font-extrabold text-rose-400 font-mono">
+                      {calculationSummary.hasSL ? Math.round(calculationSummary.grossLossINR) : (targetRiskINR || '100')}
+                    </span>
                   </div>
-                )}
-              </div>
 
-              {/* Notes */}
-              <div>
-                <label className="block text-[11px] font-extrabold uppercase text-[#38BDF8] mb-1">
-                  Notes & Execution Rationale
-                </label>
-                <textarea
-                  rows="2"
-                  placeholder="Crypto confluences, funding rate, liquidation sweeps..."
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  className="w-full p-3 bg-[#111726] text-white text-xs rounded-xl border border-[#1E2638] focus:outline-none focus:border-[#38BDF8]"
-                />
+                  <div className="p-2.5 rounded-xl bg-[#0E1424] border border-[#1E2638] text-center">
+                    <span className="text-[10px] text-emerald-400 font-bold block mb-1">Reward (₹)</span>
+                    <span className="text-sm font-extrabold text-emerald-400 font-mono">
+                      {calculationSummary.hasTP ? Math.round(calculationSummary.grossProfitINR) : '468'}
+                    </span>
+                  </div>
+
+                  <div className="p-2.5 rounded-xl bg-[#0E1424] border border-[#1E2638] text-center">
+                    <span className="text-[10px] text-[#00c8ff] font-bold block mb-1">R:R</span>
+                    <span className="text-sm font-extrabold text-[#00c8ff] font-mono">
+                      {calculationSummary.rrRatioStr !== '--' ? calculationSummary.rrRatioStr : '1 : 4.68'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Level Detail Breakdown */}
+                <div className="space-y-1.5 text-xs font-mono pt-1">
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">• Entry</span>
+                    <span className="text-white font-bold">
+                      {Number(entryPrice || 77406).toLocaleString()}
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">• Stop Loss</span>
+                    <span className="text-rose-400 font-bold">
+                      {Number(stopLoss || 77250).toLocaleString()} ({entryPrice && stopLoss ? (((parseFloat(stopLoss) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100).toFixed(2) : '-0.20'}%)
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span className="text-slate-400">• Take Profit</span>
+                    <span className="text-emerald-400 font-bold">
+                      {Number(targetPrice || 77874).toLocaleString()} (+{entryPrice && targetPrice ? (((parseFloat(targetPrice) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100).toFixed(2) : '0.60'}%)
+                    </span>
+                  </div>
+
+                  <div className="flex items-center justify-between pt-1 border-t border-[#1E2638]/60">
+                    <span className="text-slate-400">• Est. P&L (₹)</span>
+                    <span className="text-emerald-400 font-extrabold">
+                      +{calculationSummary.hasTP ? calculationSummary.grossProfitINR.toFixed(2) : '468.00'}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Visual Level Gauge / Gradient Slider */}
+                <div className="pt-2">
+                  <div className="relative h-1.5 rounded-full bg-gradient-to-r from-rose-500 via-[#00c8ff] to-emerald-500 my-4">
+                    {/* SL Marker */}
+                    <div className="absolute left-0 -top-1 w-3.5 h-3.5 rounded-full bg-rose-500 ring-4 ring-rose-500/20" />
+                    
+                    {/* Entry Marker */}
+                    <div className="absolute left-1/2 -translate-x-1/2 -top-1 w-3.5 h-3.5 rounded-full bg-[#00c8ff] ring-4 ring-sky-500/20" />
+                    
+                    {/* TP Marker */}
+                    <div className="absolute right-0 -top-1 w-3.5 h-3.5 rounded-full bg-emerald-500 ring-4 ring-emerald-500/20" />
+                  </div>
+
+                  {/* Marker Labels */}
+                  <div className="flex items-center justify-between text-[10px] font-mono">
+                    <div className="text-left">
+                      <span className="block font-bold text-rose-400">SL</span>
+                      <span className="block text-rose-400 font-medium">{Number(stopLoss || 77250).toLocaleString()}</span>
+                    </div>
+
+                    <div className="text-center">
+                      <span className="block font-bold text-slate-300">Entry</span>
+                      <span className="block text-white font-medium">{Number(entryPrice || 77406).toLocaleString()}</span>
+                    </div>
+
+                    <div className="text-right">
+                      <span className="block font-bold text-emerald-400">TP</span>
+                      <span className="block text-emerald-400 font-medium">{Number(targetPrice || 77874).toLocaleString()}</span>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
             </div>
-          )}
+          </div>
 
-          {/* Footer Action Buttons */}
-          <div className="pt-2 flex items-center justify-between border-t border-[#1E2638]">
+        </div>
+
+        {/* Footer Action Bar */}
+        <div className="pt-3 border-t border-[#1E2638] flex items-center justify-between">
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-5 py-2.5 rounded-xl bg-[#0E1320] hover:bg-[#151D30] border border-[#1E2638] text-slate-300 hover:text-white font-semibold text-xs transition cursor-pointer"
+          >
+            Cancel
+          </button>
+
+          <div className="flex items-center space-x-3">
             <button
               type="button"
-              onClick={handleSaveInternal}
-              className="px-6 py-2.5 bg-[#1E2638] hover:bg-[#2A364F] text-slate-300 hover:text-white font-bold text-xs rounded-xl transition border border-[#2D3850]"
+              onClick={handleSaveDraft}
+              className="flex items-center space-x-1.5 px-4 py-2.5 rounded-xl bg-[#0E1320] hover:bg-[#151D30] border border-[#1E2638] text-slate-300 hover:text-white font-semibold text-xs transition cursor-pointer"
             >
-              Add Trade
+              <FileText className="w-3.5 h-3.5 text-slate-400" />
+              <span>Save Draft</span>
             </button>
 
-            {step === 1 ? (
+            {step < 3 ? (
               <button
                 type="button"
-                onClick={() => {
-                  const effQty = calculationSummary.qty || parseFloat(quantity);
-                  if (!symbol || !entryPrice || (!quantity && (!effQty || effQty <= 0))) {
-                    alert('Please fill in Symbol, Entry Price, and Quantity (or Lots) before proceeding.');
-                    return;
-                  }
-                  setStep(2);
-                }}
-                className="flex flex-col items-end group"
+                onClick={() => setStep(step + 1)}
+                className="flex items-center space-x-1.5 px-6 py-2.5 rounded-xl bg-[#00c8ff] hover:bg-[#38bdf8] text-slate-950 font-bold text-xs transition shadow-lg shadow-sky-500/25 cursor-pointer"
               >
-                <div className="flex items-center space-x-1 text-[#38BDF8] font-extrabold text-xs group-hover:text-sky-300">
-                  <span>Continue</span>
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-                <span className="text-[10px] text-slate-500 font-semibold">Trade Plan</span>
+                <span>Continue</span>
+                <ArrowRight className="w-4 h-4" />
               </button>
             ) : (
               <button
                 type="button"
                 onClick={handleSaveInternal}
-                className="px-6 py-2.5 bg-[#38BDF8] hover:bg-sky-400 text-white font-bold text-xs rounded-xl shadow-lg shadow-sky-500/20 transition"
+                className="flex items-center space-x-1.5 px-6 py-2.5 rounded-xl bg-[#00c8ff] hover:bg-[#38bdf8] text-slate-950 font-bold text-xs transition shadow-lg shadow-sky-500/25 cursor-pointer"
               >
-                Save & Close
+                <Check className="w-4 h-4" />
+                <span>Save Trade</span>
               </button>
             )}
-
           </div>
-
         </div>
 
       </div>
