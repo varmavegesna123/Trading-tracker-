@@ -12,9 +12,7 @@ import {
   FileText,
   Check,
   CheckCircle2,
-  CheckSquare,
-  ShieldAlert,
-  Target
+  Upload
 } from 'lucide-react';
 import { CryptoIcon, BINANCE_POPULAR_PAIRS } from '../utils/cryptoIcons';
 
@@ -87,26 +85,26 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
   };
 
   return (
-    <div className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 z-50 p-4 bg-[#0B0F19] rounded-2xl border border-[#1E2638] shadow-2xl space-y-3 w-72 font-sans text-slate-100">
-      <div className="flex items-center justify-between text-xs font-bold text-white font-jakarta pb-2 border-b border-[#1E2638]">
+    <div className="absolute left-0 sm:right-0 sm:left-auto top-full mt-2 z-50 p-4 bg-white dark:bg-[#0B0F19] rounded-2xl border border-slate-200 dark:border-[#1E2638] shadow-2xl space-y-3 w-72 font-sans text-slate-800 dark:text-slate-100">
+      <div className="flex items-center justify-between text-xs font-bold text-slate-900 dark:text-white font-jakarta pb-2 border-b border-slate-200 dark:border-[#1E2638]">
         <button
           type="button"
           onClick={() => setViewDate(new Date(currentYear, currentMonth - 1, 1))}
-          className="p-1 rounded-lg hover:bg-[#1E2638] text-slate-400 hover:text-white transition cursor-pointer"
+          className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1E2638] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition cursor-pointer"
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
-        <span className="font-mono text-sky-400 font-bold">{monthLabel}</span>
+        <span className="font-mono text-sky-600 dark:text-sky-400 font-bold">{monthLabel}</span>
         <button
           type="button"
           onClick={() => setViewDate(new Date(currentYear, currentMonth + 1, 1))}
-          className="p-1 rounded-lg hover:bg-[#1E2638] text-slate-400 hover:text-white transition cursor-pointer"
+          className="p-1 rounded-lg hover:bg-slate-100 dark:hover:bg-[#1E2638] text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-white transition cursor-pointer"
         >
           <ChevronRight className="w-4 h-4" />
         </button>
       </div>
 
-      <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-500 uppercase font-mono">
+      <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase font-mono">
         <span>Su</span><span>Mo</span><span>Tu</span><span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
       </div>
 
@@ -124,10 +122,10 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
               onClick={() => handleSelectDay(cell.fullDate)}
               className={`h-7 rounded-lg text-xs font-semibold flex items-center justify-center transition cursor-pointer ${
                 isSelected
-                  ? 'bg-sky-500 text-slate-950 font-extrabold shadow-md shadow-sky-500/30'
+                  ? 'bg-sky-500 text-white dark:text-slate-950 font-extrabold shadow-sm'
                   : isToday
-                  ? 'bg-[#1E2638] text-sky-400 font-bold border border-sky-500/40'
-                  : 'bg-[#111726] text-slate-300 hover:bg-[#1E2638]'
+                  ? 'bg-sky-50 dark:bg-[#1E2638] text-sky-600 dark:text-sky-400 font-bold border border-sky-300 dark:border-sky-500/40'
+                  : 'bg-slate-50 dark:bg-[#111726] text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-[#1E2638]'
               }`}
             >
               {cell.dayNum}
@@ -136,9 +134,9 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
         })}
       </div>
 
-      <div className="pt-2 border-t border-[#1E2638] flex items-center justify-between text-xs font-mono">
+      <div className="pt-2 border-t border-slate-200 dark:border-[#1E2638] flex items-center justify-between text-xs font-mono">
         <div className="flex items-center space-x-1.5">
-          <span className="text-slate-400 text-[10px] font-medium uppercase font-jakarta">Time:</span>
+          <span className="text-slate-500 dark:text-slate-400 text-[10px] font-medium uppercase font-jakarta">Time:</span>
           <input
             type="text"
             maxLength={2}
@@ -151,7 +149,7 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
               const num = Math.min(Math.max(parseInt(e.target.value) || 0, 0), 23);
               handleTimeChange(String(num).padStart(2, '0'), selectedMinStr);
             }}
-            className="w-11 py-1 bg-[#111726] text-white text-center text-xs rounded-lg border border-[#1E2638] font-bold font-mono focus:outline-none focus:border-sky-500"
+            className="w-11 py-1 bg-slate-50 dark:bg-[#111726] text-slate-900 dark:text-white text-center text-xs rounded-lg border border-slate-200 dark:border-[#1E2638] font-bold font-mono focus:outline-none focus:border-sky-500"
           />
           <span className="text-slate-400 font-bold font-mono">:</span>
           <input
@@ -166,14 +164,14 @@ function CustomGlassDateTimePicker({ value, onChange, onClose }) {
               const num = Math.min(Math.max(parseInt(e.target.value) || 0, 0), 59);
               handleTimeChange(selectedHourStr, String(num).padStart(2, '0'));
             }}
-            className="w-11 py-1 bg-[#111726] text-white text-center text-xs rounded-lg border border-[#1E2638] font-bold font-mono focus:outline-none focus:border-sky-500"
+            className="w-11 py-1 bg-slate-50 dark:bg-[#111726] text-slate-900 dark:text-white text-center text-xs rounded-lg border border-slate-200 dark:border-[#1E2638] font-bold font-mono focus:outline-none focus:border-sky-500"
           />
         </div>
 
         <button
           type="button"
           onClick={onClose}
-          className="px-3.5 py-1 bg-sky-500 hover:bg-sky-400 text-slate-950 text-[11px] font-bold rounded-lg shadow-sm transition cursor-pointer"
+          className="px-3.5 py-1 bg-sky-500 hover:bg-sky-400 text-white dark:text-slate-950 text-[11px] font-bold rounded-lg shadow-sm transition cursor-pointer"
         >
           Apply
         </button>
@@ -668,10 +666,10 @@ export function TradeModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-black/80 backdrop-blur-md overflow-y-auto font-sans">
-      <div className="bg-[#0B0F17] rounded-2xl max-w-5xl w-full max-h-[92vh] overflow-y-auto border border-[#1E2638] shadow-2xl text-slate-100 p-5 sm:p-6 space-y-4 custom-scrollbar">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-5 bg-slate-900/40 dark:bg-black/80 backdrop-blur-md overflow-y-auto font-sans">
+      <div className="bg-white dark:bg-[#0B0F17] rounded-2xl max-w-5xl w-full max-h-[92vh] overflow-y-auto border border-slate-200 dark:border-[#1E2638] shadow-2xl text-slate-800 dark:text-slate-100 p-5 sm:p-6 space-y-4 custom-scrollbar">
         
-        {/* Top Header: Clean TradeZella Minimalist Bar */}
+        {/* Top Header: Responsive to Light & Dark Theme */}
         <div className="flex items-center justify-between pb-1">
           <div className="flex items-center space-x-3">
             <button
@@ -680,17 +678,17 @@ export function TradeModal({
                 if (step > 1) setStep(step - 1);
                 else onClose();
               }}
-              className="p-2 rounded-xl bg-[#111724] border border-[#1E2638] text-slate-400 hover:text-white hover:border-slate-700 transition cursor-pointer"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#111724] border border-slate-200 dark:border-[#1E2638] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700 transition cursor-pointer"
               title="Go Back"
             >
               <ArrowLeft className="w-4 h-4" />
             </button>
 
             <div>
-              <h2 className="text-base sm:text-lg font-bold text-white tracking-tight font-jakarta">
+              <h2 className="text-base sm:text-lg font-bold text-slate-900 dark:text-white tracking-tight font-jakarta">
                 {tradeToEdit ? 'Edit Trade' : 'New Trade'}
               </h2>
-              <p className="text-xs text-slate-400 font-normal">
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-normal">
                 Log a trade with plan, risk and execution details.
               </p>
             </div>
@@ -701,7 +699,7 @@ export function TradeModal({
               <button
                 type="button"
                 onClick={handleDeleteInternal}
-                className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/20 text-rose-400 hover:bg-rose-500/20 transition cursor-pointer"
+                className="p-2 rounded-xl bg-rose-50 dark:bg-rose-500/10 border border-rose-200 dark:border-rose-500/20 text-rose-600 dark:text-rose-400 hover:bg-rose-100 dark:hover:bg-rose-500/20 transition cursor-pointer"
                 title="Delete Trade Execution"
               >
                 <Trash2 className="w-4 h-4" />
@@ -711,7 +709,7 @@ export function TradeModal({
             <button
               type="button"
               onClick={handleSaveDraft}
-              className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-[#111724] border border-[#1E2638] text-slate-300 hover:text-white text-xs font-medium hover:border-slate-700 transition cursor-pointer"
+              className="hidden sm:flex items-center space-x-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#111724] border border-slate-200 dark:border-[#1E2638] text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white text-xs font-medium hover:border-slate-300 dark:hover:border-slate-700 transition cursor-pointer"
             >
               <FileText className="w-3.5 h-3.5 text-slate-400" />
               <span>Save Draft</span>
@@ -720,15 +718,15 @@ export function TradeModal({
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-xl bg-[#111724] border border-[#1E2638] text-slate-400 hover:text-white hover:border-slate-700 transition cursor-pointer"
+              className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#111724] border border-slate-200 dark:border-[#1E2638] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white hover:border-slate-300 dark:hover:border-slate-700 transition cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
         </div>
 
-        {/* TradeZella Sleek Stepper */}
-        <div className="flex items-center justify-center space-x-2 sm:space-x-4 py-2 border-y border-[#1E2638]/60 text-xs">
+        {/* Stepper (Light & Dark Theme Compatible) */}
+        <div className="flex items-center justify-center space-x-2 sm:space-x-4 py-2 border-y border-slate-200 dark:border-[#1E2638]/60 text-xs">
           <button
             type="button"
             onClick={() => setStep(1)}
@@ -736,19 +734,19 @@ export function TradeModal({
           >
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold transition ${
               step === 1
-                ? 'bg-sky-500 text-slate-950 shadow-sm'
-                : 'bg-[#111724] border border-[#1E2638] text-slate-400 group-hover:text-white'
+                ? 'bg-sky-500 text-white dark:text-slate-950 shadow-sm'
+                : 'bg-slate-100 dark:bg-[#111724] border border-slate-200 dark:border-[#1E2638] text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-white'
             }`}>
               1
             </span>
             <span className={`text-xs ${
-              step === 1 ? 'font-bold text-white' : 'font-medium text-slate-400 group-hover:text-slate-300'
+              step === 1 ? 'font-bold text-slate-900 dark:text-white' : 'font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-300'
             }`}>
               Order & Levels
             </span>
           </button>
 
-          <div className="w-8 sm:w-16 h-px bg-[#1E2638]" />
+          <div className="w-8 sm:w-16 h-px bg-slate-200 dark:bg-[#1E2638]" />
 
           <button
             type="button"
@@ -757,19 +755,19 @@ export function TradeModal({
           >
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold transition ${
               step === 2
-                ? 'bg-sky-500 text-slate-950 shadow-sm'
-                : 'bg-[#111724] border border-[#1E2638] text-slate-400 group-hover:text-white'
+                ? 'bg-sky-500 text-white dark:text-slate-950 shadow-sm'
+                : 'bg-slate-100 dark:bg-[#111724] border border-slate-200 dark:border-[#1E2638] text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-white'
             }`}>
               2
             </span>
             <span className={`text-xs ${
-              step === 2 ? 'font-bold text-white' : 'font-medium text-slate-400 group-hover:text-slate-300'
+              step === 2 ? 'font-bold text-slate-900 dark:text-white' : 'font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-300'
             }`}>
               Trade Plan & Confluences
             </span>
           </button>
 
-          <div className="w-8 sm:w-16 h-px bg-[#1E2638]" />
+          <div className="w-8 sm:w-16 h-px bg-slate-200 dark:bg-[#1E2638]" />
 
           <button
             type="button"
@@ -778,34 +776,34 @@ export function TradeModal({
           >
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold transition ${
               step === 3
-                ? 'bg-sky-500 text-slate-950 shadow-sm'
-                : 'bg-[#111724] border border-[#1E2638] text-slate-400 group-hover:text-white'
+                ? 'bg-sky-500 text-white dark:text-slate-950 shadow-sm'
+                : 'bg-slate-100 dark:bg-[#111724] border border-slate-200 dark:border-[#1E2638] text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-white'
             }`}>
               3
             </span>
             <span className={`text-xs ${
-              step === 3 ? 'font-bold text-white' : 'font-medium text-slate-400 group-hover:text-slate-300'
+              step === 3 ? 'font-bold text-slate-900 dark:text-white' : 'font-medium text-slate-500 dark:text-slate-400 group-hover:text-slate-800 dark:group-hover:text-slate-300'
             }`}>
               Review & Save
             </span>
           </button>
         </div>
 
-        {/* 2-Column Balanced Grid */}
+        {/* 2-Column Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
           
-          {/* LEFT COLUMN: Main Clean Controls */}
+          {/* LEFT COLUMN: Main Form Inputs */}
           <div className="lg:col-span-8 space-y-4">
 
-            {/* STEP 1: Clean Order & Levels */}
+            {/* STEP 1: Order & Levels */}
             {step === 1 && (
               <>
-                {/* Row 1: Direction, Order Type, Trade Status (Well-proportioned, zero text-wrapping) */}
+                {/* Row 1: Direction, Order Type, Trade Status */}
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-3">
                   
                   {/* Trade Direction */}
                   <div className="md:col-span-4">
-                    <label className="block text-[11px] font-medium text-slate-400 mb-1.5 font-jakarta">
+                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1.5 font-jakarta">
                       Trade Direction
                     </label>
                     <div className="grid grid-cols-2 gap-1.5">
@@ -814,8 +812,8 @@ export function TradeModal({
                         onClick={() => setDirection('LONG')}
                         className={`h-9 px-2 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center space-x-1 ${
                           direction === 'LONG'
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/40 shadow-sm'
-                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-slate-200'
+                            ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/40 shadow-sm'
+                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
                         }`}
                       >
                         <span>↑ Buy / Long</span>
@@ -825,8 +823,8 @@ export function TradeModal({
                         onClick={() => setDirection('SHORT')}
                         className={`h-9 px-2 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center space-x-1 ${
                           direction === 'SHORT'
-                            ? 'bg-rose-500/10 text-rose-400 border border-rose-500/40 shadow-sm'
-                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-slate-200'
+                            ? 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-500/40 shadow-sm'
+                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
                         }`}
                       >
                         <span>↓ Sell / Short</span>
@@ -836,7 +834,7 @@ export function TradeModal({
 
                   {/* Order Type */}
                   <div className="md:col-span-4">
-                    <label className="block text-[11px] font-medium text-slate-400 mb-1.5 font-jakarta">
+                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1.5 font-jakarta">
                       Order Type
                     </label>
                     <div className="grid grid-cols-3 gap-1.5">
@@ -845,8 +843,8 @@ export function TradeModal({
                         onClick={() => setOrderType('Limit')}
                         className={`h-9 px-1 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center ${
                           orderType === 'Limit'
-                            ? 'bg-sky-500/10 text-sky-400 border border-sky-500/40'
-                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-slate-200'
+                            ? 'bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-300 dark:border-sky-500/40 shadow-sm'
+                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
                         }`}
                       >
                         Limit
@@ -856,8 +854,8 @@ export function TradeModal({
                         onClick={() => setOrderType('Market')}
                         className={`h-9 px-1 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center ${
                           orderType === 'Market'
-                            ? 'bg-sky-500/10 text-sky-400 border border-sky-500/40'
-                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-slate-200'
+                            ? 'bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-300 dark:border-sky-500/40 shadow-sm'
+                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
                         }`}
                       >
                         Market
@@ -867,8 +865,8 @@ export function TradeModal({
                         onClick={() => setOrderType('Stop')}
                         className={`h-9 px-1 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center ${
                           orderType === 'Stop'
-                            ? 'bg-sky-500/10 text-sky-400 border border-sky-500/40'
-                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-slate-200'
+                            ? 'bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-300 dark:border-sky-500/40 shadow-sm'
+                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
                         }`}
                       >
                         Stop
@@ -878,7 +876,7 @@ export function TradeModal({
 
                   {/* Trade Status */}
                   <div className="md:col-span-4">
-                    <label className="block text-[11px] font-medium text-slate-400 mb-1.5 font-jakarta">
+                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1.5 font-jakarta">
                       Trade Status
                     </label>
                     <div className="grid grid-cols-2 gap-1.5">
@@ -887,8 +885,8 @@ export function TradeModal({
                         onClick={() => setStatus('OPEN')}
                         className={`h-9 px-2 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center whitespace-nowrap ${
                           status === 'OPEN'
-                            ? 'bg-sky-500/10 text-sky-400 border border-sky-500/40 shadow-sm'
-                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-slate-200'
+                            ? 'bg-sky-50 dark:bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-300 dark:border-sky-500/40 shadow-sm'
+                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
                         }`}
                       >
                         Open Position
@@ -898,8 +896,8 @@ export function TradeModal({
                         onClick={() => setStatus('CLOSED')}
                         className={`h-9 px-2 text-xs font-semibold rounded-xl transition cursor-pointer flex items-center justify-center whitespace-nowrap ${
                           status === 'CLOSED'
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/40 shadow-sm'
-                            : 'bg-[#0E1320] text-slate-400 border border-[#1E2638] hover:text-slate-200'
+                            ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/40 shadow-sm'
+                            : 'bg-slate-50 dark:bg-[#0E1320] text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-[#1E2638] hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-[#151D30]'
                         }`}
                       >
                         Closed Trade
@@ -908,14 +906,14 @@ export function TradeModal({
                   </div>
                 </div>
 
-                {/* Row 2: Instrument / Symbol, Exchange, Execution Date (Consistent Height & Alignment) */}
+                {/* Row 2: Instrument / Symbol, Exchange, Execution Date */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {/* Instrument / Symbol */}
                   <div>
-                    <label className="block text-[11px] font-medium text-slate-400 mb-1.5 font-jakarta">
+                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1.5 font-jakarta">
                       Instrument / Symbol *
                     </label>
-                    <div className="relative flex items-center bg-[#0E1320] rounded-xl border border-[#1E2638] px-3 h-10 hover:border-slate-700 focus-within:border-sky-500/70 transition">
+                    <div className="relative flex items-center bg-slate-50 dark:bg-[#0E1320] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
                       <CryptoIcon symbol={symbol || 'BTC'} className="w-4 h-4 mr-2 shrink-0" />
                       <input
                         type="text"
@@ -929,10 +927,10 @@ export function TradeModal({
                           else if (upper.includes('ETH')) setContractSize('0.01');
                           else if (upper.includes('SOL')) setContractSize('0.1');
                         }}
-                        className="w-full bg-transparent text-white text-xs font-bold focus:outline-none font-mono uppercase placeholder:text-slate-600"
+                        className="w-full bg-transparent text-slate-900 dark:text-white text-xs font-bold focus:outline-none font-mono uppercase placeholder:text-slate-400 dark:placeholder:text-slate-600"
                         required
                       />
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0 pointer-events-none" />
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0 pointer-events-none" />
                       <datalist id="trademodal-binance-pairs">
                         {BINANCE_POPULAR_PAIRS.map(p => (
                           <option key={p.symbol} value={p.symbol}>{p.name + ' (' + p.coin + ')'}</option>
@@ -943,43 +941,43 @@ export function TradeModal({
 
                   {/* Exchange */}
                   <div>
-                    <label className="block text-[11px] font-medium text-slate-400 mb-1.5 font-jakarta">
+                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1.5 font-jakarta">
                       Exchange
                     </label>
-                    <div className="relative flex items-center bg-[#0E1320] rounded-xl border border-[#1E2638] px-3 h-10 hover:border-slate-700 focus-within:border-sky-500/70 transition">
-                      <span className="text-sky-400 text-xs mr-2 select-none">❖</span>
+                    <div className="relative flex items-center bg-slate-50 dark:bg-[#0E1320] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
+                      <span className="text-sky-500 text-xs mr-2 select-none">❖</span>
                       <select
                         value={exchange}
                         onChange={(e) => setExchange(e.target.value)}
-                        className="w-full bg-transparent text-white text-xs font-medium focus:outline-none cursor-pointer appearance-none"
+                        className="w-full bg-transparent text-slate-900 dark:text-white text-xs font-medium focus:outline-none cursor-pointer appearance-none"
                       >
-                        <option value="Delta Exchange" className="bg-[#0B0F19]">Delta Exchange</option>
-                        <option value="Binance" className="bg-[#0B0F19]">Binance</option>
-                        <option value="Bybit" className="bg-[#0B0F19]">Bybit</option>
-                        <option value="OKX" className="bg-[#0B0F19]">OKX</option>
-                        <option value="Coinbase" className="bg-[#0B0F19]">Coinbase</option>
-                        <option value="NSE" className="bg-[#0B0F19]">NSE (India)</option>
+                        <option value="Delta Exchange" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">Delta Exchange</option>
+                        <option value="Binance" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">Binance</option>
+                        <option value="Bybit" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">Bybit</option>
+                        <option value="OKX" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">OKX</option>
+                        <option value="Coinbase" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">Coinbase</option>
+                        <option value="NSE" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">NSE (India)</option>
                       </select>
-                      <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0 pointer-events-none" />
+                      <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0 pointer-events-none" />
                     </div>
                   </div>
 
                   {/* Execution Date */}
                   <div>
-                    <label className="block text-[11px] font-medium text-slate-400 mb-1.5 font-jakarta">
+                    <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1.5 font-jakarta">
                       Execution Date
                     </label>
                     <div className="relative">
                       <button
                         type="button"
                         onClick={() => setShowEntryDatePicker(!showEntryDatePicker)}
-                        className="w-full px-3 h-10 bg-[#0E1320] hover:bg-[#151D30] text-slate-200 text-xs font-medium rounded-xl border border-[#1E2638] hover:border-slate-700 focus:outline-none flex items-center justify-between cursor-pointer transition"
+                        className="w-full px-3 h-10 bg-slate-50 hover:bg-slate-100 dark:bg-[#0E1320] dark:hover:bg-[#151D30] text-slate-800 dark:text-slate-200 text-xs font-medium rounded-xl border border-slate-200 dark:border-[#1E2638] hover:border-slate-300 dark:hover:border-slate-700 focus:outline-none flex items-center justify-between cursor-pointer transition"
                       >
                         <div className="flex items-center space-x-2">
-                          <Calendar className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                          <Calendar className="w-3.5 h-3.5 text-sky-500 shrink-0" />
                           <span>{formatShortDate(entryDate)}</span>
                         </div>
-                        <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0" />
+                        <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0" />
                       </button>
 
                       {showEntryDatePicker && (
@@ -993,16 +991,16 @@ export function TradeModal({
                   </div>
                 </div>
 
-                {/* Section 1: Capital & Position Sizing (Clean Card) */}
-                <div className="p-4 rounded-2xl bg-[#0D121F]/80 border border-[#1E2638] space-y-3">
+                {/* Section 1: Capital & Position Sizing */}
+                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-1.5 text-xs font-semibold text-slate-200 font-jakarta">
+                    <div className="flex items-center space-x-1.5 text-xs font-semibold text-slate-800 dark:text-slate-200 font-jakarta">
                       <span>Capital & Position Sizing</span>
-                      <Info className="w-3.5 h-3.5 text-slate-500 cursor-pointer hover:text-slate-300" title="Margin, capacity and leverage sizing details" />
+                      <Info className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 cursor-pointer hover:text-slate-600 dark:hover:text-slate-300" title="Margin, capacity and leverage sizing details" />
                     </div>
 
                     <div className="flex items-center space-x-1">
-                      <span className="text-[11px] text-slate-400 mr-1">Quick Size:</span>
+                      <span className="text-[11px] text-slate-500 dark:text-slate-400 mr-1">Quick Size:</span>
                       {[10, 25, 50, 75, 100].map(pct => (
                         <button
                           key={pct}
@@ -1010,8 +1008,8 @@ export function TradeModal({
                           onClick={() => handlePercentageMargin(pct)}
                           className={`px-2 py-0.5 rounded-lg text-xs font-medium transition cursor-pointer ${
                             selectedQuickSize === pct
-                              ? 'bg-sky-500 text-slate-950 font-bold shadow-sm'
-                              : 'bg-[#111726] text-slate-400 hover:text-white border border-[#1E2638]'
+                              ? 'bg-sky-500 text-white dark:text-slate-950 font-bold shadow-sm'
+                              : 'bg-white dark:bg-[#111726] text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-[#1E2638]'
                           }`}
                         >
                           {pct}%
@@ -1023,89 +1021,89 @@ export function TradeModal({
                   {/* 4 Clean Columns */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
                         Starting Capital (₹)
                       </label>
-                      <div className="relative flex items-center bg-[#0B0F19] rounded-xl border border-[#1E2638] px-3 h-10 hover:border-slate-700 focus-within:border-sky-500/70 transition">
-                        <span className="text-slate-500 text-xs mr-1 select-none">₹</span>
+                      <div className="relative flex items-center bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
+                        <span className="text-slate-400 dark:text-slate-500 text-xs mr-1 select-none">₹</span>
                         <input
                           type="number"
                           step="any"
                           value={startingCapital}
                           onChange={(e) => setStartingCapital(e.target.value)}
-                          className="w-full bg-transparent text-white font-mono text-xs font-medium focus:outline-none"
+                          className="w-full bg-transparent text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
                         Margin Used (₹)
                       </label>
-                      <div className="relative flex items-center bg-[#0B0F19] rounded-xl border border-[#1E2638] px-3 h-10 hover:border-slate-700 focus-within:border-sky-500/70 transition">
-                        <span className="text-slate-500 text-xs mr-1 select-none">₹</span>
+                      <div className="relative flex items-center bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
+                        <span className="text-slate-400 dark:text-slate-500 text-xs mr-1 select-none">₹</span>
                         <input
                           type="number"
                           step="any"
                           value={marginUsed}
                           onChange={(e) => setMarginUsed(e.target.value)}
-                          className="w-full bg-transparent text-white font-mono text-xs font-medium focus:outline-none"
+                          className="w-full bg-transparent text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none"
                         />
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
                         Available Balance (₹)
                       </label>
-                      <div className="flex items-center bg-[#0B0F19] rounded-xl border border-[#1E2638] px-3 h-10 text-emerald-400 font-mono text-xs font-semibold">
+                      <div className="flex items-center bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 text-emerald-600 dark:text-emerald-400 font-mono text-xs font-semibold">
                         <span>₹ {calculationSummary.availableBalance >= 0 ? calculationSummary.availableBalance.toLocaleString('en-IN') : '0'}</span>
                       </div>
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
                         Leverage
                       </label>
-                      <div className="relative flex items-center bg-[#0B0F19] rounded-xl border border-[#1E2638] px-3 h-10 hover:border-slate-700 focus-within:border-sky-500/70 transition">
+                      <div className="relative flex items-center bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
                         <select
                           value={leverage}
                           onChange={(e) => setLeverage(e.target.value)}
-                          className="w-full bg-transparent text-white text-xs font-medium focus:outline-none cursor-pointer appearance-none"
+                          className="w-full bg-transparent text-slate-900 dark:text-white text-xs font-medium focus:outline-none cursor-pointer appearance-none"
                         >
-                          <option value="1" className="bg-[#0B0F19]">1x</option>
-                          <option value="5" className="bg-[#0B0F19]">5x</option>
-                          <option value="10" className="bg-[#0B0F19]">10x</option>
-                          <option value="20" className="bg-[#0B0F19]">20x</option>
-                          <option value="25" className="bg-[#0B0F19]">25x</option>
-                          <option value="50" className="bg-[#0B0F19]">50x</option>
-                          <option value="75" className="bg-[#0B0F19]">75x</option>
-                          <option value="100" className="bg-[#0B0F19]">100x</option>
+                          <option value="1" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">1x</option>
+                          <option value="5" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">5x</option>
+                          <option value="10" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">10x</option>
+                          <option value="20" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">20x</option>
+                          <option value="25" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">25x</option>
+                          <option value="50" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">50x</option>
+                          <option value="75" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">75x</option>
+                          <option value="100" className="bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white">100x</option>
                         </select>
-                        <ChevronDown className="w-3.5 h-3.5 text-slate-500 shrink-0 pointer-events-none" />
+                        <ChevronDown className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500 shrink-0 pointer-events-none" />
                       </div>
                     </div>
                   </div>
 
-                  {/* Sub-strip: Subtle, neat specs */}
-                  <div className="flex flex-wrap items-center justify-between text-xs text-slate-400 pt-1 border-t border-[#1E2638]/60">
+                  {/* Sub-strip */}
+                  <div className="flex flex-wrap items-center justify-between text-xs text-slate-500 dark:text-slate-400 pt-1 border-t border-slate-200 dark:border-[#1E2638]/60">
                     <div>
-                      Capacity: <span className="text-sky-400 font-medium">{formatINR(calculationSummary.capacityNotionalINR)}</span> <span className="text-slate-500 text-[11px]">(Margin × Leverage)</span>
+                      Capacity: <span className="text-sky-600 dark:text-sky-400 font-medium">{formatINR(calculationSummary.capacityNotionalINR)}</span> <span className="text-slate-400 dark:text-slate-500 text-[11px]">(Margin × Leverage)</span>
                     </div>
-                    <div className="text-[11px] text-slate-400">
-                      Contract: <span className="text-slate-300">1 Lot = {contractSize} {symbol.split('/')[0] || 'BTC'}</span> · 1 USDT = <span className="text-slate-300">₹{usdtRate}</span>
+                    <div className="text-[11px]">
+                      Contract: <span className="text-slate-700 dark:text-slate-300 font-medium">1 Lot = {contractSize} {symbol.split('/')[0] || 'BTC'}</span> · 1 USDT = <span className="text-slate-700 dark:text-slate-300 font-medium">₹{usdtRate}</span>
                     </div>
                   </div>
                 </div>
 
-                {/* Section 2: Order Levels & Position Sizing (Clean, No Emojis in Inputs) */}
-                <div className="p-4 rounded-2xl bg-[#0D121F]/80 border border-[#1E2638] space-y-3">
+                {/* Section 2: Order Levels & Position Sizing */}
+                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-3">
                   <div className="flex items-center justify-between">
-                    <div className="text-xs font-semibold text-slate-200 font-jakarta">
+                    <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 font-jakarta">
                       Order Levels & Position Sizing
                     </div>
 
-                    <label className="flex items-center space-x-1.5 text-xs text-slate-300 font-medium cursor-pointer">
+                    <label className="flex items-center space-x-1.5 text-xs text-slate-600 dark:text-slate-300 font-medium cursor-pointer">
                       <input
                         type="checkbox"
                         checked={hasBracketOrder}
@@ -1113,14 +1111,14 @@ export function TradeModal({
                         className="rounded accent-sky-500 cursor-pointer"
                       />
                       <span>TP / SL Bracket</span>
-                      <Info className="w-3 h-3 text-slate-500" />
+                      <Info className="w-3 h-3 text-slate-400 dark:text-slate-500" />
                     </label>
                   </div>
 
                   {/* Row 1: 4 Price Inputs */}
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
                         Entry Price *
                       </label>
                       <input
@@ -1129,13 +1127,13 @@ export function TradeModal({
                         placeholder="77406"
                         value={entryPrice}
                         onChange={(e) => setEntryPrice(e.target.value)}
-                        className="w-full px-3 h-10 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500/70 hover:border-slate-700 transition"
+                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
                         required
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-rose-400 mb-1 font-jakarta">
+                      <label className="block text-[11px] font-medium text-rose-600 dark:text-rose-400 mb-1 font-jakarta">
                         Stop Loss (SL)
                       </label>
                       <input
@@ -1144,12 +1142,12 @@ export function TradeModal({
                         placeholder="77250"
                         value={stopLoss}
                         onChange={(e) => setStopLoss(e.target.value)}
-                        className="w-full px-3 h-10 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-rose-300 font-mono text-xs font-medium focus:outline-none focus:border-rose-500/70 hover:border-slate-700 transition"
+                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-rose-600 dark:text-rose-300 font-mono text-xs font-medium focus:outline-none focus:border-rose-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-emerald-400 mb-1 font-jakarta">
+                      <label className="block text-[11px] font-medium text-emerald-600 dark:text-emerald-400 mb-1 font-jakarta">
                         Take Profit (TP)
                       </label>
                       <input
@@ -1158,12 +1156,12 @@ export function TradeModal({
                         placeholder="77874"
                         value={targetPrice}
                         onChange={(e) => setTargetPrice(e.target.value)}
-                        className="w-full px-3 h-10 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-emerald-300 font-mono text-xs font-medium focus:outline-none focus:border-emerald-500/70 hover:border-slate-700 transition"
+                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-emerald-600 dark:text-emerald-300 font-mono text-xs font-medium focus:outline-none focus:border-emerald-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
                         Actual Exit Price
                       </label>
                       <input
@@ -1172,7 +1170,7 @@ export function TradeModal({
                         placeholder="77485"
                         value={exitPrice}
                         onChange={(e) => setExitPrice(e.target.value)}
-                        className="w-full px-3 h-10 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500/70 hover:border-slate-700 transition"
+                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
                       />
                     </div>
                   </div>
@@ -1181,14 +1179,14 @@ export function TradeModal({
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="block text-[11px] font-medium text-slate-400 font-jakarta">
+                        <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 font-jakarta">
                           Order Size in Lots *
                         </label>
-                        <span className="text-[10px] text-slate-400 font-mono">
+                        <span className="text-[10px] text-slate-500 dark:text-slate-400 font-mono">
                           = {calculationSummary.qty.toFixed(6)} {symbol.split('/')[0] || 'BTC'}
                         </span>
                       </div>
-                      <div className="relative flex items-center bg-[#0B0F19] rounded-xl border border-[#1E2638] px-3 h-10 hover:border-slate-700 focus-within:border-sky-500/70 transition">
+                      <div className="relative flex items-center bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
                         <input
                           type="number"
                           step="any"
@@ -1202,10 +1200,10 @@ export function TradeModal({
                               setIsManualQuantity(false);
                             }
                           }}
-                          className="w-full bg-transparent text-white font-mono text-xs font-medium focus:outline-none pr-10"
+                          className="w-full bg-transparent text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none pr-10"
                           required
                         />
-                        <span className="text-slate-500 text-xs font-medium pointer-events-none select-none">
+                        <span className="text-slate-400 dark:text-slate-500 text-xs font-medium pointer-events-none select-none">
                           Lots
                         </span>
                       </div>
@@ -1213,7 +1211,7 @@ export function TradeModal({
 
                     <div>
                       <div className="flex items-center justify-between mb-1">
-                        <label className="block text-[11px] font-medium text-slate-400 font-jakarta">
+                        <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 font-jakarta">
                           Dynamic Risk Target (₹)
                         </label>
                         {calculationSummary.hasSL && calculationSummary.recommendedRiskLots > 0 && (
@@ -1225,20 +1223,20 @@ export function TradeModal({
                               setQuantity(parseFloat((calculationSummary.recommendedRiskLots * c).toFixed(6)).toString());
                               setIsManualQuantity(false);
                             }}
-                            className="text-[10px] text-sky-400 hover:text-sky-300 font-medium cursor-pointer"
+                            className="text-[10px] text-sky-600 dark:text-sky-400 hover:underline font-medium cursor-pointer"
                           >
                             Apply {calculationSummary.recommendedRiskLots} Lots
                           </button>
                         )}
                       </div>
-                      <div className="relative flex items-center bg-[#0B0F19] rounded-xl border border-[#1E2638] px-3 h-10 hover:border-slate-700 focus-within:border-sky-500/70 transition">
-                        <span className="text-slate-500 text-xs mr-1 select-none">₹</span>
+                      <div className="relative flex items-center bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] px-3 h-10 hover:border-slate-300 dark:hover:border-slate-700 focus-within:border-sky-500 transition">
+                        <span className="text-slate-400 dark:text-slate-500 text-xs mr-1 select-none">₹</span>
                         <input
                           type="number"
                           step="any"
                           value={targetRiskINR}
                           onChange={(e) => setTargetRiskINR(e.target.value)}
-                          className="w-full bg-transparent text-white font-mono text-xs font-medium focus:outline-none"
+                          className="w-full bg-transparent text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none"
                         />
                       </div>
                     </div>
@@ -1247,7 +1245,7 @@ export function TradeModal({
                   {/* Row 3: Exchange Realized P&L, Trading Fees, Funding Fees */}
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1 text-xs">
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
                         Exchange Realized P&L (₹)
                       </label>
                       <input
@@ -1256,12 +1254,12 @@ export function TradeModal({
                         placeholder="-100"
                         value={manualRealizedPnL}
                         onChange={(e) => setManualRealizedPnL(e.target.value)}
-                        className="w-full px-3 h-10 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500/70 hover:border-slate-700 transition"
+                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
                         Trading Fees (₹)
                       </label>
                       <input
@@ -1270,12 +1268,12 @@ export function TradeModal({
                         placeholder="0.00"
                         value={tradingFees}
                         onChange={(e) => setTradingFees(e.target.value)}
-                        className="w-full px-3 h-10 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500/70 hover:border-slate-700 transition"
+                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-[11px] font-medium text-slate-400 mb-1 font-jakarta">
+                      <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 mb-1 font-jakarta">
                         Funding Fees (₹)
                       </label>
                       <input
@@ -1284,7 +1282,7 @@ export function TradeModal({
                         placeholder="0.00"
                         value={fundingFees}
                         onChange={(e) => setFundingFees(e.target.value)}
-                        className="w-full px-3 h-10 bg-[#0B0F19] rounded-xl border border-[#1E2638] text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500/70 hover:border-slate-700 transition"
+                        className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] rounded-xl border border-slate-200 dark:border-[#1E2638] text-slate-900 dark:text-white font-mono text-xs font-medium focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700 transition"
                       />
                     </div>
                   </div>
@@ -1296,63 +1294,63 @@ export function TradeModal({
             {step === 2 && (
               <div className="space-y-4">
                 {/* Confluences Card */}
-                <div className="p-4 rounded-2xl bg-[#0D121F]/80 border border-[#1E2638] space-y-3">
-                  <div className="text-xs font-semibold text-slate-200 font-jakarta">
+                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-3">
+                  <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 font-jakarta">
                     SMC Confluence Checklist
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
-                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638] cursor-pointer hover:border-slate-700 transition">
+                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638] cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 transition">
                       <input
                         type="checkbox"
                         checked={h1Bias}
                         onChange={(e) => setH1Bias(e.target.checked)}
                         className="rounded accent-sky-500 cursor-pointer"
                       />
-                      <span className="font-medium text-slate-200">1H HTF Directional Bias</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-200">1H HTF Directional Bias</span>
                     </label>
 
-                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638] cursor-pointer hover:border-slate-700 transition">
+                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638] cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 transition">
                       <input
                         type="checkbox"
                         checked={m15Structure}
                         onChange={(e) => setM15Structure(e.target.checked)}
                         className="rounded accent-sky-500 cursor-pointer"
                       />
-                      <span className="font-medium text-slate-200">15m Market Structure Shift / FVG</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-200">15m Market Structure Shift / FVG</span>
                     </label>
 
-                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638] cursor-pointer hover:border-slate-700 transition">
+                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638] cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 transition">
                       <input
                         type="checkbox"
                         checked={m5EntryPoi}
                         onChange={(e) => setM5EntryPoi(e.target.checked)}
                         className="rounded accent-sky-500 cursor-pointer"
                       />
-                      <span className="font-medium text-slate-200">5m Entry POI / Mitigation</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-200">5m Entry POI / Mitigation</span>
                     </label>
 
-                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638] cursor-pointer hover:border-slate-700 transition">
+                    <label className="flex items-center space-x-2.5 p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638] cursor-pointer hover:border-slate-300 dark:hover:border-slate-700 transition">
                       <input
                         type="checkbox"
                         checked={m1BosChoch}
                         onChange={(e) => setM1BosChoch(e.target.checked)}
                         className="rounded accent-sky-500 cursor-pointer"
                       />
-                      <span className="font-medium text-slate-200">1m LTF Trigger (CHOCH / BOS)</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-200">1m LTF Trigger (CHOCH / BOS)</span>
                     </label>
                   </div>
                 </div>
 
                 {/* Strategy Selector */}
-                <div className="p-4 rounded-2xl bg-[#0D121F]/80 border border-[#1E2638] space-y-2">
-                  <label className="block text-[11px] font-medium text-slate-400 font-jakarta">
+                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-2">
+                  <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 font-jakarta">
                     Trading Strategy / Setup Model
                   </label>
                   <select
                     value={strategy}
                     onChange={(e) => setStrategy(e.target.value)}
-                    className="w-full px-3 h-10 bg-[#0B0F19] text-white text-xs rounded-xl border border-[#1E2638] font-medium focus:outline-none focus:border-sky-500/70 hover:border-slate-700 cursor-pointer"
+                    className="w-full px-3 h-10 bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white text-xs rounded-xl border border-slate-200 dark:border-[#1E2638] font-medium focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700 cursor-pointer"
                   >
                     <option value="SMC Order Block">SMC Order Block</option>
                     <option value="Liquidity Sweep">Liquidity Sweep / Raid</option>
@@ -1364,19 +1362,19 @@ export function TradeModal({
                 </div>
 
                 {/* Upload Screenshot */}
-                <div className="p-4 rounded-2xl bg-[#0D121F]/80 border border-[#1E2638] space-y-2">
-                  <label className="block text-[11px] font-medium text-slate-400 font-jakarta">
+                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-2">
+                  <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 font-jakarta">
                     Upload Setup Screenshot (Local File)
                   </label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={handleFileUpload}
-                    className="w-full text-xs text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#1E2638] file:text-sky-400 hover:file:bg-slate-700 cursor-pointer"
+                    className="w-full text-xs text-slate-500 dark:text-slate-400 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-slate-100 dark:file:bg-[#1E2638] file:text-sky-600 dark:file:text-sky-400 hover:file:bg-slate-200 dark:hover:file:bg-slate-700 cursor-pointer"
                   />
 
                   {chartUrl && (
-                    <div className="mt-2 relative rounded-xl overflow-hidden border border-[#1E2638] h-32 bg-[#0B0F19]">
+                    <div className="mt-2 relative rounded-xl overflow-hidden border border-slate-200 dark:border-[#1E2638] h-32 bg-slate-100 dark:bg-[#0B0F19]">
                       <img src={chartUrl} alt="Setup Chart" className="w-full h-full object-cover" />
                       <button
                         type="button"
@@ -1390,8 +1388,8 @@ export function TradeModal({
                 </div>
 
                 {/* Notes */}
-                <div className="p-4 rounded-2xl bg-[#0D121F]/80 border border-[#1E2638] space-y-2">
-                  <label className="block text-[11px] font-medium text-slate-400 font-jakarta">
+                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-2">
+                  <label className="block text-[11px] font-medium text-slate-600 dark:text-slate-400 font-jakarta">
                     Notes & Execution Rationale
                   </label>
                   <textarea
@@ -1399,7 +1397,7 @@ export function TradeModal({
                     placeholder="Enter setup observations, confluence reasons, emotions, or market context..."
                     value={notes}
                     onChange={(e) => setNotes(e.target.value)}
-                    className="w-full p-3 bg-[#0B0F19] text-white text-xs rounded-xl border border-[#1E2638] focus:outline-none focus:border-sky-500/70 hover:border-slate-700"
+                    className="w-full p-3 bg-white dark:bg-[#0B0F19] text-slate-900 dark:text-white text-xs rounded-xl border border-slate-200 dark:border-[#1E2638] focus:outline-none focus:border-sky-500 hover:border-slate-300 dark:hover:border-slate-700"
                   />
                 </div>
               </div>
@@ -1408,49 +1406,49 @@ export function TradeModal({
             {/* STEP 3: Review & Save */}
             {step === 3 && (
               <div className="space-y-4">
-                <div className="p-4 rounded-2xl bg-[#0D121F]/80 border border-[#1E2638] space-y-4">
-                  <div className="flex items-center space-x-2 text-xs font-semibold text-slate-200 font-jakarta">
-                    <CheckCircle2 className="w-4 h-4 text-emerald-400" />
+                <div className="p-4 rounded-2xl bg-slate-50/70 dark:bg-[#0D121F]/80 border border-slate-200 dark:border-[#1E2638] space-y-4">
+                  <div className="flex items-center space-x-2 text-xs font-semibold text-slate-800 dark:text-slate-200 font-jakarta">
+                    <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                     <span>Review Execution Summary</span>
                   </div>
 
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs font-mono">
-                    <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638]">
-                      <span className="text-slate-500 text-[10px] block uppercase">Instrument</span>
-                      <span className="text-white font-bold text-sm">{symbol}</span>
+                    <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638]">
+                      <span className="text-slate-500 dark:text-slate-400 text-[10px] block uppercase">Instrument</span>
+                      <span className="text-slate-900 dark:text-white font-bold text-sm">{symbol}</span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638]">
-                      <span className="text-slate-500 text-[10px] block uppercase">Direction & Type</span>
-                      <span className={`font-bold text-sm ${direction === 'LONG' ? 'text-emerald-400' : 'text-rose-400'}`}>
+                    <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638]">
+                      <span className="text-slate-500 dark:text-slate-400 text-[10px] block uppercase">Direction & Type</span>
+                      <span className={`font-bold text-sm ${direction === 'LONG' ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                         {direction} • {orderType}
                       </span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638]">
-                      <span className="text-slate-500 text-[10px] block uppercase">Position Lots</span>
-                      <span className="text-white font-bold text-sm">{orderLots} Lots</span>
+                    <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638]">
+                      <span className="text-slate-500 dark:text-slate-400 text-[10px] block uppercase">Position Lots</span>
+                      <span className="text-slate-900 dark:text-white font-bold text-sm">{orderLots} Lots</span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638]">
-                      <span className="text-slate-500 text-[10px] block uppercase">Entry Price</span>
-                      <span className="text-white font-bold text-sm">{entryPrice}</span>
+                    <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638]">
+                      <span className="text-slate-500 dark:text-slate-400 text-[10px] block uppercase">Entry Price</span>
+                      <span className="text-slate-900 dark:text-white font-bold text-sm">{entryPrice}</span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638]">
-                      <span className="text-slate-500 text-[10px] block uppercase">Stop Loss</span>
-                      <span className="text-rose-400 font-bold text-sm">{stopLoss || '--'}</span>
+                    <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638]">
+                      <span className="text-slate-500 dark:text-slate-400 text-[10px] block uppercase">Stop Loss</span>
+                      <span className="text-rose-600 dark:text-rose-400 font-bold text-sm">{stopLoss || '--'}</span>
                     </div>
 
-                    <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638]">
-                      <span className="text-slate-500 text-[10px] block uppercase">Take Profit</span>
-                      <span className="text-emerald-400 font-bold text-sm">{targetPrice || '--'}</span>
+                    <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638]">
+                      <span className="text-slate-500 dark:text-slate-400 text-[10px] block uppercase">Take Profit</span>
+                      <span className="text-emerald-600 dark:text-emerald-400 font-bold text-sm">{targetPrice || '--'}</span>
                     </div>
                   </div>
 
-                  <div className="p-3 rounded-xl bg-[#0B0F19] border border-[#1E2638] flex items-center justify-between text-xs font-mono">
-                    <span className="text-slate-400">Calculated Realized Net P&L:</span>
-                    <span className={`text-base font-bold ${calculationSummary.realizedNetPnL >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  <div className="p-3 rounded-xl bg-white dark:bg-[#0B0F19] border border-slate-200 dark:border-[#1E2638] flex items-center justify-between text-xs font-mono">
+                    <span className="text-slate-600 dark:text-slate-400">Calculated Realized Net P&L:</span>
+                    <span className={`text-base font-bold ${calculationSummary.realizedNetPnL >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
                       {calculationSummary.realizedNetPnL >= 0 ? '+' : ''}{formatINR(calculationSummary.realizedNetPnL)}
                     </span>
                   </div>
@@ -1460,20 +1458,20 @@ export function TradeModal({
 
           </div>
 
-          {/* RIGHT COLUMN: Clean TradeZella Pro Summary Ticket */}
+          {/* RIGHT COLUMN: Summary Ticket */}
           <div className="lg:col-span-4 space-y-4">
-            <div className="bg-[#0D121F]/90 border border-[#1E2638] rounded-2xl p-4 sm:p-5 space-y-4">
+            <div className="bg-slate-50/90 dark:bg-[#0D121F]/90 border border-slate-200 dark:border-[#1E2638] rounded-2xl p-4 sm:p-5 space-y-4">
               
               {/* Trade Overview */}
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <div className="text-xs font-semibold text-slate-200 font-jakarta">
+                  <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 font-jakarta">
                     Trade Overview
                   </div>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold tracking-wider ${
                     direction === 'LONG'
-                      ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30'
-                      : 'bg-rose-500/10 text-rose-400 border border-rose-500/30'
+                      ? 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-300 dark:border-emerald-500/30'
+                      : 'bg-rose-50 dark:bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-300 dark:border-rose-500/30'
                   }`}>
                     {direction} • {orderType.toUpperCase()}
                   </span>
@@ -1481,59 +1479,59 @@ export function TradeModal({
 
                 <div className="space-y-2 text-xs font-mono">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Symbol</span>
-                    <span className="text-white font-semibold flex items-center space-x-1.5">
+                    <span className="text-slate-500 dark:text-slate-400">Symbol</span>
+                    <span className="text-slate-900 dark:text-white font-semibold flex items-center space-x-1.5">
                       <CryptoIcon symbol={symbol || 'BTC'} className="w-3.5 h-3.5" />
                       <span>{symbol || 'BTC/USDT'}</span>
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Exchange</span>
-                    <span className="text-white font-semibold">{exchange}</span>
+                    <span className="text-slate-500 dark:text-slate-400">Exchange</span>
+                    <span className="text-slate-900 dark:text-white font-semibold">{exchange}</span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Leverage</span>
-                    <span className="text-white font-semibold">{leverage}x</span>
+                    <span className="text-slate-500 dark:text-slate-400">Leverage</span>
+                    <span className="text-slate-900 dark:text-white font-semibold">{leverage}x</span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">Order Size</span>
-                    <span className="text-white font-semibold">
+                    <span className="text-slate-500 dark:text-slate-400">Order Size</span>
+                    <span className="text-slate-900 dark:text-white font-semibold">
                       {orderLots || 14} Lots ({calculationSummary.qty.toFixed(6)} {symbol.split('/')[0] || 'BTC'})
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="h-px bg-[#1E2638]/70" />
+              <div className="h-px bg-slate-200 dark:bg-[#1E2638]/70" />
 
               {/* Risk & Reward */}
               <div className="space-y-3">
-                <div className="text-xs font-semibold text-slate-200 font-jakarta">
+                <div className="text-xs font-semibold text-slate-800 dark:text-slate-200 font-jakarta">
                   Risk & Reward
                 </div>
 
-                {/* 3 Stat Cards: Risk, Reward, R:R (Clean TradeZella Pro Cards) */}
+                {/* 3 Stat Cards: Risk, Reward, R:R */}
                 <div className="grid grid-cols-3 gap-2">
-                  <div className="p-2.5 rounded-xl bg-[#090D16] border border-[#1E2638] text-center">
-                    <span className="text-[10px] text-slate-400 font-medium block mb-1">Risk (₹)</span>
-                    <span className="text-sm font-bold text-rose-400 font-mono">
+                  <div className="p-2.5 rounded-xl bg-white dark:bg-[#090D16] border border-slate-200 dark:border-[#1E2638] text-center shadow-xs">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block mb-1">Risk (₹)</span>
+                    <span className="text-sm font-bold text-rose-600 dark:text-rose-400 font-mono">
                       {calculationSummary.hasSL ? Math.round(calculationSummary.grossLossINR) : (targetRiskINR || '100')}
                     </span>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-[#090D16] border border-[#1E2638] text-center">
-                    <span className="text-[10px] text-slate-400 font-medium block mb-1">Reward (₹)</span>
-                    <span className="text-sm font-bold text-emerald-400 font-mono">
+                  <div className="p-2.5 rounded-xl bg-white dark:bg-[#090D16] border border-slate-200 dark:border-[#1E2638] text-center shadow-xs">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block mb-1">Reward (₹)</span>
+                    <span className="text-sm font-bold text-emerald-600 dark:text-emerald-400 font-mono">
                       {calculationSummary.hasTP ? Math.round(calculationSummary.grossProfitINR) : '468'}
                     </span>
                   </div>
 
-                  <div className="p-2.5 rounded-xl bg-[#090D16] border border-[#1E2638] text-center">
-                    <span className="text-[10px] text-slate-400 font-medium block mb-1">R:R</span>
-                    <span className="text-sm font-bold text-sky-400 font-mono">
+                  <div className="p-2.5 rounded-xl bg-white dark:bg-[#090D16] border border-slate-200 dark:border-[#1E2638] text-center shadow-xs">
+                    <span className="text-[10px] text-slate-500 dark:text-slate-400 font-medium block mb-1">R:R</span>
+                    <span className="text-sm font-bold text-sky-600 dark:text-sky-400 font-mono">
                       {calculationSummary.rrRatioStr !== '--' ? calculationSummary.rrRatioStr : '1 : 4.68'}
                     </span>
                   </div>
@@ -1542,29 +1540,29 @@ export function TradeModal({
                 {/* Level Detail Breakdown */}
                 <div className="space-y-1.5 text-xs font-mono pt-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">• Entry</span>
-                    <span className="text-white font-semibold">
+                    <span className="text-slate-500 dark:text-slate-400">• Entry</span>
+                    <span className="text-slate-800 dark:text-white font-semibold">
                       {Number(entryPrice || 77406).toLocaleString()}
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">• Stop Loss</span>
-                    <span className="text-rose-400 font-semibold">
+                    <span className="text-slate-500 dark:text-slate-400">• Stop Loss</span>
+                    <span className="text-rose-600 dark:text-rose-400 font-semibold">
                       {Number(stopLoss || 77250).toLocaleString()} ({entryPrice && stopLoss ? (((parseFloat(stopLoss) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100).toFixed(2) : '-0.20'}%)
                     </span>
                   </div>
 
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-400">• Take Profit</span>
-                    <span className="text-emerald-400 font-semibold">
+                    <span className="text-slate-500 dark:text-slate-400">• Take Profit</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-semibold">
                       {Number(targetPrice || 77874).toLocaleString()} (+{entryPrice && targetPrice ? (((parseFloat(targetPrice) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100).toFixed(2) : '0.60'}%)
                     </span>
                   </div>
 
-                  <div className="flex items-center justify-between pt-1 border-t border-[#1E2638]/60">
-                    <span className="text-slate-400">• Est. P&L (₹)</span>
-                    <span className="text-emerald-400 font-bold">
+                  <div className="flex items-center justify-between pt-1 border-t border-slate-200 dark:border-[#1E2638]/60">
+                    <span className="text-slate-500 dark:text-slate-400">• Est. P&L (₹)</span>
+                    <span className="text-emerald-600 dark:text-emerald-400 font-bold">
                       +{calculationSummary.hasTP ? calculationSummary.grossProfitINR.toFixed(2) : '468.00'}
                     </span>
                   </div>
@@ -1586,18 +1584,18 @@ export function TradeModal({
                   {/* Marker Labels */}
                   <div className="flex items-center justify-between text-[10px] font-mono">
                     <div className="text-left">
-                      <span className="block font-semibold text-rose-400">SL</span>
-                      <span className="block text-rose-400">{Number(stopLoss || 77250).toLocaleString()}</span>
+                      <span className="block font-semibold text-rose-600 dark:text-rose-400">SL</span>
+                      <span className="block text-rose-600 dark:text-rose-400 font-medium">{Number(stopLoss || 77250).toLocaleString()}</span>
                     </div>
 
                     <div className="text-center">
-                      <span className="block font-semibold text-slate-300">Entry</span>
-                      <span className="block text-white">{Number(entryPrice || 77406).toLocaleString()}</span>
+                      <span className="block font-semibold text-slate-700 dark:text-slate-300">Entry</span>
+                      <span className="block text-slate-900 dark:text-white font-medium">{Number(entryPrice || 77406).toLocaleString()}</span>
                     </div>
 
                     <div className="text-right">
-                      <span className="block font-semibold text-emerald-400">TP</span>
-                      <span className="block text-emerald-400">{Number(targetPrice || 77874).toLocaleString()}</span>
+                      <span className="block font-semibold text-emerald-600 dark:text-emerald-400">TP</span>
+                      <span className="block text-emerald-600 dark:text-emerald-400 font-medium">{Number(targetPrice || 77874).toLocaleString()}</span>
                     </div>
                   </div>
                 </div>
@@ -1609,12 +1607,12 @@ export function TradeModal({
 
         </div>
 
-        {/* Clean Footer Bar */}
-        <div className="pt-3 border-t border-[#1E2638] flex items-center justify-between">
+        {/* Footer Bar */}
+        <div className="pt-3 border-t border-slate-200 dark:border-[#1E2638] flex items-center justify-between">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 rounded-xl bg-[#111724] hover:bg-[#151D30] border border-[#1E2638] hover:border-slate-700 text-slate-400 hover:text-white font-medium text-xs transition cursor-pointer"
+            className="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#111724] dark:hover:bg-[#151D30] border border-slate-200 dark:border-[#1E2638] hover:border-slate-300 dark:hover:border-slate-700 text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white font-medium text-xs transition cursor-pointer"
           >
             Cancel
           </button>
@@ -1623,7 +1621,7 @@ export function TradeModal({
             <button
               type="button"
               onClick={handleSaveDraft}
-              className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-[#111724] hover:bg-[#151D30] border border-[#1E2638] hover:border-slate-700 text-slate-300 hover:text-white font-medium text-xs transition cursor-pointer"
+              className="flex items-center space-x-1.5 px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-[#111724] dark:hover:bg-[#151D30] border border-slate-200 dark:border-[#1E2638] hover:border-slate-300 dark:hover:border-slate-700 text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white font-medium text-xs transition cursor-pointer"
             >
               <FileText className="w-3.5 h-3.5 text-slate-400" />
               <span>Save Draft</span>
@@ -1633,7 +1631,7 @@ export function TradeModal({
               <button
                 type="button"
                 onClick={() => setStep(step + 1)}
-                className="flex items-center space-x-1.5 px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition shadow-sm cursor-pointer"
+                className="flex items-center space-x-1.5 px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white dark:text-slate-950 font-bold text-xs transition shadow-sm cursor-pointer"
               >
                 <span>Continue</span>
                 <ArrowRight className="w-4 h-4" />
@@ -1642,7 +1640,7 @@ export function TradeModal({
               <button
                 type="button"
                 onClick={handleSaveInternal}
-                className="flex items-center space-x-1.5 px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-slate-950 font-bold text-xs transition shadow-sm cursor-pointer"
+                className="flex items-center space-x-1.5 px-5 py-2 rounded-xl bg-sky-500 hover:bg-sky-400 text-white dark:text-slate-950 font-bold text-xs transition shadow-sm cursor-pointer"
               >
                 <Check className="w-4 h-4" />
                 <span>Save Trade</span>

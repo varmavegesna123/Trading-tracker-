@@ -150,8 +150,8 @@ export function Sidebar({
       {/* Footer Area: Hidden/Compact when collapsed */}
       {!collapsed && (
         <div className="p-3 space-y-3">
-          {/* Redesigned Pro Trader User Profile Card */}
-          <div className="rounded-2xl bg-gradient-to-b from-[#111726] to-[#0B0F19] border border-[#1E2638] hover:border-[#38BDF8]/40 p-3 shadow-lg shadow-black/20 transition-all space-y-2.5">
+          {/* Redesigned Pro Trader User Profile Card (Light & Dark Mode Compatible) */}
+          <div className="rounded-2xl bg-slate-50 dark:bg-gradient-to-b dark:from-[#111726] dark:to-[#0B0F19] border border-slate-200 dark:border-[#1E2638] hover:border-sky-500/40 p-3 shadow-sm dark:shadow-lg dark:shadow-black/20 transition-all space-y-2.5">
             {/* Top row: Avatar, Name, Email, Status */}
             <div 
               onClick={onOpenAuthModal}
@@ -160,25 +160,25 @@ export function Sidebar({
             >
               {/* Dynamic Avatar with Active Indicator */}
               <div className="relative shrink-0">
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-[#38BDF8]/20 via-sky-600/30 to-indigo-600/30 border border-[#38BDF8]/40 text-[#38BDF8] font-bold text-xs flex items-center justify-center font-mono shadow-inner group-hover:scale-105 group-hover:border-[#38BDF8] transition">
+                <div className="w-10 h-10 rounded-xl bg-sky-500/10 dark:bg-gradient-to-tr dark:from-[#38BDF8]/20 dark:via-sky-600/30 dark:to-indigo-600/30 border border-sky-500/30 dark:border-[#38BDF8]/40 text-sky-600 dark:text-[#38BDF8] font-bold text-xs flex items-center justify-center font-mono shadow-inner group-hover:scale-105 group-hover:border-[#38BDF8] transition">
                   {initials}
                 </div>
-                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-[#0B0F19]" title="Active Session" />
+                <span className="absolute -bottom-0.5 -right-0.5 w-3 h-3 rounded-full bg-emerald-500 ring-2 ring-white dark:ring-[#0B0F19]" title="Active Session" />
               </div>
 
               {/* Name & Login Email */}
               <div className="flex flex-col min-w-0 flex-1">
                 <div className="flex items-center space-x-1.5">
-                  <span className="text-xs font-bold text-white truncate font-jakarta group-hover:text-[#38BDF8] transition">
+                  <span className="text-xs font-bold text-slate-800 dark:text-white truncate font-jakarta group-hover:text-sky-600 dark:group-hover:text-[#38BDF8] transition">
                     {displayName}
                   </span>
-                  <ShieldCheck className="w-3.5 h-3.5 text-[#38BDF8] shrink-0" title="Verified Trader" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-sky-500 dark:text-[#38BDF8] shrink-0" title="Verified Trader" />
                 </div>
                 
                 {/* Prominently visible login email */}
-                <div className="flex items-center space-x-1 text-slate-400 group-hover:text-slate-300 transition">
-                  <Mail className="w-3 h-3 text-slate-500 shrink-0" />
-                  <span className="text-[11px] font-mono text-slate-300 truncate" title={displayEmail}>
+                <div className="flex items-center space-x-1 text-slate-500 dark:text-slate-400 group-hover:text-slate-700 dark:group-hover:text-slate-300 transition">
+                  <Mail className="w-3 h-3 text-slate-400 dark:text-slate-500 shrink-0" />
+                  <span className="text-[11px] font-mono text-slate-600 dark:text-slate-300 truncate" title={displayEmail}>
                     {displayEmail}
                   </span>
                 </div>
@@ -186,9 +186,9 @@ export function Sidebar({
             </div>
 
             {/* Bottom row: Pro Plan Active Pill & Quick Actions */}
-            <div className="flex items-center justify-between pt-2 border-t border-[#1E2638]/60">
-              <div className="flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-bold text-emerald-400 font-mono tracking-wider">
-                <Crown className="w-3 h-3 text-amber-400" />
+            <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-[#1E2638]/60">
+              <div className="flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-[10px] font-bold text-emerald-600 dark:text-emerald-400 font-mono tracking-wider">
+                <Crown className="w-3 h-3 text-amber-500 dark:text-amber-400" />
                 <span>{user?.plan || 'PREMIUM PLAN'}</span>
               </div>
 
@@ -196,7 +196,7 @@ export function Sidebar({
                 <button
                   type="button"
                   onClick={onOpenAuthModal}
-                  className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-[#1E2638] transition"
+                  className="p-1 rounded-lg text-slate-400 hover:text-slate-700 dark:hover:text-white hover:bg-slate-200 dark:hover:bg-[#1E2638] transition"
                   title="Switch / Manage Account"
                 >
                   <ChevronDown className="w-3.5 h-3.5" />
@@ -208,7 +208,7 @@ export function Sidebar({
                       e.stopPropagation();
                       onLogout();
                     }}
-                    className="p-1 rounded-lg text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition"
+                    className="p-1 rounded-lg text-slate-400 hover:text-rose-500 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-500/10 transition"
                     title="Sign Out"
                   >
                     <LogOut className="w-3.5 h-3.5" />
