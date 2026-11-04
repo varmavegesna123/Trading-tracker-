@@ -13,6 +13,7 @@ import {
   Check 
 } from 'lucide-react';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatters';
+import { USD_TO_INR_RATE } from '../utils/currency';
 
 function formatVal(val, currency = 'INR') {
   return formatCurrency(val, currency, 'INR', {
@@ -37,7 +38,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
   const [stopLoss, setStopLoss] = useState('');
   const [targetPrice, setTargetPrice] = useState('');
   const [targetRiskINR, setTargetRiskINR] = useState('');
-  const [usdtRate, setUsdtRate] = useState('90');
+  const [usdtRate, setUsdtRate] = useState(String(USD_TO_INR_RATE));
   const [tradingFees, setTradingFees] = useState('');
 
   // Equity Calculator State
@@ -58,7 +59,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
     const lev = parseFloat(leverage) || 25;
     const entry = parseFloat(entryPrice) || 0;
     const cSize = parseFloat(contractSize) || 0.001;
-    const rate = parseFloat(usdtRate) || 90;
+    const rate = parseFloat(usdtRate) || USD_TO_INR_RATE;
     const marginNum = parseFloat(margin);
 
     if (entry > 0 && lev > 0 && cSize > 0 && rate > 0 && marginNum > 0) {
@@ -91,7 +92,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
     const qty = lots * cSize;
     const targetRisk = parseFloat(targetRiskINR) || 0;
     const fees = parseFloat(tradingFees) || 0;
-    const rate = parseFloat(usdtRate) || 90;
+    const rate = parseFloat(usdtRate) || USD_TO_INR_RATE;
     const isLong = direction === 'LONG';
 
     const capacityNotionalINR = margin * lev;

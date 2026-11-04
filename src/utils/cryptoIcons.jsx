@@ -19,15 +19,18 @@ export function extractBaseSymbol(symbol) {
     clean = clean.slice(0, -4);
   } else if (clean.endsWith('USDC') && clean.length > 4) {
     clean = clean.slice(0, -4);
+  } else if (clean.endsWith('USD') && clean.length > 3) {
+    clean = clean.slice(0, -3);
   } else if (clean.includes('-')) {
     clean = clean.split('-')[0];
   } else if (clean.includes('.')) {
     clean = clean.split('.')[0];
   }
 
-  // Handle rebrands & logo mapping fallbacks
+  // Handle rebrands, gold & logo mapping fallbacks
   if (clean === 'POL') return 'matic';
   if (clean === 'RENDER') return 'rndr';
+  if (clean === 'GOLD') return 'xau';
 
   return clean.toLowerCase();
 }
@@ -38,16 +41,25 @@ export function getCryptoIconUrl(symbol) {
   return `https://assets.coincap.io/assets/icons/${base}@2x.png`;
 }
 
-// Popular Binance Pairs Metadata (Top 50 Real Active Spot & Perpetuals Pairs)
+// Popular Binance Pairs Metadata (Real Active Spot & Perpetuals Pairs)
 export const BINANCE_POPULAR_PAIRS = [
   { symbol: 'BTC/USDT', coin: 'BTC', name: 'Bitcoin' },
+  { symbol: 'BTC/USD', coin: 'BTC', name: 'Bitcoin (USD)' },
   { symbol: 'ETH/USDT', coin: 'ETH', name: 'Ethereum' },
+  { symbol: 'ETH/USD', coin: 'ETH', name: 'Ethereum (USD)' },
   { symbol: 'SOL/USDT', coin: 'SOL', name: 'Solana' },
+  { symbol: 'SOL/USD', coin: 'SOL', name: 'Solana (USD)' },
+  { symbol: 'XAU/USD', coin: 'XAU', name: 'Gold (XAU/USD)' },
+  { symbol: 'XAUUSD', coin: 'XAU', name: 'Gold (XAUUSD)' },
+  { symbol: 'ALV/USDT', coin: 'ALV', name: 'Alvey Chain' },
+  { symbol: 'ALV/USD', coin: 'ALV', name: 'Alvey Chain (USD)' },
+  { symbol: 'ALGO/USDT', coin: 'ALGO', name: 'Algorand' },
   { symbol: 'BNB/USDT', coin: 'BNB', name: 'BNB' },
   { symbol: 'XRP/USDT', coin: 'XRP', name: 'XRP' },
   { symbol: 'ADA/USDT', coin: 'ADA', name: 'Cardano' },
   { symbol: 'DOGE/USDT', coin: 'DOGE', name: 'Dogecoin' },
   { symbol: 'AVAX/USDT', coin: 'AVAX', name: 'Avalanche' },
+  { symbol: 'AVAX/USD', coin: 'AVAX', name: 'Avalanche (USD)' },
   { symbol: 'SUI/USDT', coin: 'SUI', name: 'Sui' },
   { symbol: 'PEPE/USDT', coin: 'PEPE', name: 'Pepe' },
   { symbol: 'LINK/USDT', coin: 'LINK', name: 'Chainlink' },
@@ -96,6 +108,24 @@ export function CryptoIcon({ symbol, className = "w-5 h-5", alt = "" }) {
   const [error, setError] = useState(false);
   const base = extractBaseSymbol(symbol);
   const iconUrl = getCryptoIconUrl(symbol);
+
+  // Dedicated Gold / XAU Badge
+  if (base === 'xau' || base === 'gold') {
+    return (
+      <span className={`${className} rounded-full bg-amber-500/20 border border-amber-500/50 text-amber-400 font-mono font-bold flex items-center justify-center text-[9px] shrink-0 uppercase shadow-xs`}>
+        Au
+      </span>
+    );
+  }
+
+  // Dedicated ALV Badge
+  if (base === 'alv') {
+    return (
+      <span className={`${className} rounded-full bg-purple-500/20 border border-purple-500/50 text-purple-400 font-mono font-bold flex items-center justify-center text-[9px] shrink-0 uppercase shadow-xs`}>
+        ALV
+      </span>
+    );
+  }
 
   if (error || !base) {
     return (

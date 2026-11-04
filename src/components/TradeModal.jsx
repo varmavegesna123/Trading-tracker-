@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import { CryptoIcon, BINANCE_POPULAR_PAIRS } from '../utils/cryptoIcons';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatters';
+import { USD_TO_INR_RATE } from '../utils/currency';
 
 function formatVal(val, currency = 'INR') {
   return formatCurrency(val, currency, 'INR', {
@@ -227,7 +228,7 @@ export function TradeModal({
   const [leverage, setLeverage] = useState('25');
   const [selectedQuickSize, setSelectedQuickSize] = useState(null);
   const [contractSize, setContractSize] = useState('0.001');
-  const [usdtRate, setUsdtRate] = useState('90');
+  const [usdtRate, setUsdtRate] = useState(String(USD_TO_INR_RATE));
 
   // Order Levels & Risk Management State
   const [hasBracketOrder, setHasBracketOrder] = useState(true);
@@ -274,7 +275,7 @@ export function TradeModal({
       );
       setTradingFees(tradeToEdit.tradingFees !== undefined && tradeToEdit.tradingFees !== null ? String(tradeToEdit.tradingFees) : '');
       setFundingFees(tradeToEdit.fundingFees !== undefined && tradeToEdit.fundingFees !== null ? String(tradeToEdit.fundingFees) : '');
-      setUsdtRate(tradeToEdit.usdtRate !== undefined && tradeToEdit.usdtRate !== null ? String(tradeToEdit.usdtRate) : '90');
+      setUsdtRate(tradeToEdit.usdtRate !== undefined && tradeToEdit.usdtRate !== null ? String(tradeToEdit.usdtRate) : String(USD_TO_INR_RATE));
       setIsManualQuantity(Boolean(tradeToEdit.isManualQuantity));
       setStrategy(tradeToEdit.strategy || 'SMC Order Block');
       setNotes(tradeToEdit.notes || '');
@@ -334,7 +335,7 @@ export function TradeModal({
     setLeverage('25');
     setSelectedQuickSize(null);
     setContractSize('0.001');
-    setUsdtRate('90');
+    setUsdtRate(String(USD_TO_INR_RATE));
     setHasBracketOrder(true);
     setEntryPrice('');
     setStopLoss('');
@@ -383,7 +384,7 @@ export function TradeModal({
     const lev = parseFloat(leverage) || 25;
     const entry = parseFloat(entryPrice) || 0;
     const cSize = parseFloat(contractSize) || 0.001;
-    const rate = parseFloat(usdtRate) || 90;
+    const rate = parseFloat(usdtRate) || USD_TO_INR_RATE;
     const marginNum = parseFloat(margin);
 
     if (entry > 0 && lev > 0 && cSize > 0 && rate > 0 && marginNum > 0) {
@@ -415,7 +416,7 @@ export function TradeModal({
     const tFees = parseFloat(tradingFees) || 0;
     const fFees = parseFloat(fundingFees) || 0;
     const totalFees = tFees + fFees;
-    const rate = parseFloat(usdtRate) || 90;
+    const rate = parseFloat(usdtRate) || USD_TO_INR_RATE;
     const isLong = direction === 'LONG';
 
     // 1. Capacity & Position Notional
@@ -429,16 +430,31 @@ export function TradeModal({
     // 2. Stop Loss & Take Profit Price Distances
     let slDiff = 0;
     let hasSL = false;
+    let isSLInProfit = false;
     if (entry > 0 && sl > 0) {
-      slDiff = isLong ? (entry - sl) : (sl - entry);
-      hasSL = slDiff > 0;
+      const directionalSL = isLong ? (entry - sl) : (sl - entry);
+      if (directionalSL > 0) {
+        slDiff = directionalSL;
+        hasSL = true;
+      } else {
+        // Trailed stop loss moved beyond entry (locked-in profit)
+        slDiff = Math.abs(entry - sl);
+        hasSL = true;
+        isSLInProfit = true;
+      }
     }
 
     let tpDiff = 0;
     let hasTP = false;
     if (entry > 0 && tp > 0) {
-      tpDiff = isLong ? (tp - entry) : (entry - tp);
-      hasTP = tpDiff > 0;
+      const directionalTP = isLong ? (tp - entry) : (entry - tp);
+      if (directionalTP > 0) {
+        tpDiff = directionalTP;
+        hasTP = true;
+      } else {
+        tpDiff = Math.abs(tp - entry);
+        hasTP = tpDiff > 0;
+      }
     }
 
     // 3. Dynamic Risk-Based Lot Sizing
@@ -453,12 +469,12 @@ export function TradeModal({
       }
     }
 
-    // 4. Stop Loss Estimated Loss
+    // 4. Stop Loss Estimated Loss / Locked Profit
     const rawGrossLossUSDT = hasSL && qty > 0 ? (qty * slDiff) : 0;
     const grossLossINR = rawGrossLossUSDT * rate;
-    const netLossINR = grossLossINR + totalFees;
-    const riskPercentCapital = cap > 0 && netLossINR > 0 ? (netLossINR / cap) * 100 : 0;
-    const balanceAtSL = cap > 0 ? (cap - netLossINR) : 0;
+    const netLossINR = isSLInProfit ? Math.max(0, grossLossINR - totalFees) : (grossLossINR + totalFees);
+    const riskPercentCapital = cap > 0 && grossLossINR > 0 ? (grossLossINR / cap) * 100 : 0;
+    const balanceAtSL = cap > 0 ? (isSLInProfit ? (cap + netLossINR) : (cap - netLossINR)) : 0;
 
     // 5. Take Profit Estimated Profit
     const rawGrossProfitUSDT = hasTP && qty > 0 ? (qty * tpDiff) : 0;
@@ -476,7 +492,7 @@ export function TradeModal({
     }
 
     // 7. Actual Realized P&L
-    const hasExit = status === 'CLOSED' && exitPrice !== '' && !isNaN(exit) && exit > 0;
+    const hasExit = (status === 'CLOSED' || exitPrice !== '') && exitPrice !== '' && !isNaN(exit) && exit > 0;
     let rawGrossRealizedUSDT = 0;
     let realizedGrossPnLINR = 0;
     let realizedNetPnLINR = 0;
@@ -494,7 +510,7 @@ export function TradeModal({
       realizedNetPnLINR = parseFloat(manualRealizedPnL);
     }
 
-    const capitalBase = margin > 0 ? margin : (cap > 0 ? cap : lotsNotionalINR);
+    const capitalBase = margin > 0 ? margin : (cap > 0 ? cap : (lotsNotionalINR > 0 ? lotsNotionalINR : 1));
     if (capitalBase > 0 && (hasExit || hasManualRealized)) {
       realizedRoiPercent = (realizedNetPnLINR / capitalBase) * 100;
     }
@@ -512,6 +528,7 @@ export function TradeModal({
       cSize,
       lots,
       hasSL,
+      isSLInProfit,
       hasTP,
       slDiff,
       tpDiff,
@@ -655,7 +672,7 @@ export function TradeModal({
       availableBalance: calculationSummary.availableBalance,
       tradingFees: parseFloat(tradingFees) || 0,
       fundingFees: parseFloat(fundingFees) || 0,
-      usdtRate: parseFloat(usdtRate) || 90,
+      usdtRate: parseFloat(usdtRate) || USD_TO_INR_RATE,
       isManualQuantity: Boolean(isManualQuantity),
       grossPnL: calculationSummary.realizedGrossPnL,
       netPnL: calculationSummary.realizedNetPnL,
@@ -990,6 +1007,10 @@ export function TradeModal({
                           if (upper.includes('BTC')) setContractSize('0.001');
                           else if (upper.includes('ETH')) setContractSize('0.01');
                           else if (upper.includes('SOL')) setContractSize('0.1');
+                          else if (upper.includes('XAU') || upper.includes('GOLD')) setContractSize('0.01');
+                          else if (upper.includes('AVAX')) setContractSize('0.1');
+                          else if (upper.includes('ALV')) setContractSize('100');
+                          else if (upper.includes('ALGO')) setContractSize('10');
                         }}
                         className={`w-full bg-transparent text-xs font-bold focus:outline-none font-mono uppercase ${
                           isDark ? 'text-white placeholder:text-slate-600' : 'text-slate-900 placeholder:text-slate-400'
@@ -1026,11 +1047,13 @@ export function TradeModal({
                         }`}
                       >
                         <option value="Delta Exchange" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Delta Exchange</option>
+                        <option value="XAUUSD" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>XAUUSD</option>
                         <option value="Binance" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Binance</option>
                         <option value="Bybit" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Bybit</option>
                         <option value="OKX" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>OKX</option>
                         <option value="Coinbase" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Coinbase</option>
                         <option value="NSE" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>NSE (India)</option>
+                        <option value="Forex" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Forex</option>
                       </select>
                       <ChevronDown className={`w-3.5 h-3.5 shrink-0 pointer-events-none ${
                         isDark ? 'text-slate-500' : 'text-slate-400'
@@ -1698,40 +1721,132 @@ export function TradeModal({
 
               <div className={`h-px ${isDark ? 'bg-[#1E2638]/70' : 'bg-slate-200'}`} />
 
-              {/* Risk & Reward */}
+              {/* Risk & Reward / Realized Performance */}
               <div className="space-y-3">
-                <div className={`text-xs font-semibold font-jakarta ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
-                  Risk & Reward
+                <div className="flex items-center justify-between">
+                  <div className={`text-xs font-semibold font-jakarta ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+                    {status === 'CLOSED' || calculationSummary.hasExit ? 'Realized P&L & Performance' : 'Risk & Reward'}
+                  </div>
+                  {status === 'CLOSED' && (
+                    <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold uppercase tracking-wider border ${
+                      (calculationSummary.hasExit || calculationSummary.hasManualRealized)
+                        ? (calculationSummary.realizedNetPnL >= 0
+                            ? isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                            : isDark ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' : 'bg-rose-50 text-rose-700 border-rose-200')
+                        : isDark ? 'bg-sky-500/10 text-sky-400 border-sky-500/30' : 'bg-sky-50 text-sky-700 border-sky-200'
+                    }`}>
+                      {(calculationSummary.hasExit || calculationSummary.hasManualRealized)
+                        ? (calculationSummary.realizedNetPnL >= 0 ? 'WIN • PROFIT' : 'LOSS')
+                        : 'CLOSED'}
+                    </span>
+                  )}
                 </div>
 
                 {/* 3 Stat Cards */}
                 <div className="grid grid-cols-3 gap-2">
-                  <div className={`p-2.5 rounded-xl border text-center ${
-                    isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
-                  }`}>
-                    <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Risk ({currencySymbol})</span>
-                    <span className={`text-sm font-bold font-mono ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>
-                      {calculationSummary.hasSL ? formatVal(calculationSummary.grossLossINR, currency) : (targetRiskINR ? formatVal(targetRiskINR, currency) : '--')}
-                    </span>
-                  </div>
+                  {status === 'CLOSED' || calculationSummary.hasExit ? (
+                    <>
+                      {/* Card 1: Net Realized P&L */}
+                      <div className={`p-2.5 rounded-xl border text-center ${
+                        isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
+                      }`}>
+                        <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                          Net P&L ({currencySymbol})
+                        </span>
+                        <span className={`text-sm font-bold font-mono ${
+                          (calculationSummary.hasExit || calculationSummary.hasManualRealized)
+                            ? (calculationSummary.realizedNetPnL >= 0 
+                                ? (isDark ? 'text-emerald-400' : 'text-emerald-600') 
+                                : (isDark ? 'text-rose-400' : 'text-rose-600'))
+                            : (isDark ? 'text-slate-400' : 'text-slate-500')
+                        }`}>
+                          {(calculationSummary.hasExit || calculationSummary.hasManualRealized)
+                            ? `${calculationSummary.realizedNetPnL >= 0 ? '+' : ''}${formatVal(calculationSummary.realizedNetPnL, currency)}`
+                            : '--'}
+                        </span>
+                      </div>
 
-                  <div className={`p-2.5 rounded-xl border text-center ${
-                    isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
-                  }`}>
-                    <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Reward ({currencySymbol})</span>
-                    <span className={`text-sm font-bold font-mono ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                      {calculationSummary.hasTP ? formatVal(calculationSummary.grossProfitINR, currency) : '--'}
-                    </span>
-                  </div>
+                      {/* Card 2: ROI % */}
+                      <div className={`p-2.5 rounded-xl border text-center ${
+                        isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
+                      }`}>
+                        <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                          ROI %
+                        </span>
+                        <span className={`text-sm font-bold font-mono ${
+                          (calculationSummary.hasExit || calculationSummary.hasManualRealized)
+                            ? (calculationSummary.realizedRoiPercent >= 0 
+                                ? (isDark ? 'text-emerald-400' : 'text-emerald-600') 
+                                : (isDark ? 'text-rose-400' : 'text-rose-600'))
+                            : (isDark ? 'text-slate-400' : 'text-slate-500')
+                        }`}>
+                          {(calculationSummary.hasExit || calculationSummary.hasManualRealized)
+                            ? `${calculationSummary.realizedRoiPercent >= 0 ? '+' : ''}${calculationSummary.realizedRoiPercent.toFixed(2)}%`
+                            : '--'}
+                        </span>
+                      </div>
 
-                  <div className={`p-2.5 rounded-xl border text-center ${
-                    isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
-                  }`}>
-                    <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>R:R</span>
-                    <span className={`text-sm font-bold font-mono ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>
-                      {calculationSummary.rrRatioStr}
-                    </span>
-                  </div>
+                      {/* Card 3: Outcome */}
+                      <div className={`p-2.5 rounded-xl border text-center ${
+                        isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
+                      }`}>
+                        <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                          Result
+                        </span>
+                        <span className={`text-sm font-bold font-mono uppercase ${
+                          (calculationSummary.hasExit || calculationSummary.hasManualRealized)
+                            ? (calculationSummary.realizedNetPnL >= 0 
+                                ? (isDark ? 'text-emerald-400' : 'text-emerald-600') 
+                                : (isDark ? 'text-rose-400' : 'text-rose-600'))
+                            : (isDark ? 'text-sky-400' : 'text-sky-600')
+                        }`}>
+                          {(calculationSummary.hasExit || calculationSummary.hasManualRealized)
+                            ? (calculationSummary.realizedNetPnL >= 0 ? 'WIN' : 'LOSS')
+                            : (calculationSummary.rrRatioStr !== '--' ? calculationSummary.rrRatioStr : 'CLOSED')}
+                        </span>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {/* Card 1: Risk */}
+                      <div className={`p-2.5 rounded-xl border text-center ${
+                        isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
+                      }`}>
+                        <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Risk ({currencySymbol})</span>
+                        <span className={`text-sm font-bold font-mono ${
+                          calculationSummary.isSLInProfit
+                            ? (isDark ? 'text-emerald-400' : 'text-emerald-600')
+                            : (isDark ? 'text-rose-400' : 'text-rose-600')
+                        }`}>
+                          {calculationSummary.hasSL 
+                            ? (calculationSummary.isSLInProfit 
+                                ? `+${formatVal(calculationSummary.netLossINR, currency)}` 
+                                : formatVal(calculationSummary.netLossINR, currency))
+                            : (targetRiskINR ? formatVal(targetRiskINR, currency) : '--')}
+                        </span>
+                      </div>
+
+                      {/* Card 2: Reward */}
+                      <div className={`p-2.5 rounded-xl border text-center ${
+                        isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
+                      }`}>
+                        <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Reward ({currencySymbol})</span>
+                        <span className={`text-sm font-bold font-mono ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
+                          {calculationSummary.hasTP ? `+${formatVal(calculationSummary.grossProfitINR, currency)}` : '--'}
+                        </span>
+                      </div>
+
+                      {/* Card 3: R:R */}
+                      <div className={`p-2.5 rounded-xl border text-center ${
+                        isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
+                      }`}>
+                        <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>R:R</span>
+                        <span className={`text-sm font-bold font-mono ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>
+                          {calculationSummary.rrRatioStr}
+                        </span>
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Level Detail Breakdown */}
@@ -1743,9 +1858,22 @@ export function TradeModal({
                     </span>
                   </div>
 
+                  {exitPrice && (
+                    <div className="flex items-center justify-between">
+                      <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Actual Exit</span>
+                      <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                        {Number(exitPrice).toLocaleString()}
+                      </span>
+                    </div>
+                  )}
+
                   <div className="flex items-center justify-between">
                     <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Stop Loss</span>
-                    <span className={`font-semibold ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>
+                    <span className={`font-semibold ${
+                      calculationSummary.isSLInProfit
+                        ? (isDark ? 'text-emerald-400' : 'text-emerald-600')
+                        : (isDark ? 'text-rose-400' : 'text-rose-600')
+                    }`}>
                       {stopLoss ? `${Number(stopLoss).toLocaleString()} (${entryPrice && stopLoss ? (((parseFloat(stopLoss) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100).toFixed(2) : '0.00'}%)` : '--'}
                     </span>
                   </div>
@@ -1753,16 +1881,40 @@ export function TradeModal({
                   <div className="flex items-center justify-between">
                     <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Take Profit</span>
                     <span className={`font-semibold ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                      {targetPrice ? `${Number(targetPrice).toLocaleString()} (+${entryPrice && targetPrice ? (((parseFloat(targetPrice) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100).toFixed(2) : '0.00'}%)` : '--'}
+                      {targetPrice ? `${Number(targetPrice).toLocaleString()} (${entryPrice && targetPrice ? ((((parseFloat(targetPrice) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100) >= 0 ? '+' : '') + (((parseFloat(targetPrice) - parseFloat(entryPrice)) / parseFloat(entryPrice)) * 100).toFixed(2) : '0.00'}%)` : '--'}
                     </span>
                   </div>
 
                   <div className={`flex items-center justify-between pt-1 border-t ${
                     isDark ? 'border-[#1E2638]/60' : 'border-slate-200'
                   }`}>
-                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Est. P&L ({currencySymbol})</span>
-                    <span className={`font-bold ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                      {calculationSummary.hasTP ? `+${formatCurrency(calculationSummary.grossProfitINR, currency)}` : '--'}
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>
+                      {status === 'CLOSED' || calculationSummary.hasExit ? `• Realized P&L (${currencySymbol})` : `• Est. P&L (${currencySymbol})`}
+                    </span>
+                    <span className={`font-bold ${
+                      (status === 'CLOSED' || calculationSummary.hasExit)
+                        ? ((calculationSummary.hasExit || calculationSummary.hasManualRealized)
+                            ? (calculationSummary.realizedNetPnL >= 0 
+                                ? (isDark ? 'text-emerald-400' : 'text-emerald-600') 
+                                : (isDark ? 'text-rose-400' : 'text-rose-600'))
+                            : (isDark ? 'text-slate-400' : 'text-slate-500'))
+                        : (calculationSummary.hasTP
+                            ? (isDark ? 'text-emerald-400' : 'text-emerald-600')
+                            : (calculationSummary.hasExit
+                                ? (calculationSummary.realizedNetPnL >= 0 
+                                    ? (isDark ? 'text-emerald-400' : 'text-emerald-600') 
+                                    : (isDark ? 'text-rose-400' : 'text-rose-600'))
+                                : (isDark ? 'text-slate-400' : 'text-slate-500')))
+                    }`}>
+                      {(status === 'CLOSED' || calculationSummary.hasExit)
+                        ? ((calculationSummary.hasExit || calculationSummary.hasManualRealized)
+                            ? `${calculationSummary.realizedNetPnL >= 0 ? '+' : ''}${formatCurrency(calculationSummary.realizedNetPnL, currency)}`
+                            : '--')
+                        : (calculationSummary.hasTP
+                            ? `+${formatCurrency(calculationSummary.grossProfitINR, currency)}`
+                            : (calculationSummary.hasExit
+                                ? `${calculationSummary.realizedNetPnL >= 0 ? '+' : ''}${formatCurrency(calculationSummary.realizedNetPnL, currency)}`
+                                : '--'))}
                     </span>
                   </div>
                 </div>
