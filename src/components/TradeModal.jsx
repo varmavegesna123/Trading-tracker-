@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   X, 
   ArrowLeft, 
@@ -12,11 +12,30 @@ import {
   FileText,
   Check,
   CheckCircle2,
-  Upload
+  Upload,
+  Search,
+  Sparkles
 } from 'lucide-react';
 import { CryptoIcon, BINANCE_POPULAR_PAIRS } from '../utils/cryptoIcons';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatters';
 import { USD_TO_INR_RATE } from '../utils/currency';
+
+export function getRecommendedContractSize(symbolStr) {
+  const upper = String(symbolStr || '').toUpperCase().trim();
+  if (upper.includes('BTC')) return '0.001';
+  if (upper.includes('ETH')) return '0.01';
+  if (upper.includes('SOL')) return '0.1';
+  if (upper.includes('XAU') || upper.includes('GOLD')) return '0.01';
+  if (upper.includes('AVAX')) return '0.1';
+  if (upper.includes('ALV')) return '100';
+  if (upper.includes('ALGO')) return '10';
+  if (upper.includes('BNB')) return '0.01';
+  if (upper.includes('XRP')) return '10';
+  if (upper.includes('ADA')) return '10';
+  if (upper.includes('DOGE')) return '100';
+  if (upper.includes('PEPE') || upper.includes('SHIB')) return '1000';
+  return '0.001';
+}
 
 function formatVal(val, currency = 'INR') {
   return formatCurrency(val, currency, 'INR', {
@@ -219,6 +238,10 @@ export function TradeModal({
   const [market, setMarket] = useState('Crypto');
   const [exchange, setExchange] = useState('Delta Exchange');
   const [symbol, setSymbol] = useState('BTC/USDT');
+  const [showSymbolDropdown, setShowSymbolDropdown] = useState(false);
+  const [symbolSearch, setSymbolSearch] = useState('');
+  const [symbolCategory, setSymbolCategory] = useState('ALL');
+  const symbolDropdownRef = useRef(null);
   const [entryDate, setEntryDate] = useState(new Date().toISOString().slice(0, 16));
   const [showEntryDatePicker, setShowEntryDatePicker] = useState(false);
   
@@ -356,6 +379,59 @@ export function TradeModal({
     setM5EntryPoi(false);
     setM1BosChoch(false);
     setLtfTrigger('CHOCH');
+    setShowSymbolDropdown(false);
+    setSymbolSearch('');
+  };
+
+  // Close symbol dropdown on click outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (symbolDropdownRef.current && !symbolDropdownRef.current.contains(e.target)) {
+        setShowSymbolDropdown(false);
+      }
+    };
+    if (showSymbolDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [showSymbolDropdown]);
+
+  // Filtered popular pairs based on search and category
+  const filteredSymbols = useMemo(() => {
+    let list = BINANCE_POPULAR_PAIRS;
+    if (symbolCategory === 'POPULAR') {
+      const topSymbols = ['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'XAUUSD', 'XAU/USD', 'ALV/USDT', 'ALGO/USDT', 'AVAX/USDT', 'BNB/USDT', 'XRP/USDT', 'DOGE/USDT'];
+      list = list.filter(p => topSymbols.includes(p.symbol));
+    } else if (symbolCategory === 'METALS') {
+      list = list.filter(p => p.symbol.includes('XAU') || p.coin === 'XAU');
+    } else if (symbolCategory === 'CRYPTO') {
+      list = list.filter(p => !p.symbol.includes('XAU') && p.coin !== 'XAU');
+    }
+
+    if (symbolSearch.trim()) {
+      const q = symbolSearch.toUpperCase().trim();
+      list = list.filter(p => 
+        p.symbol.toUpperCase().includes(q) || 
+        p.name.toUpperCase().includes(q) || 
+        p.coin.toUpperCase().includes(q)
+      );
+    }
+    return list;
+  }, [symbolSearch, symbolCategory]);
+
+  const handleSelectSymbol = (selectedSym) => {
+    const clean = selectedSym.toUpperCase().trim();
+    setSymbol(clean);
+    const recSize = getRecommendedContractSize(clean);
+    setContractSize(recSize);
+    if (clean.includes('XAU')) {
+      setExchange('XAUUSD');
+      setMarket('Forex');
+    } else {
+      setMarket('Crypto');
+    }
+    setShowSymbolDropdown(false);
+    setSymbolSearch('');
   };
 
   // Synchronize Lot size to Coin Quantity
@@ -986,46 +1062,204 @@ export function TradeModal({
                 {/* Row 2: Instrument / Symbol, Exchange, Execution Date */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                   {/* Instrument / Symbol */}
-                  <div>
-                    <label className={`block text-[11px] font-medium mb-1.5 font-jakarta ${
-                      isDark ? 'text-slate-400' : 'text-slate-600'
-                    }`}>
-                      Instrument / Symbol *
-                    </label>
-                    <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
-                      isDark ? 'bg-[#0E1320] border-[#1E2638] hover:border-slate-700 focus-within:border-sky-500' : 'bg-white border-slate-200 hover:border-slate-300 focus-within:border-sky-500'
-                    }`}>
-                      <CryptoIcon symbol={symbol || 'BTC'} className="w-4 h-4 mr-2 shrink-0" />
-                      <input
-                        type="text"
-                        list="trademodal-binance-pairs"
-                        placeholder="BTC/USDT"
-                        value={symbol}
-                        onChange={(e) => {
-                          setSymbol(e.target.value);
-                          const upper = (e.target.value || '').toUpperCase();
-                          if (upper.includes('BTC')) setContractSize('0.001');
-                          else if (upper.includes('ETH')) setContractSize('0.01');
-                          else if (upper.includes('SOL')) setContractSize('0.1');
-                          else if (upper.includes('XAU') || upper.includes('GOLD')) setContractSize('0.01');
-                          else if (upper.includes('AVAX')) setContractSize('0.1');
-                          else if (upper.includes('ALV')) setContractSize('100');
-                          else if (upper.includes('ALGO')) setContractSize('10');
-                        }}
-                        className={`w-full bg-transparent text-xs font-bold focus:outline-none font-mono uppercase ${
-                          isDark ? 'text-white placeholder:text-slate-600' : 'text-slate-900 placeholder:text-slate-400'
-                        }`}
-                        required
-                      />
-                      <ChevronDown className={`w-3.5 h-3.5 shrink-0 pointer-events-none ${
-                        isDark ? 'text-slate-500' : 'text-slate-400'
-                      }`} />
-                      <datalist id="trademodal-binance-pairs">
-                        {BINANCE_POPULAR_PAIRS.map(p => (
-                          <option key={p.symbol} value={p.symbol}>{p.name + ' (' + p.coin + ')'}</option>
-                        ))}
-                      </datalist>
+                  <div className="relative" ref={symbolDropdownRef}>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className={`block text-[11px] font-medium font-jakarta ${
+                        isDark ? 'text-slate-400' : 'text-slate-600'
+                      }`}>
+                        Instrument / Symbol *
+                      </label>
+                      {symbol && (
+                        <span className={`text-[10px] font-mono font-medium ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>
+                          1 Lot = {contractSize} {symbol.split('/')[0] || 'BTC'}
+                        </span>
+                      )}
                     </div>
+
+                    {/* Trigger Button */}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowSymbolDropdown(prev => !prev);
+                        setSymbolSearch('');
+                      }}
+                      className={`w-full flex items-center justify-between rounded-xl border px-3 h-10 transition cursor-pointer select-none text-left ${
+                        showSymbolDropdown
+                          ? isDark ? 'border-sky-500 ring-2 ring-sky-500/20 bg-[#111726]' : 'border-sky-500 ring-2 ring-sky-500/20 bg-sky-50/50'
+                          : isDark ? 'bg-[#0E1320] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className="flex items-center space-x-2.5 min-w-0 flex-1 pr-1">
+                        <CryptoIcon symbol={symbol || 'BTC'} className="w-5 h-5 shrink-0" />
+                        <span className={`text-xs font-bold font-mono uppercase tracking-wide truncate ${
+                          symbol ? (isDark ? 'text-white' : 'text-slate-900') : (isDark ? 'text-slate-500' : 'text-slate-400')
+                        }`}>
+                          {symbol || 'Select Trading Pair'}
+                        </span>
+                        <span className={`hidden sm:inline-block text-[10px] font-mono px-1.5 py-0.5 rounded border ml-auto mr-1 ${
+                          symbol.includes('XAU')
+                            ? isDark ? 'bg-amber-500/10 border-amber-500/30 text-amber-400' : 'bg-amber-50 border-amber-200 text-amber-700'
+                            : isDark ? 'bg-[#1E2638]/70 border-[#2A364F] text-slate-400' : 'bg-slate-100 border-slate-200 text-slate-600'
+                        }`}>
+                          {symbol.includes('XAU') ? 'METALS' : 'PERP'}
+                        </span>
+                      </div>
+
+                      <ChevronDown className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
+                        showSymbolDropdown ? 'rotate-180 text-sky-400' : (isDark ? 'text-slate-500' : 'text-slate-400')
+                      }`} />
+                    </button>
+
+                    {/* Custom Searchable Dropdown Popover */}
+                    {showSymbolDropdown && (
+                      <div className={`absolute left-0 top-full mt-1.5 w-80 sm:w-96 z-50 rounded-2xl border shadow-2xl p-3 space-y-2.5 font-sans animate-in fade-in zoom-in-95 duration-100 ${
+                        isDark ? 'bg-[#0B0F19] border-[#1E2638] text-slate-100 shadow-black/80' : 'bg-white border-slate-200 text-slate-800 shadow-slate-300/80'
+                      }`}>
+                        
+                        {/* Search Input Box */}
+                        <div className={`flex items-center px-2.5 py-1.5 rounded-xl border transition ${
+                          isDark ? 'bg-[#111726] border-[#1E2638] focus-within:border-sky-500' : 'bg-slate-50 border-slate-200 focus-within:border-sky-500'
+                        }`}>
+                          <Search className={`w-3.5 h-3.5 mr-2 shrink-0 ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
+                          <input
+                            type="text"
+                            autoFocus
+                            placeholder="Search coin (e.g. ETH, SOL, XAU, ALV)..."
+                            value={symbolSearch}
+                            onChange={(e) => setSymbolSearch(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter') {
+                                e.preventDefault();
+                                if (filteredSymbols.length > 0) {
+                                  handleSelectSymbol(filteredSymbols[0].symbol);
+                                } else if (symbolSearch.trim()) {
+                                  handleSelectSymbol(symbolSearch.trim());
+                                }
+                              } else if (e.key === 'Escape') {
+                                setShowSymbolDropdown(false);
+                              }
+                            }}
+                            className={`w-full bg-transparent text-xs font-medium focus:outline-none ${
+                              isDark ? 'text-white placeholder:text-slate-500' : 'text-slate-900 placeholder:text-slate-400'
+                            }`}
+                          />
+                          {symbolSearch && (
+                            <button
+                              type="button"
+                              onClick={() => setSymbolSearch('')}
+                              className={`p-0.5 rounded-md hover:bg-slate-500/20 text-xs ${isDark ? 'text-slate-400' : 'text-slate-500'}`}
+                            >
+                              <X className="w-3 h-3" />
+                            </button>
+                          )}
+                        </div>
+
+                        {/* Category Filter Pills */}
+                        <div className="flex items-center space-x-1.5 text-[11px] font-medium overflow-x-auto pb-0.5 custom-scrollbar">
+                          {[
+                            { id: 'ALL', label: 'All Pairs' },
+                            { id: 'POPULAR', label: '🔥 Top 10' },
+                            { id: 'CRYPTO', label: 'Crypto' },
+                            { id: 'METALS', label: 'Gold (XAU)' }
+                          ].map(cat => (
+                            <button
+                              key={cat.id}
+                              type="button"
+                              onClick={() => setSymbolCategory(cat.id)}
+                              className={`px-2.5 py-1 rounded-lg transition whitespace-nowrap cursor-pointer border ${
+                                symbolCategory === cat.id
+                                  ? 'bg-sky-500 text-white font-bold border-sky-500 shadow-xs'
+                                  : isDark 
+                                    ? 'bg-[#111726] border-[#1E2638] text-slate-400 hover:text-white hover:border-slate-700' 
+                                    : 'bg-slate-100 border-slate-200 text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                              }`}
+                            >
+                              {cat.label}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Symbol List */}
+                        <div className="max-h-60 overflow-y-auto space-y-1 custom-scrollbar pr-1">
+                          {/* Custom Symbol fallback if user typed something not strictly in the list */}
+                          {symbolSearch.trim() && !filteredSymbols.some(p => p.symbol.toUpperCase() === symbolSearch.toUpperCase().trim()) && (
+                            <button
+                              type="button"
+                              onClick={() => handleSelectSymbol(symbolSearch.trim())}
+                              className={`w-full flex items-center justify-between p-2 rounded-xl text-left border border-dashed transition cursor-pointer mb-1.5 ${
+                                isDark 
+                                  ? 'border-sky-500/40 bg-sky-500/10 hover:bg-sky-500/20 text-sky-300' 
+                                  : 'border-sky-300 bg-sky-50 hover:bg-sky-100 text-sky-700'
+                              }`}
+                            >
+                              <div className="flex items-center space-x-2">
+                                <Sparkles className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+                                <span className="text-xs font-mono font-bold uppercase">
+                                  Use "{symbolSearch.toUpperCase().trim()}"
+                                </span>
+                              </div>
+                              <span className="text-[10px] font-mono uppercase opacity-80">Custom Symbol →</span>
+                            </button>
+                          )}
+
+                          {filteredSymbols.length === 0 && !symbolSearch.trim() ? (
+                            <div className="text-center py-6 text-xs text-slate-400 font-mono">
+                              No symbols match the filter
+                            </div>
+                          ) : (
+                            filteredSymbols.map(p => {
+                              const isSelected = symbol === p.symbol;
+                              const cSize = getRecommendedContractSize(p.symbol);
+                              return (
+                                <button
+                                  key={p.symbol}
+                                  type="button"
+                                  onClick={() => handleSelectSymbol(p.symbol)}
+                                  className={`w-full flex items-center justify-between p-2 rounded-xl text-left transition cursor-pointer group border ${
+                                    isSelected
+                                      ? isDark ? 'bg-sky-500/15 border-sky-500/40 text-white' : 'bg-sky-50 border-sky-300 text-sky-900'
+                                      : isDark ? 'border-transparent hover:bg-[#111726] text-slate-300 hover:text-white' : 'border-transparent hover:bg-slate-100 text-slate-700 hover:text-slate-900'
+                                  }`}
+                                >
+                                  <div className="flex items-center space-x-2.5 min-w-0">
+                                    <CryptoIcon symbol={p.symbol} className="w-5 h-5 shrink-0" />
+                                    <div className="min-w-0">
+                                      <div className="flex items-center space-x-1.5">
+                                        <span className={`text-xs font-mono font-bold uppercase ${
+                                          isSelected ? (isDark ? 'text-sky-400' : 'text-sky-700') : (isDark ? 'text-white' : 'text-slate-900')
+                                        }`}>
+                                          {p.symbol}
+                                        </span>
+                                        {p.symbol.includes('XAU') && (
+                                          <span className="text-[9px] px-1 rounded bg-amber-500/20 text-amber-400 border border-amber-500/30 font-mono">
+                                            GOLD
+                                          </span>
+                                        )}
+                                      </div>
+                                      <span className={`text-[10px] block truncate ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
+                                        {p.name}
+                                      </span>
+                                    </div>
+                                  </div>
+
+                                  <div className="flex items-center space-x-2 shrink-0">
+                                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${
+                                      isDark ? 'bg-[#0E1320] border-[#1E2638] text-slate-400' : 'bg-slate-50 border-slate-200 text-slate-500'
+                                    }`}>
+                                      1 Lot = {cSize} {p.coin}
+                                    </span>
+                                    {isSelected && (
+                                      <Check className={`w-3.5 h-3.5 shrink-0 ${isDark ? 'text-sky-400' : 'text-sky-600'}`} />
+                                    )}
+                                  </div>
+                                </button>
+                              );
+                            })
+                          )}
+                        </div>
+
+                      </div>
+                    )}
                   </div>
 
                   {/* Exchange */}

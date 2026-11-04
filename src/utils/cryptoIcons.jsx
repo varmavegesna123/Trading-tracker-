@@ -41,25 +41,25 @@ export function getCryptoIconUrl(symbol) {
   return `https://assets.coincap.io/assets/icons/${base}@2x.png`;
 }
 
-// Popular Binance Pairs Metadata (Real Active Spot & Perpetuals Pairs)
+// Popular Binance & Crypto Pairs Metadata (Real Active Spot, Perpetuals & Metals)
 export const BINANCE_POPULAR_PAIRS = [
   { symbol: 'BTC/USDT', coin: 'BTC', name: 'Bitcoin' },
-  { symbol: 'BTC/USD', coin: 'BTC', name: 'Bitcoin (USD)' },
   { symbol: 'ETH/USDT', coin: 'ETH', name: 'Ethereum' },
-  { symbol: 'ETH/USD', coin: 'ETH', name: 'Ethereum (USD)' },
   { symbol: 'SOL/USDT', coin: 'SOL', name: 'Solana' },
-  { symbol: 'SOL/USD', coin: 'SOL', name: 'Solana (USD)' },
+  { symbol: 'XAUUSD', coin: 'XAU', name: 'Gold Spot (XAUUSD)' },
   { symbol: 'XAU/USD', coin: 'XAU', name: 'Gold (XAU/USD)' },
-  { symbol: 'XAUUSD', coin: 'XAU', name: 'Gold (XAUUSD)' },
   { symbol: 'ALV/USDT', coin: 'ALV', name: 'Alvey Chain' },
-  { symbol: 'ALV/USD', coin: 'ALV', name: 'Alvey Chain (USD)' },
   { symbol: 'ALGO/USDT', coin: 'ALGO', name: 'Algorand' },
+  { symbol: 'AVAX/USDT', coin: 'AVAX', name: 'Avalanche' },
+  { symbol: 'ETH/USD', coin: 'ETH', name: 'Ethereum (USD)' },
+  { symbol: 'SOL/USD', coin: 'SOL', name: 'Solana (USD)' },
+  { symbol: 'ALV/USD', coin: 'ALV', name: 'Alvey Chain (USD)' },
+  { symbol: 'BTC/USD', coin: 'BTC', name: 'Bitcoin (USD)' },
+  { symbol: 'AVAX/USD', coin: 'AVAX', name: 'Avalanche (USD)' },
   { symbol: 'BNB/USDT', coin: 'BNB', name: 'BNB' },
   { symbol: 'XRP/USDT', coin: 'XRP', name: 'XRP' },
   { symbol: 'ADA/USDT', coin: 'ADA', name: 'Cardano' },
   { symbol: 'DOGE/USDT', coin: 'DOGE', name: 'Dogecoin' },
-  { symbol: 'AVAX/USDT', coin: 'AVAX', name: 'Avalanche' },
-  { symbol: 'AVAX/USD', coin: 'AVAX', name: 'Avalanche (USD)' },
   { symbol: 'SUI/USDT', coin: 'SUI', name: 'Sui' },
   { symbol: 'PEPE/USDT', coin: 'PEPE', name: 'Pepe' },
   { symbol: 'LINK/USDT', coin: 'LINK', name: 'Chainlink' },
