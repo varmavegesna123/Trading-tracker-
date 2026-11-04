@@ -12,21 +12,17 @@ import {
   TrendingUp, 
   Check 
 } from 'lucide-react';
-import { formatCurrency } from '../utils/formatters';
+import { formatCurrency, getCurrencySymbol } from '../utils/formatters';
 
-function formatINR(val) {
-  const num = Number(val);
-  if (isNaN(num)) return '₹0';
-  const isNegative = num < 0;
-  const abs = Math.abs(num);
-  const formatted = abs.toLocaleString('en-IN', {
+function formatVal(val, currency = 'INR') {
+  return formatCurrency(val, currency, 'INR', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 0
   });
-  return `${isNegative ? '-' : ''}₹${formatted}`;
 }
 
 export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, currency = 'INR' }) {
+  const currencySymbol = getCurrencySymbol(currency);
   const [calculatorMode, setCalculatorMode] = useState('futures'); // 'futures' | 'equity'
   
   // Delta Futures State
@@ -380,7 +376,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
               <div className="grid grid-cols-3 gap-2">
                 <div>
                   <label className="block text-[9px] font-bold text-slate-400 uppercase font-mono">
-                    Starting Capital (₹)
+                    Starting Capital ({currencySymbol})
                   </label>
                   <input
                     type="number"
@@ -392,7 +388,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
 
                 <div>
                   <label className="block text-[9px] font-bold text-slate-400 uppercase font-mono">
-                    Margin Used (₹)
+                    Margin Used ({currencySymbol})
                   </label>
                   <input
                     type="number"
@@ -404,12 +400,12 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
 
                 <div>
                   <label className="block text-[9px] font-bold text-slate-400 uppercase font-mono">
-                    Available Balance (₹)
+                    Available Balance ({currencySymbol})
                   </label>
                   <div className={`px-2.5 py-1.5 bg-[#0B0F19] text-xs font-mono font-black rounded-xl border border-[#1E2638] ${
                     futuresCalc.availableBalance < 0 ? 'text-rose-400' : 'text-[#10B981]'
                   }`}>
-                    {formatINR(futuresCalc.availableBalance)}
+                    {formatVal(futuresCalc.availableBalance, currency)}
                   </div>
                 </div>
               </div>
@@ -466,7 +462,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
                   <Crosshair className="w-3.5 h-3.5 text-rose-400 shrink-0" />
                   <div>
                     <span className="text-[10px] text-slate-400 block">
-                      Target Risk: <strong>₹{targetRiskINR}</strong>
+                      Target Risk: <strong>{currencySymbol}{targetRiskINR}</strong>
                     </span>
                     <span className="text-xs font-black text-[#38BDF8] block">
                       Max Permitted: {futuresCalc.recommendedRiskLots} Lots ({ (futuresCalc.recommendedRiskLots * (parseFloat(contractSize) || 0.001)).toFixed(3) } BTC)
@@ -543,7 +539,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
                 <div className="p-2 rounded-lg bg-[#0B0F19] border border-[#1E2638]">
                   <span className="text-[9px] text-slate-400 block uppercase">Position Notional</span>
                   <span className="text-xs font-black text-white block mt-0.5">
-                    {formatINR(futuresCalc.lotsNotionalINR)}
+                    {formatVal(futuresCalc.lotsNotionalINR, currency)}
                   </span>
                   <span className="text-[8px] text-slate-500 block">
                     ≈ ${futuresCalc.lotsNotionalUSDT.toFixed(2)} USDT
@@ -553,7 +549,7 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
                 <div className="p-2 rounded-lg bg-[#0B0F19] border border-[#1E2638]">
                   <span className="text-[9px] text-slate-400 block uppercase">Required Margin</span>
                   <span className="text-xs font-black text-[#38BDF8] block mt-0.5">
-                    {formatINR(futuresCalc.requiredMarginINR)}
+                    {formatVal(futuresCalc.requiredMarginINR, currency)}
                   </span>
                   <span className="text-[8px] text-slate-500 block">
                     {leverage}x leverage
@@ -563,10 +559,10 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
                 <div className="p-2 rounded-lg bg-[#0B0F19] border border-[#1E2638]">
                   <span className="text-[9px] text-slate-400 block uppercase">Available Bal</span>
                   <span className={`text-xs font-black block mt-0.5 ${futuresCalc.availableBalance < 0 ? 'text-rose-400' : 'text-[#10B981]'}`}>
-                    {formatINR(futuresCalc.availableBalance)}
+                    {formatVal(futuresCalc.availableBalance, currency)}
                   </span>
                   <span className="text-[8px] text-slate-500 block">
-                    Cap: {formatINR(parseFloat(startingCapital) || 2000)}
+                    Cap: {formatVal(parseFloat(startingCapital) || 2000, currency)}
                   </span>
                 </div>
               </div>
@@ -578,11 +574,11 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
                     <span>{stopLoss ? `@ ${stopLoss}` : ''}</span>
                   </div>
                   <div className="text-sm font-black text-rose-400 mt-0.5">
-                    {futuresCalc.hasSL ? `-${formatINR(futuresCalc.grossLossINR)}` : '--'}
+                    {futuresCalc.hasSL ? `-${formatVal(futuresCalc.grossLossINR, currency)}` : '--'}
                   </div>
                   <div className="text-[8px] text-slate-400 flex items-center justify-between mt-0.5">
                     <span>{futuresCalc.riskPercentCapital.toFixed(2)}% capital</span>
-                    <span>Bal: {formatINR(futuresCalc.balanceAtSL)}</span>
+                    <span>Bal: {formatVal(futuresCalc.balanceAtSL, currency)}</span>
                   </div>
                 </div>
 
@@ -592,11 +588,11 @@ export function PositionCalculatorModal({ isOpen, onClose, totalEquity = 2000, c
                     <span>{targetPrice ? `@ ${targetPrice}` : ''}</span>
                   </div>
                   <div className="text-sm font-black text-[#10B981] mt-0.5">
-                    {futuresCalc.hasTP ? `+${formatINR(futuresCalc.grossProfitINR)}` : '--'}
+                    {futuresCalc.hasTP ? `+${formatVal(futuresCalc.grossProfitINR, currency)}` : '--'}
                   </div>
                   <div className="text-[8px] text-slate-400 flex items-center justify-between mt-0.5">
                     <span>+{futuresCalc.rewardPercentCapital.toFixed(2)}% capital</span>
-                    <span>Bal: {formatINR(futuresCalc.balanceAtTP)}</span>
+                    <span>Bal: {formatVal(futuresCalc.balanceAtTP, currency)}</span>
                   </div>
                 </div>
               </div>

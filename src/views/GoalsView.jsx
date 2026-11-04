@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Target, Trophy, Award, CheckCircle2, Edit3, X, Save } from 'lucide-react';
-import { formatCurrency, calculateTradePnL } from '../utils/formatters';
+import { formatCurrency, convertCurrency, calculateTradePnL } from '../utils/formatters';
 
-export function GoalsView({ trades = [], currency = 'USD', user }) {
+export function GoalsView({ trades = [], currency = 'INR', user }) {
   const storagePrefix = `tradetracker_${user?.id || user?.email || 'anonymous'}`;
   // Saved Goals State with LocalStorage Persistence
   const [profitGoal, setProfitGoal] = useState(() => {
@@ -28,12 +28,12 @@ export function GoalsView({ trades = [], currency = 'USD', user }) {
 
   // Edit Modal State
   const [isEditing, setIsEditing] = useState(false);
-  const [tempProfitGoal, setTempProfitGoal] = useState(profitGoal);
+  const [tempProfitGoal, setTempProfitGoal] = useState(() => convertCurrency(profitGoal, 'INR', currency));
   const [tempTradeGoal, setTempTradeGoal] = useState(tradeGoal);
   const [tempWinRateGoal, setTempWinRateGoal] = useState(winRateGoal);
 
   const handleOpenEdit = () => {
-    setTempProfitGoal(profitGoal);
+    setTempProfitGoal(Math.round(convertCurrency(profitGoal, 'INR', currency)));
     setTempTradeGoal(tradeGoal);
     setTempWinRateGoal(winRateGoal);
     setIsEditing(true);
@@ -41,7 +41,8 @@ export function GoalsView({ trades = [], currency = 'USD', user }) {
 
   const handleSaveGoals = (e) => {
     e.preventDefault();
-    const pGoal = parseFloat(tempProfitGoal) || 10000;
+    const enteredProfit = parseFloat(tempProfitGoal) || 1000;
+    const pGoal = convertCurrency(enteredProfit, currency, 'INR');
     const tGoal = parseInt(tempTradeGoal) || 10;
     const wGoal = Math.min(Math.max(parseFloat(tempWinRateGoal) || 50, 1), 100);
 

@@ -40,7 +40,7 @@ import {
 import { storageService } from '../services/storage';
 
 export function SettingsView({ 
-  currency = 'USDT', 
+  currency = 'INR', 
   setCurrency, 
   darkMode = true,
   setDarkMode,
@@ -285,17 +285,17 @@ export function SettingsView({
           {/* Account Currency */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-[#1E2638]/50">
             <div>
-              <label className="text-xs font-semibold text-slate-200 block">Base Account Currency</label>
-              <p className="text-[11px] text-slate-400">Primary currency symbol for global P&L calculation.</p>
+              <label className="text-xs font-semibold text-slate-200 block">Preferred Display Currency</label>
+              <p className="text-[11px] text-slate-400">Delta Exchange India fixed conversion: 1 USD = ₹85. Financial values update immediately.</p>
             </div>
             <select
               value={currency}
               onChange={(e) => setCurrency && setCurrency(e.target.value)}
-              className="px-3 py-2 bg-[#0B0F19] text-white text-xs font-bold rounded-xl border border-[#1E2638] focus:outline-none focus:border-[#38BDF8] w-48 font-mono cursor-pointer"
+              className="px-3 py-2 bg-[#0B0F19] text-white text-xs font-bold rounded-xl border border-[#1E2638] focus:outline-none focus:border-[#38BDF8] w-56 font-mono cursor-pointer"
             >
-              <option value="USD">$ USD (US Dollar)</option>
               <option value="INR">₹ INR (Indian Rupee)</option>
-              <option value="USDT">₮ USDT (Tether USD)</option>
+              <option value="USD">$ USD (US Dollar - ₹85)</option>
+              <option value="USDT">₮ USDT (Tether USD - ₹85)</option>
               <option value="EUR">€ EUR (Euro)</option>
               <option value="GBP">£ GBP (British Pound)</option>
             </select>

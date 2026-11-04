@@ -15,17 +15,13 @@ import {
   Upload
 } from 'lucide-react';
 import { CryptoIcon, BINANCE_POPULAR_PAIRS } from '../utils/cryptoIcons';
+import { formatCurrency, getCurrencySymbol } from '../utils/formatters';
 
-function formatINR(val) {
-  const num = Number(val);
-  if (isNaN(num)) return '₹0';
-  const isNegative = num < 0;
-  const abs = Math.abs(num);
-  const formatted = abs.toLocaleString('en-IN', {
-    maximumFractionDigits: 2,
+function formatVal(val, currency = 'INR') {
+  return formatCurrency(val, currency, 'INR', {
+    maximumFractionDigits: 0,
     minimumFractionDigits: 0
   });
-  return `${isNegative ? '-' : ''}₹${formatted}`;
 }
 
 function formatShortDate(dateStr) {
@@ -203,9 +199,10 @@ export function TradeModal({
   onDelete,
   tradeToEdit = null, 
   initialConfluences = null,
-  currency = 'USD',
+  currency = 'INR',
   darkMode = true 
 }) {
+  const currencySymbol = getCurrencySymbol(currency);
   const [step, setStep] = useState(1);
 
   // Auto-detect dark mode if prop is passed or document html class has 'dark'
@@ -1107,12 +1104,12 @@ export function TradeModal({
                       <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
                         isDark ? 'text-slate-400' : 'text-slate-600'
                       }`}>
-                        Starting Capital (₹)
+                        Starting Capital ({currencySymbol})
                       </label>
                       <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
                         isDark ? 'bg-[#0B0F19] border-[#1E2638] focus-within:border-sky-500 hover:border-slate-700' : 'bg-white border-slate-200 focus-within:border-sky-500 hover:border-slate-300'
                       }`}>
-                        <span className={`text-xs mr-1 select-none ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>₹</span>
+                        <span className={`text-xs mr-1 select-none ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{currencySymbol}</span>
                         <input
                           type="number"
                           step="any"
@@ -1129,12 +1126,12 @@ export function TradeModal({
                       <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
                         isDark ? 'text-slate-400' : 'text-slate-600'
                       }`}>
-                        Margin Used (₹)
+                        Margin Used ({currencySymbol})
                       </label>
                       <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
                         isDark ? 'bg-[#0B0F19] border-[#1E2638] focus-within:border-sky-500 hover:border-slate-700' : 'bg-white border-slate-200 focus-within:border-sky-500 hover:border-slate-300'
                       }`}>
-                        <span className={`text-xs mr-1 select-none ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>₹</span>
+                        <span className={`text-xs mr-1 select-none ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{currencySymbol}</span>
                         <input
                           type="number"
                           step="any"
@@ -1151,12 +1148,12 @@ export function TradeModal({
                       <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
                         isDark ? 'text-slate-400' : 'text-slate-600'
                       }`}>
-                        Available Balance (₹)
+                        Available Balance ({currencySymbol})
                       </label>
                       <div className={`flex items-center rounded-xl border px-3 h-10 font-mono text-xs font-semibold ${
                         isDark ? 'bg-[#0B0F19] border-[#1E2638] text-emerald-400' : 'bg-white border-slate-200 text-emerald-600'
                       }`}>
-                        <span>₹ {calculationSummary.availableBalance >= 0 ? calculationSummary.availableBalance.toLocaleString('en-IN') : '0'}</span>
+                        <span>{currencySymbol} {calculationSummary.availableBalance >= 0 ? calculationSummary.availableBalance.toLocaleString('en-IN') : '0'}</span>
                       </div>
                     </div>
 
@@ -1195,7 +1192,7 @@ export function TradeModal({
                     isDark ? 'border-[#1E2638]/60 text-slate-400' : 'border-slate-200 text-slate-500'
                   }`}>
                     <div>
-                      Capacity: <span className={`font-medium ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>{formatINR(calculationSummary.capacityNotionalINR)}</span> <span className="text-[11px] opacity-70">(Margin × Leverage)</span>
+                      Capacity: <span className={`font-medium ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>{formatVal(calculationSummary.capacityNotionalINR, currency)}</span> <span className="text-[11px] opacity-70">(Margin × Leverage)</span>
                     </div>
                     <div className="text-[11px]">
                       Contract: <span className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>1 Lot = {contractSize} {symbol.split('/')[0] || 'BTC'}</span> · 1 USDT = <span className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>₹{usdtRate}</span>
@@ -1349,7 +1346,7 @@ export function TradeModal({
                         <label className={`block text-[11px] font-medium font-jakarta ${
                           isDark ? 'text-slate-400' : 'text-slate-600'
                         }`}>
-                          Dynamic Risk Target (₹)
+                          Dynamic Risk Target ({currencySymbol})
                         </label>
                         {calculationSummary.hasSL && calculationSummary.recommendedRiskLots > 0 && (
                           <button
@@ -1371,7 +1368,7 @@ export function TradeModal({
                       <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
                         isDark ? 'bg-[#0B0F19] border-[#1E2638] focus-within:border-sky-500 hover:border-slate-700' : 'bg-white border-slate-200 focus-within:border-sky-500 hover:border-slate-300'
                       }`}>
-                        <span className={`text-xs mr-1 select-none ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>₹</span>
+                        <span className={`text-xs mr-1 select-none ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>{currencySymbol}</span>
                         <input
                           type="number"
                           step="any"
@@ -1391,7 +1388,7 @@ export function TradeModal({
                       <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
                         isDark ? 'text-slate-400' : 'text-slate-600'
                       }`}>
-                        Exchange Realized P&L (₹)
+                        Exchange Realized P&L ({currencySymbol})
                       </label>
                       <input
                         type="number"
@@ -1409,7 +1406,7 @@ export function TradeModal({
                       <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
                         isDark ? 'text-slate-400' : 'text-slate-600'
                       }`}>
-                        Trading Fees (₹)
+                        Trading Fees ({currencySymbol})
                       </label>
                       <input
                         type="number"
@@ -1427,7 +1424,7 @@ export function TradeModal({
                       <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
                         isDark ? 'text-slate-400' : 'text-slate-600'
                       }`}>
-                        Funding Fees (₹)
+                        Funding Fees ({currencySymbol})
                       </label>
                       <input
                         type="number"
@@ -1632,7 +1629,7 @@ export function TradeModal({
                   }`}>
                     <span className={isDark ? 'text-slate-400' : 'text-slate-600'}>Calculated Realized Net P&L:</span>
                     <span className={`text-base font-bold ${calculationSummary.realizedNetPnL >= 0 ? isDark ? 'text-emerald-400' : 'text-emerald-600' : isDark ? 'text-rose-400' : 'text-rose-600'}`}>
-                      {calculationSummary.realizedNetPnL >= 0 ? '+' : ''}{formatINR(calculationSummary.realizedNetPnL)}
+                      {calculationSummary.realizedNetPnL >= 0 ? '+' : ''}{formatVal(calculationSummary.realizedNetPnL, currency)}
                     </span>
                   </div>
                 </div>
@@ -1703,18 +1700,18 @@ export function TradeModal({
                   <div className={`p-2.5 rounded-xl border text-center ${
                     isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
                   }`}>
-                    <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Risk (₹)</span>
+                    <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Risk ({currencySymbol})</span>
                     <span className={`text-sm font-bold font-mono ${isDark ? 'text-rose-400' : 'text-rose-600'}`}>
-                      {calculationSummary.hasSL ? Math.round(calculationSummary.grossLossINR) : (targetRiskINR || '100')}
+                      {calculationSummary.hasSL ? formatVal(calculationSummary.grossLossINR, currency) : formatVal(targetRiskINR || 100, currency)}
                     </span>
                   </div>
 
                   <div className={`p-2.5 rounded-xl border text-center ${
                     isDark ? 'bg-[#090D16] border-[#1E2638]' : 'bg-white border-slate-200 shadow-xs'
                   }`}>
-                    <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Reward (₹)</span>
+                    <span className={`text-[10px] font-medium block mb-1 ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>Reward ({currencySymbol})</span>
                     <span className={`text-sm font-bold font-mono ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                      {calculationSummary.hasTP ? Math.round(calculationSummary.grossProfitINR) : '468'}
+                      {calculationSummary.hasTP ? formatVal(calculationSummary.grossProfitINR, currency) : formatVal(468, currency)}
                     </span>
                   </div>
 
@@ -1754,9 +1751,9 @@ export function TradeModal({
                   <div className={`flex items-center justify-between pt-1 border-t ${
                     isDark ? 'border-[#1E2638]/60' : 'border-slate-200'
                   }`}>
-                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Est. P&L (₹)</span>
+                    <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>• Est. P&L ({currencySymbol})</span>
                     <span className={`font-bold ${isDark ? 'text-emerald-400' : 'text-emerald-600'}`}>
-                      +{calculationSummary.hasTP ? calculationSummary.grossProfitINR.toFixed(2) : '468.00'}
+                      +{calculationSummary.hasTP ? formatCurrency(calculationSummary.grossProfitINR, currency) : formatCurrency(468, currency)}
                     </span>
                   </div>
                 </div>

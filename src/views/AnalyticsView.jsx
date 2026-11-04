@@ -31,7 +31,7 @@ import { formatCurrency, formatDate, calculateTradePnL } from '../utils/formatte
 
 const PIE_COLORS = ['#10B981', '#EF4444', '#475569'];
 
-export function AnalyticsView({ trades = [], currency = 'USD' }) {
+export function AnalyticsView({ trades = [], currency = 'INR' }) {
   const [activeTab, setActiveTab] = useState('overview');
 
   const analytics = useMemo(() => {
@@ -495,7 +495,7 @@ export function AnalyticsView({ trades = [], currency = 'USD' }) {
                 <BarChart data={analytics.monthlyChartData} margin={{ top: 10, right: 30, left: -10, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#1E2638" opacity={0.6} />
                   <XAxis dataKey="month" tick={{ fontSize: 10, fill: '#64748B' }} axisLine={false} tickLine={false} padding={{ left: 40, right: 40 }} />
-                  <YAxis tick={{ fontSize: 10, fill: '#64748B' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: '#64748B' }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrency(v, currency, 'INR', { notation: 'compact' })} />
                   <Tooltip
                     shared={false}
                     isAnimationActive={false}

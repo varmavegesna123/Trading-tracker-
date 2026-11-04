@@ -12,7 +12,7 @@ import {
 } from 'lucide-react';
 import { formatCurrency, calculateTradePnL, formatPercent } from '../utils/formatters';
 
-export function ReportsView({ trades = [], currency = 'USD', onExportCSV, onExportJSON }) {
+export function ReportsView({ trades = [], currency = 'INR', onExportCSV, onExportJSON }) {
   const closed = trades.filter(t => t.status === 'CLOSED');
   
   let netPnL = 0;

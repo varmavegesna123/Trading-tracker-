@@ -12,12 +12,12 @@ import {
   Calendar,
   CheckCircle2
 } from 'lucide-react';
-import { formatCurrency, formatDate, formatPercent, calculateTradePnL } from '../utils/formatters';
+import { formatCurrency, formatPrice, formatDate, formatPercent, calculateTradePnL } from '../utils/formatters';
 import { CryptoIcon } from '../utils/cryptoIcons';
 
 export function TradeLogView({ 
   trades = [], 
-  currency = 'USD', 
+  currency = 'INR', 
   onOpenTradeModal,
   onOpenPreTradeChecklist,
   onEditTrade,
@@ -191,8 +191,8 @@ export function TradeLogView({
                           </span>
                         )}
                       </td>
-                      <td className="py-3 px-3 font-mono text-slate-300 font-bold">{t.entryPrice !== undefined && t.entryPrice !== null ? formatCurrency(t.entryPrice, currency) : '-'}</td>
-                      <td className="py-3 px-3 font-mono text-slate-300 font-bold">{t.status === 'CLOSED' && t.exitPrice !== undefined && t.exitPrice !== null ? formatCurrency(t.exitPrice, currency) : '-'}</td>
+                      <td className="py-3 px-3 font-mono text-slate-300 font-bold">{t.entryPrice !== undefined && t.entryPrice !== null ? formatPrice(t.entryPrice, t.symbol) : '-'}</td>
+                      <td className="py-3 px-3 font-mono text-slate-300 font-bold">{t.status === 'CLOSED' && t.exitPrice !== undefined && t.exitPrice !== null ? formatPrice(t.exitPrice, t.symbol) : '-'}</td>
                       <td className="py-3 px-3 font-mono text-slate-300 font-bold">
                         <div>
                           <span>{t.quantity !== undefined ? t.quantity : '-'}</span>

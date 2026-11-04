@@ -28,7 +28,7 @@ import {
   Cell,
   CartesianGrid
 } from 'recharts';
-import { formatCurrency, formatDate, calculateTradePnL } from '../utils/formatters';
+import { formatCurrency, formatPrice, formatDate, calculateTradePnL } from '../utils/formatters';
 import { CryptoIcon } from '../utils/cryptoIcons';
 
 const CYAN = '#38BDF8';
@@ -39,7 +39,7 @@ const GREY = '#475569';
 export function DashboardView({ 
   trades = [], 
   capitalLogs = [], 
-  currency = 'USD', 
+  currency = 'INR', 
   onOpenTradeModal,
   onOpenCapitalModal,
   onOpenImportModal,
@@ -437,7 +437,7 @@ export function DashboardView({
                   </defs>
                   <CartesianGrid horizontal={false} vertical={false} />
                   <XAxis dataKey="date" tick={{ fontSize: 10, fill: '#64748B' }} axisLine={false} tickLine={false} />
-                  <YAxis tick={{ fontSize: 10, fill: '#64748B' }} axisLine={false} tickLine={false} />
+                  <YAxis tick={{ fontSize: 10, fill: '#64748B' }} axisLine={false} tickLine={false} tickFormatter={(v) => formatCurrency(v, currency, 'INR', { notation: 'compact' })} />
                   <Tooltip
                     isAnimationActive={false}
                     cursor={{ stroke: data.netPnL >= 0 ? GREEN : RED, strokeWidth: 1.5, strokeDasharray: '3 3' }}
@@ -566,8 +566,8 @@ export function DashboardView({
                           {t.direction}
                         </span>
                       </td>
-                      <td className="py-2.5 px-3 font-mono text-slate-300">{t.entryPrice ? formatCurrency(t.entryPrice, currency) : '-'}</td>
-                      <td className="py-2.5 px-3 font-mono text-slate-300">{t.status === 'CLOSED' && t.exitPrice ? formatCurrency(t.exitPrice, currency) : '-'}</td>
+                      <td className="py-2.5 px-3 font-mono text-slate-300">{t.entryPrice ? formatPrice(t.entryPrice, t.symbol) : '-'}</td>
+                      <td className="py-2.5 px-3 font-mono text-slate-300">{t.status === 'CLOSED' && t.exitPrice ? formatPrice(t.exitPrice, t.symbol) : '-'}</td>
                       <td className="py-2.5 px-3 font-mono text-slate-300">{t.quantity}</td>
                       <td className="py-2.5 px-3 font-mono font-bold">
                         {t.status === 'CLOSED' ? (

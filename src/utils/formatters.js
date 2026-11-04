@@ -1,37 +1,24 @@
 // Utility functions for formatting currencies, numbers, dates, and P&L calculations
-
-export const CURRENCY_SYMBOLS = {
-  INR: '₹',
-  USD: '$',
-  USDT: '₮',
-  EUR: '€',
-  GBP: '£',
-  BTC: '₿'
-};
+export { 
+  USD_TO_INR_RATE, 
+  BASE_CURRENCY, 
+  CURRENCY_SYMBOLS, 
+  getCurrencySymbol, 
+  convertCurrency, 
+  formatCurrency 
+} from './currency';
 
 /**
- * Format currency amount with proper locale and symbol
+ * Format asset prices (e.g. BTC 77,406.00) cleanly
  */
-export const formatCurrency = (amount, currencyCode = 'USD') => {
-  const num = Number(amount) || 0;
-  const symbol = CURRENCY_SYMBOLS[currencyCode] || '$';
-  
-  if (currencyCode === 'INR') {
-    // Format according to Indian numbering system (e.g. ₹1,50,000.00)
-    const absoluteNum = Math.abs(num);
-    const formatted = absoluteNum.toLocaleString('en-IN', {
-      maximumFractionDigits: 2,
-      minimumFractionDigits: 2
-    });
-    return `${num < 0 ? '-' : ''}${symbol}${formatted}`;
-  }
-  
-  const absoluteNum = Math.abs(num);
-  const formatted = absoluteNum.toLocaleString('en-US', {
-    maximumFractionDigits: 2,
-    minimumFractionDigits: 2
+export const formatPrice = (price, symbol = '') => {
+  const num = Number(price);
+  if (isNaN(num) || price === null || price === undefined || price === '') return '-';
+  const decimals = num > 100 ? 2 : 4;
+  return num.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: decimals
   });
-  return `${num < 0 ? '-' : ''}${symbol}${formatted}`;
 };
 
 /**

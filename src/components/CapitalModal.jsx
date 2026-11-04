@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { X, ArrowDownRight, ArrowUpRight, DollarSign } from 'lucide-react';
-import { formatCurrency } from '../utils/formatters';
+import { formatCurrency, convertCurrency, BASE_CURRENCY } from '../utils/formatters';
 
 export function CapitalModal({ isOpen, onClose, onSave, currency = 'INR' }) {
   const [formData, setFormData] = useState({
@@ -19,10 +19,13 @@ export function CapitalModal({ isOpen, onClose, onSave, currency = 'INR' }) {
       return;
     }
 
+    const enteredAmount = Number(formData.amount);
+    const baseAmount = convertCurrency(enteredAmount, currency, BASE_CURRENCY);
+
     onSave({
       id: `cap-${Date.now()}`,
       type: formData.type,
-      amount: Number(formData.amount),
+      amount: baseAmount,
       date: formData.date,
       notes: formData.notes
     });

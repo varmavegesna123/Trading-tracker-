@@ -2,7 +2,7 @@ import React from 'react';
 import { Layers, Plus, TrendingUp, TrendingDown, CheckCircle2, Award, Zap } from 'lucide-react';
 import { formatCurrency, calculateTradePnL } from '../utils/formatters';
 
-export function StrategiesView({ trades = [], currency = 'USD', onOpenTradeModal }) {
+export function StrategiesView({ trades = [], currency = 'INR', onOpenTradeModal }) {
   const strategyMap = {};
 
   trades.filter(t => t.status === 'CLOSED').forEach(t => {

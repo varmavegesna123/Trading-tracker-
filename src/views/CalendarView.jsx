@@ -2,7 +2,7 @@ import React, { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, TrendingUp, TrendingDown, ArrowUpRight, Clock } from 'lucide-react';
 import { formatCurrency, calculateTradePnL } from '../utils/formatters';
 
-export function CalendarView({ trades = [], currency = 'USD', onEditTrade }) {
+export function CalendarView({ trades = [], currency = 'INR', onEditTrade }) {
   const [currentMonthDate, setCurrentMonthDate] = useState(new Date());
   const [selectedDayTrades, setSelectedDayTrades] = useState(null);
   const [selectedDateStr, setSelectedDateStr] = useState(null);
