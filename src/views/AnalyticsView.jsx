@@ -299,7 +299,7 @@ export function AnalyticsView({ trades = [], currency = 'INR' }) {
                   <span>Edge Matrix: Win Rate by Multi-Timeframe Confluences</span>
                 </h3>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  Comparative analysis of A+ 4/4 confluences (1H Bias + 15m Structure + 5m POI + 1m BOS/CHoCH) vs lower setups
+                  Comparative analysis of A+ 4/4 confluences (London/NY Sweep + NY Impulse + 50-61.8% Fib/POI + Rejection Candle) vs lower setups
                 </p>
               </div>
               <span className="px-3 py-1 rounded-full bg-[#38BDF8]/10 border border-[#38BDF8]/30 text-[#38BDF8] text-xs font-mono font-bold">

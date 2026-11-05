@@ -334,11 +334,14 @@ export function TradeModal({
     } else {
       resetForm();
       if (initialConfluences) {
-        setH1Bias(Boolean(initialConfluences.h1Bias));
-        setM15Structure(Boolean(initialConfluences.m15Structure));
-        setM5EntryPoi(Boolean(initialConfluences.m5EntryPoi));
-        setM1BosChoch(Boolean(initialConfluences.m1BosChoch));
-        setLtfTrigger(initialConfluences.ltfTrigger || 'CHOCH');
+        setH1Bias(Boolean(initialConfluences.h1Bias ?? initialConfluences.londonSweep));
+        setM15Structure(Boolean(initialConfluences.m15Structure ?? initialConfluences.nyImpulse));
+        setM5EntryPoi(Boolean(initialConfluences.m5EntryPoi ?? initialConfluences.fibPoiZone));
+        setM1BosChoch(Boolean(initialConfluences.m1BosChoch ?? initialConfluences.rejectionCandle));
+        setLtfTrigger(initialConfluences.triggerType || initialConfluences.ltfTrigger || 'PIN_BAR');
+        if (initialConfluences.symbol) setSymbol(initialConfluences.symbol);
+        if (initialConfluences.direction) setDirection(initialConfluences.direction);
+        if (initialConfluences.strategyModel) setStrategy(initialConfluences.strategyModel);
       }
     }
     setStep(1);
@@ -1714,57 +1717,76 @@ export function TradeModal({
                 <div className={`p-4 rounded-2xl border space-y-3 ${
                   isDark ? 'bg-[#0D121F]/80 border-[#1E2638]' : 'bg-[#F8FAFC] border-slate-200'
                 }`}>
-                  <div className={`text-xs font-semibold font-jakarta ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
-                    SMC Confluence Checklist
+                  <div className="flex items-center justify-between">
+                    <div className={`text-xs font-semibold font-jakarta ${isDark ? 'text-slate-200' : 'text-slate-800'}`}>
+                      ICT London / NY Confluence Checklist
+                    </div>
+                    <span className={`text-[10px] font-mono font-bold ${
+                      [h1Bias, m15Structure, m5EntryPoi, m1BosChoch].filter(Boolean).length === 4
+                        ? 'text-emerald-500'
+                        : [h1Bias, m15Structure, m5EntryPoi, m1BosChoch].filter(Boolean).length === 3
+                        ? 'text-sky-500'
+                        : isDark ? 'text-slate-400' : 'text-slate-500'
+                    }`}>
+                      {[h1Bias, m15Structure, m5EntryPoi, m1BosChoch].filter(Boolean).length}/4 Verified
+                    </span>
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
                     <label className={`flex items-center space-x-2.5 p-3 rounded-xl border cursor-pointer transition ${
-                      isDark ? 'bg-[#0B0F19] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
+                      h1Bias 
+                        ? isDark ? 'bg-emerald-950/20 border-emerald-500/50' : 'bg-emerald-50/70 border-emerald-300' 
+                        : isDark ? 'bg-[#0B0F19] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
                     }`}>
                       <input
                         type="checkbox"
                         checked={h1Bias}
                         onChange={(e) => setH1Bias(e.target.checked)}
-                        className="rounded accent-sky-500 cursor-pointer"
+                        className="rounded accent-emerald-500 cursor-pointer"
                       />
-                      <span className={`font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>1H HTF Directional Bias</span>
+                      <span className={`font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>1. London / NY Session Sweep</span>
                     </label>
 
                     <label className={`flex items-center space-x-2.5 p-3 rounded-xl border cursor-pointer transition ${
-                      isDark ? 'bg-[#0B0F19] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
+                      m15Structure 
+                        ? isDark ? 'bg-emerald-950/20 border-emerald-500/50' : 'bg-emerald-50/70 border-emerald-300' 
+                        : isDark ? 'bg-[#0B0F19] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
                     }`}>
                       <input
                         type="checkbox"
                         checked={m15Structure}
                         onChange={(e) => setM15Structure(e.target.checked)}
-                        className="rounded accent-sky-500 cursor-pointer"
+                        className="rounded accent-emerald-500 cursor-pointer"
                       />
-                      <span className={`font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>15m Market Structure Shift / FVG</span>
+                      <span className={`font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>2. NY Impulsive Move (Displacement)</span>
                     </label>
 
                     <label className={`flex items-center space-x-2.5 p-3 rounded-xl border cursor-pointer transition ${
-                      isDark ? 'bg-[#0B0F19] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
+                      m5EntryPoi 
+                        ? isDark ? 'bg-emerald-950/20 border-emerald-500/50' : 'bg-emerald-50/70 border-emerald-300' 
+                        : isDark ? 'bg-[#0B0F19] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
                     }`}>
                       <input
                         type="checkbox"
                         checked={m5EntryPoi}
                         onChange={(e) => setM5EntryPoi(e.target.checked)}
-                        className="rounded accent-sky-500 cursor-pointer"
+                        className="rounded accent-emerald-500 cursor-pointer"
                       />
-                      <span className={`font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>5m Entry POI / Mitigation</span>
+                      <span className={`font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>3. 50%–61.8% Fib Zone & POI</span>
                     </label>
 
                     <label className={`flex items-center space-x-2.5 p-3 rounded-xl border cursor-pointer transition ${
-                      isDark ? 'bg-[#0B0F19] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
+                      m1BosChoch 
+                        ? isDark ? 'bg-emerald-950/20 border-emerald-500/50' : 'bg-emerald-50/70 border-emerald-300' 
+                        : isDark ? 'bg-[#0B0F19] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
                     }`}>
                       <input
                         type="checkbox"
                         checked={m1BosChoch}
                         onChange={(e) => setM1BosChoch(e.target.checked)}
-                        className="rounded accent-sky-500 cursor-pointer"
+                        className="rounded accent-emerald-500 cursor-pointer"
                       />
-                      <span className={`font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>1m LTF Trigger (CHOCH / BOS)</span>
+                      <span className={`font-medium ${isDark ? 'text-slate-200' : 'text-slate-700'}`}>4. Rejection Candle Confirmation</span>
                     </label>
                   </div>
                 </div>
@@ -1782,7 +1804,10 @@ export function TradeModal({
                       isDark ? 'bg-[#0B0F19] text-white border-[#1E2638] hover:border-slate-700' : 'bg-white text-slate-900 border-slate-200 hover:border-slate-300'
                     }`}
                   >
-                    <option value="SMC Order Block">SMC Order Block</option>
+                    <option value="London / NY Sweep & 50-61.8% Fib POI">London / NY Sweep & 50-61.8% Fib POI</option>
+                    <option value="London / NY Session Sweep">London / NY Session Sweep</option>
+                    <option value="NY Impulse + 50-61.8% Fib Retracement">NY Impulse + 50-61.8% Fib Retracement</option>
+                    <option value="SMC Order Block">SMC Order Block / POI Mitigation</option>
                     <option value="Liquidity Sweep">Liquidity Sweep / Raid</option>
                     <option value="Fair Value Gap (FVG)">Fair Value Gap (FVG)</option>
                     <option value="Break of Structure">Break of Structure (BOS)</option>
