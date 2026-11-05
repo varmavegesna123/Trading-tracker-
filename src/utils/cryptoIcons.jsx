@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
-// Extract primary base crypto symbol from any trading pair format
-// e.g. "BTC/USDT" -> "btc", "ETHUSDT" -> "eth", "SOL-PERP" -> "sol"
+// Extract primary base crypto or commodity symbol from any trading pair format
+// e.g. "BTC/USDT" -> "btc", "XAUUSD" -> "xau", "SOL-PERP" -> "sol"
 export function extractBaseSymbol(symbol) {
   if (!symbol) return 'btc';
   let clean = String(symbol).trim().toUpperCase();
@@ -30,9 +30,23 @@ export function extractBaseSymbol(symbol) {
   // Handle rebrands, gold & logo mapping fallbacks
   if (clean === 'POL') return 'matic';
   if (clean === 'RENDER') return 'rndr';
-  if (clean === 'GOLD') return 'xau';
+  if (clean === 'GOLD' || clean === 'XAUT' || clean === 'PAXG' || clean === 'XAU') return 'xau';
 
   return clean.toLowerCase();
+}
+
+// Extract clean human-readable asset ticker (e.g. "XAUUSD" -> "XAU", "BTC/USDT" -> "BTC")
+export function getAssetTicker(symbol) {
+  if (!symbol) return 'BTC';
+  const clean = String(symbol).trim().toUpperCase();
+  if (clean.includes('XAU') || clean.includes('GOLD')) return 'XAU';
+  if (clean.includes('PAXG')) return 'PAXG';
+  if (clean.includes('/')) return clean.split('/')[0];
+  if (clean.endsWith('USDT') && clean.length > 4) return clean.slice(0, -4);
+  if (clean.endsWith('BUSD') && clean.length > 4) return clean.slice(0, -4);
+  if (clean.endsWith('USDC') && clean.length > 4) return clean.slice(0, -4);
+  if (clean.endsWith('USD') && clean.length > 3) return clean.slice(0, -3);
+  return clean;
 }
 
 // Returns official coin CDN image URL
@@ -41,67 +55,43 @@ export function getCryptoIconUrl(symbol) {
   return `https://assets.coincap.io/assets/icons/${base}@2x.png`;
 }
 
-// Popular Binance & Crypto Pairs Metadata (Real Active Spot, Perpetuals & Metals)
+// Popular Delta Exchange, Binance & Global Active Trading Pairs (100% Real Authentic Symbols)
 export const BINANCE_POPULAR_PAIRS = [
   { symbol: 'BTC/USDT', coin: 'BTC', name: 'Bitcoin' },
   { symbol: 'ETH/USDT', coin: 'ETH', name: 'Ethereum' },
   { symbol: 'SOL/USDT', coin: 'SOL', name: 'Solana' },
-  { symbol: 'XAUUSD', coin: 'XAU', name: 'Gold Spot (XAUUSD)' },
-  { symbol: 'BNB/USDT', coin: 'BNB', name: 'BNB' },
-  { symbol: 'ALV/USDT', coin: 'ALV', name: 'Alvey Chain' },
-  { symbol: 'ALGO/USDT', coin: 'ALGO', name: 'Algorand' },
-  { symbol: 'AVAX/USDT', coin: 'AVAX', name: 'Avalanche' },
-  { symbol: 'XAU/USD', coin: 'XAU', name: 'Gold (XAU/USD)' },
-  { symbol: 'ETH/USD', coin: 'ETH', name: 'Ethereum (USD)' },
-  { symbol: 'SOL/USD', coin: 'SOL', name: 'Solana (USD)' },
-  { symbol: 'ALV/USD', coin: 'ALV', name: 'Alvey Chain (USD)' },
-  { symbol: 'BTC/USD', coin: 'BTC', name: 'Bitcoin (USD)' },
-  { symbol: 'AVAX/USD', coin: 'AVAX', name: 'Avalanche (USD)' },
-  { symbol: 'BNB/USDT', coin: 'BNB', name: 'BNB' },
+  { symbol: 'XAUUSD', coin: 'XAU', name: 'Gold Spot / USD (Delta Exchange)' },
   { symbol: 'XRP/USDT', coin: 'XRP', name: 'XRP' },
-  { symbol: 'ADA/USDT', coin: 'ADA', name: 'Cardano' },
+  { symbol: 'BNB/USDT', coin: 'BNB', name: 'BNB' },
   { symbol: 'DOGE/USDT', coin: 'DOGE', name: 'Dogecoin' },
+  { symbol: 'AVAX/USDT', coin: 'AVAX', name: 'Avalanche' },
   { symbol: 'SUI/USDT', coin: 'SUI', name: 'Sui' },
   { symbol: 'PEPE/USDT', coin: 'PEPE', name: 'Pepe' },
   { symbol: 'LINK/USDT', coin: 'LINK', name: 'Chainlink' },
-  { symbol: 'DOT/USDT', coin: 'DOT', name: 'Polkadot' },
+  { symbol: 'ADA/USDT', coin: 'ADA', name: 'Cardano' },
   { symbol: 'NEAR/USDT', coin: 'NEAR', name: 'NEAR Protocol' },
   { symbol: 'SHIB/USDT', coin: 'SHIB', name: 'Shiba Inu' },
-  { symbol: 'TON/USDT', coin: 'TON', name: 'Toncoin' },
-  { symbol: 'MATIC/USDT', coin: 'MATIC', name: 'Polygon' },
-  { symbol: 'POL/USDT', coin: 'POL', name: 'Polygon POL' },
   { symbol: 'LTC/USDT', coin: 'LTC', name: 'Litecoin' },
+  { symbol: 'TRX/USDT', coin: 'TRX', name: 'TRON' },
+  { symbol: 'ALGO/USDT', coin: 'ALGO', name: 'Algorand' },
+  { symbol: 'ALV/USDT', coin: 'ALV', name: 'Alvey Chain' },
+  { symbol: 'DOT/USDT', coin: 'DOT', name: 'Polkadot' },
   { symbol: 'UNI/USDT', coin: 'UNI', name: 'Uniswap' },
-  { symbol: 'ATOM/USDT', coin: 'ATOM', name: 'Cosmos' },
-  { symbol: 'ETC/USDT', coin: 'ETC', name: 'Ethereum Classic' },
-  { symbol: 'XLM/USDT', coin: 'XLM', name: 'Stellar' },
-  { symbol: 'APT/USDT', coin: 'APT', name: 'Aptos' },
-  { symbol: 'FIL/USDT', coin: 'FIL', name: 'Filecoin' },
-  { symbol: 'LDO/USDT', coin: 'LDO', name: 'Lido DAO' },
-  { symbol: 'ICP/USDT', coin: 'ICP', name: 'Internet Computer' },
-  { symbol: 'RENDER/USDT', coin: 'RENDER', name: 'Render' },
-  { symbol: 'RNDR/USDT', coin: 'RNDR', name: 'Render Token' },
   { symbol: 'INJ/USDT', coin: 'INJ', name: 'Injective' },
-  { symbol: 'OP/USDT', coin: 'OP', name: 'Optimism' },
+  { symbol: 'RENDER/USDT', coin: 'RENDER', name: 'Render' },
+  { symbol: 'APT/USDT', coin: 'APT', name: 'Aptos' },
   { symbol: 'ARB/USDT', coin: 'ARB', name: 'Arbitrum' },
-  { symbol: 'FET/USDT', coin: 'FET', name: 'Fetch.ai' },
-  { symbol: 'WIF/USDT', coin: 'WIF', name: 'dogwifhat' },
-  { symbol: 'FLOKI/USDT', coin: 'FLOKI', name: 'Floki' },
+  { symbol: 'OP/USDT', coin: 'OP', name: 'Optimism' },
   { symbol: 'TIA/USDT', coin: 'TIA', name: 'Celestia' },
   { symbol: 'SEI/USDT', coin: 'SEI', name: 'Sei' },
-  { symbol: 'STX/USDT', coin: 'STX', name: 'Stacks' },
   { symbol: 'AAVE/USDT', coin: 'AAVE', name: 'Aave' },
-  { symbol: 'MKR/USDT', coin: 'MKR', name: 'Maker' },
   { symbol: 'TAO/USDT', coin: 'TAO', name: 'Bittensor' },
-  { symbol: 'WLD/USDT', coin: 'WLD', name: 'Worldcoin' },
-  { symbol: 'TRX/USDT', coin: 'TRX', name: 'TRON' },
   { symbol: 'BCH/USDT', coin: 'BCH', name: 'Bitcoin Cash' },
-  { symbol: 'JUP/USDT', coin: 'JUP', name: 'Jupiter' },
-  { symbol: 'PYTH/USDT', coin: 'PYTH', name: 'Pyth Network' },
+  { symbol: 'FET/USDT', coin: 'FET', name: 'Artificial Superintelligence (FET)' },
+  { symbol: 'WIF/USDT', coin: 'WIF', name: 'dogwifhat' },
   { symbol: 'BONK/USDT', coin: 'BONK', name: 'Bonk' },
-  { symbol: 'NOT/USDT', coin: 'NOT', name: 'Notcoin' },
-  { symbol: 'DOGS/USDT', coin: 'DOGS', name: 'Dogs' },
-  { symbol: 'POPCAT/USDT', coin: 'POPCAT', name: 'Popcat' }
+  { symbol: 'XAUTUSD', coin: 'XAU', name: 'Tether Gold (Delta Perpetual)' },
+  { symbol: 'PAXGUSD', coin: 'XAU', name: 'PAX Gold (Delta Perpetual)' }
 ];
 
 // React component to render exact official coin logo image with styled fallback
@@ -110,11 +100,21 @@ export function CryptoIcon({ symbol, className = "w-5 h-5", alt = "" }) {
   const base = extractBaseSymbol(symbol);
   const iconUrl = getCryptoIconUrl(symbol);
 
-  // Dedicated Gold / XAU Badge
+  // Dedicated Gold / XAU Badge - matching the official Gold Bullion 3-bar icon
   if (base === 'xau' || base === 'gold') {
     return (
-      <span className={`${className} rounded-full bg-amber-500/20 border border-amber-500/50 text-amber-400 font-mono font-bold flex items-center justify-center text-[9px] shrink-0 uppercase shadow-xs`}>
-        Au
+      <span 
+        title="Gold (XAUUSD)"
+        className={`${className} rounded-full bg-[#E5A910] flex items-center justify-center shrink-0 shadow-xs overflow-hidden select-none`}
+      >
+        <svg viewBox="0 0 24 24" fill="none" className="w-[72%] h-[72%]" xmlns="http://www.w3.org/2000/svg">
+          {/* Top Ingot */}
+          <polygon points="9,5.5 15,5.5 16.8,9.5 7.2,9.5" fill="#FFFFFF" stroke="#FFFFFF" strokeWidth="0.4" strokeLinejoin="round" />
+          {/* Bottom Left Ingot */}
+          <polygon points="4.8,11.5 10.4,11.5 11.7,15.5 3.5,15.5" fill="#FFFFFF" stroke="#FFFFFF" strokeWidth="0.4" strokeLinejoin="round" />
+          {/* Bottom Right Ingot */}
+          <polygon points="13.6,11.5 19.2,11.5 20.5,15.5 12.3,15.5" fill="#FFFFFF" stroke="#FFFFFF" strokeWidth="0.4" strokeLinejoin="round" />
+        </svg>
       </span>
     );
   }
@@ -184,3 +184,4 @@ export async function fetchBinanceTickerPairs() {
     }));
   }
 }
+

@@ -16,7 +16,7 @@ import {
   Search,
   Sparkles
 } from 'lucide-react';
-import { CryptoIcon, BINANCE_POPULAR_PAIRS } from '../utils/cryptoIcons';
+import { CryptoIcon, BINANCE_POPULAR_PAIRS, getAssetTicker } from '../utils/cryptoIcons';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatters';
 import { USD_TO_INR_RATE } from '../utils/currency';
 
@@ -25,7 +25,8 @@ export function getRecommendedContractSize(symbolStr) {
   if (upper.includes('BTC')) return '0.001';
   if (upper.includes('ETH')) return '0.01';
   if (upper.includes('SOL')) return '0.1';
-  if (upper.includes('XAU') || upper.includes('GOLD')) return '0.01';
+  // Delta Exchange XAUUSD specification: 1 Lot = 0.001 XAU
+  if (upper.includes('XAU') || upper.includes('GOLD') || upper.includes('PAXG')) return '0.001';
   if (upper.includes('AVAX')) return '0.1';
   if (upper.includes('ALV')) return '100';
   if (upper.includes('ALGO')) return '10';
@@ -403,7 +404,7 @@ export function TradeModal({
   const filteredSymbols = useMemo(() => {
     let list = BINANCE_POPULAR_PAIRS;
     if (symbolCategory === 'POPULAR') {
-      const topSymbols = ['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'XAUUSD', 'XAU/USD', 'ALV/USDT', 'ALGO/USDT', 'AVAX/USDT', 'BNB/USDT', 'XRP/USDT', 'DOGE/USDT'];
+      const topSymbols = ['BTC/USDT', 'ETH/USDT', 'SOL/USDT', 'XAUUSD', 'XRP/USDT', 'BNB/USDT', 'DOGE/USDT', 'AVAX/USDT', 'SUI/USDT', 'LINK/USDT', 'ALV/USDT'];
       list = list.filter(p => topSymbols.includes(p.symbol));
     } else if (symbolCategory === 'METALS') {
       list = list.filter(p => p.symbol.includes('XAU') || p.coin === 'XAU');
@@ -427,9 +428,11 @@ export function TradeModal({
     setSymbol(clean);
     const recSize = getRecommendedContractSize(clean);
     setContractSize(recSize);
-    if (clean.includes('XAU')) {
-      setExchange('XAUUSD');
-      setMarket('Forex');
+    if (clean.includes('XAU') || clean.includes('GOLD')) {
+      setMarket('Commodities');
+      if (!exchange || exchange === 'XAUUSD') {
+        setExchange('Delta Exchange');
+      }
     } else {
       setMarket('Crypto');
     }
@@ -1074,7 +1077,7 @@ export function TradeModal({
                       </label>
                       {symbol && (
                         <span className={`text-[10px] font-mono font-medium ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>
-                          1 Lot = {contractSize} {symbol.split('/')[0] || 'BTC'}
+                          1 Lot = {contractSize} {getAssetTicker(symbol)}
                         </span>
                       )}
                     </div>
@@ -1462,7 +1465,7 @@ export function TradeModal({
                       Capacity: <span className={`font-medium ${isDark ? 'text-sky-400' : 'text-sky-600'}`}>{formatVal(calculationSummary.capacityNotionalINR, currency)}</span> <span className="text-[11px] opacity-70">(Margin × Leverage)</span>
                     </div>
                     <div className="text-[11px]">
-                      Contract: <span className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>1 Lot = {contractSize} {symbol.split('/')[0] || 'BTC'}</span> · 1 USDT = <span className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>₹{usdtRate}</span>
+                      Contract: <span className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>1 Lot = {contractSize} {getAssetTicker(symbol)}</span> · 1 USDT = <span className={`font-medium ${isDark ? 'text-slate-300' : 'text-slate-700'}`}>₹{usdtRate}</span>
                     </div>
                   </div>
                 </div>
@@ -1576,7 +1579,7 @@ export function TradeModal({
                           Order Size in Lots *
                         </label>
                         <span className={`text-[10px] font-mono ${isDark ? 'text-slate-400' : 'text-slate-500'}`}>
-                          = {calculationSummary.qty.toFixed(6)} {symbol.split('/')[0] || 'BTC'}
+                          = {calculationSummary.qty.toFixed(6)} {getAssetTicker(symbol)}
                         </span>
                       </div>
                       <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
@@ -1972,7 +1975,7 @@ export function TradeModal({
                   <div className="flex items-center justify-between">
                     <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Order Size</span>
                     <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                      {orderLots ? `${orderLots} Lots (${calculationSummary.qty.toFixed(6)} ${symbol.split('/')[0] || 'BTC'})` : '--'}
+                      {orderLots ? `${orderLots} Lots (${calculationSummary.qty.toFixed(6)} ${getAssetTicker(symbol)})` : '--'}
                     </span>
                   </div>
                 </div>
