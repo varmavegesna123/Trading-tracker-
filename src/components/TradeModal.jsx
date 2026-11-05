@@ -407,21 +407,21 @@ export function LeverageSelector({
   );
 }
 
-// Crisp official application logos for supported trading exchanges
+// Crisp official application logos for supported trading exchanges (clean transparent backgrounds)
 export function ExchangeLogo({ exchange, className = "w-5 h-5" }) {
   const ex = String(exchange || '').toLowerCase().trim();
 
-  // 1. Delta Exchange (Official India 3D Orange & Green Delta)
+  // 1. Delta Exchange (Official India 3D Orange & Green Delta - Transparent)
   if (ex.includes('delta')) {
     return (
-      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#181A20] border border-[#FF7A00]/25 p-0.5 shadow-xs overflow-hidden select-none`}>
-        <svg viewBox="0 0 24 24" fill="none" className="w-[90%] h-[90%]" xmlns="http://www.w3.org/2000/svg">
+      <span className={`${className} inline-flex items-center justify-center shrink-0 select-none`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           {/* Left Orange Shadow Facet */}
-          <polygon points="4,12 9.5,8.8 9.5,15.2" fill="#E65800" />
+          <polygon points="3.5,12 9.5,8.5 9.5,15.5" fill="#E65800" />
           {/* Top Orange Wing */}
-          <polygon points="10.2,4.8 21.2,10.2 13.8,12 10.2,9.2" fill="#FF7A00" />
+          <polygon points="10.2,4.5 21.5,10.2 14,12 10.2,9" fill="#FF7A00" />
           {/* Bottom Green Wing */}
-          <polygon points="10.2,19.2 21.2,10.2 13.8,12 10.2,14.8" fill="#00C853" />
+          <polygon points="10.2,19.5 21.5,10.2 14,12 10.2,15" fill="#00C853" />
         </svg>
       </span>
     );
@@ -439,61 +439,62 @@ export function ExchangeLogo({ exchange, className = "w-5 h-5" }) {
     );
   }
 
-  // 3. Binance (Official Binance Yellow Diamond Lattice)
+  // 3. Binance (Official Binance Gold App Badge - Clean Yellow, No Black Background)
   if (ex.includes('binance')) {
     return (
-      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#181A20] border border-[#F3BA2F]/40 p-0.5 shadow-xs overflow-hidden select-none`}>
+      <span className={`${className} inline-flex items-center justify-center shrink-0 select-none`}>
         <svg viewBox="0 0 24 24" fill="none" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 4.5L14.7 7.2L12 9.9L9.3 7.2L12 4.5ZM16.8 9.3L19.5 12L16.8 14.7L14.1 12L16.8 9.3ZM12 14.1L14.7 16.8L12 19.5L9.3 16.8L12 14.1ZM7.2 9.3L9.9 12L7.2 14.7L4.5 12L7.2 9.3ZM12 10.8L13.2 12L12 13.2L10.8 12L12 10.8Z" fill="#F3BA2F" />
+          <circle cx="12" cy="12" r="11" fill="#F3BA2F" />
+          <path d="M12 5.5L14.2 7.7L12 9.9L9.8 7.7L12 5.5ZM16.4 9.9L18.6 12.1L16.4 14.3L14.2 12.1L16.4 9.9ZM12 14.3L14.2 16.5L12 18.7L9.8 16.5L12 14.3ZM7.6 9.9L9.8 12.1L7.6 14.3L5.4 12.1L7.6 9.9ZM12 11.2L12.9 12.1L12 13L11.1 12.1L12 11.2Z" fill="#1E2026" />
         </svg>
       </span>
     );
   }
 
-  // 4. CoinSwitch (Official Rebranded Mint Green 'C' & White Coin)
+  // 4. CoinSwitch (Official Rebranded Mint Green 'C' & White Coin - Transparent)
   if (ex.includes('coinswitch') || ex.includes('switch')) {
     return (
-      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#181A20] border border-[#21CC7B]/30 shadow-xs overflow-hidden select-none`}>
+      <span className={`${className} inline-flex items-center justify-center shrink-0 select-none`}>
         <svg viewBox="0 0 24 24" fill="none" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="12" cy="12" r="11" fill="#181A20" />
           {/* Left Mint Green Crescent / C-Spine */}
           <path 
-            d="M 12 4.2 C 7.69 4.2 4.2 7.69 4.2 12 C 4.2 16.31 7.69 19.8 12 19.8 L 12 16.2 C 9.68 16.2 7.8 14.32 7.8 12 C 7.8 9.68 9.68 7.8 12 7.8 Z" 
-            fill="#21CC7B" 
+            d="M 12 3.5 C 7.3 3.5 3.5 7.3 3.5 12 C 3.5 16.7 7.3 20.5 12 20.5 L 12 16.8 C 9.35 16.8 7.2 14.65 7.2 12 C 7.2 9.35 9.35 7.2 12 7.2 Z" 
+            fill="#00D084" 
           />
           {/* Top Right Dark Teal-Green Quadrant */}
           <path 
-            d="M 12 4.2 C 16.31 4.2 19.8 7.69 19.8 12 L 16.2 12 C 16.2 9.68 14.32 7.8 12 7.8 Z" 
-            fill="#1C945E" 
+            d="M 12 3.5 C 16.7 3.5 20.5 7.3 20.5 12 L 16.8 12 C 16.8 9.35 14.65 7.2 12 7.2 Z" 
+            fill="#0E9F6E" 
           />
-          {/* Bottom Right Solid White Coin */}
-          <circle cx="15.6" cy="15.6" r="3" fill="#FFFFFF" />
+          {/* Bottom Right Coin */}
+          <circle cx="15.8" cy="15.8" r="3.4" fill="#00D084" />
+          <circle cx="15.8" cy="15.8" r="2.2" fill="#FFFFFF" />
         </svg>
       </span>
     );
   }
 
-  // 5. Bybit
+  // 5. Bybit (Official Bybit Amber App Emblem)
   if (ex.includes('bybit')) {
     return (
-      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#121214] border border-[#F7A600]/30 shadow-xs overflow-hidden select-none`}>
+      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#F7A600] shadow-xs overflow-hidden select-none`}>
         <svg viewBox="0 0 24 24" fill="none" className="w-[85%] h-[85%]" xmlns="http://www.w3.org/2000/svg">
-          <path d="M7 6H12.8C14.8 6 16.3 7.3 16.3 9C16.3 10.1 15.6 11 14.6 11.5C15.8 12 16.8 13.1 16.8 14.5C16.8 16.4 15.2 18 13.1 18H7V6ZM10.2 8.5V10.7H12.6C13.2 10.7 13.7 10.2 13.7 9.6C13.7 9 13.2 8.5 12.6 8.5H10.2ZM10.2 13V15.5H12.9C13.6 15.5 14.1 15 14.1 14.3C14.1 13.6 13.6 13 12.9 13H10.2Z" fill="#F7A600" />
+          <path d="M7 6H12.8C14.8 6 16.3 7.3 16.3 9C16.3 10.1 15.6 11 14.6 11.5C15.8 12 16.8 13.1 16.8 14.5C16.8 16.4 15.2 18 13.1 18H7V6ZM10.2 8.5V10.7H12.6C13.2 10.7 13.7 10.2 13.7 9.6C13.7 9 13.2 8.5 12.6 8.5H10.2ZM10.2 13V15.5H12.9C13.6 15.5 14.1 15 14.1 14.3C14.1 13.6 13.6 13 12.9 13H10.2Z" fill="#FFFFFF" />
         </svg>
       </span>
     );
   }
 
-  // 6. OKX
+  // 6. OKX (Theme-adaptive transparent emblem)
   if (ex.includes('okx')) {
     return (
-      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-black border border-white/20 shadow-xs overflow-hidden select-none`}>
-        <svg viewBox="0 0 24 24" fill="none" className="w-[80%] h-[80%]" xmlns="http://www.w3.org/2000/svg">
-          <rect x="5.5" y="5.5" width="5" height="5" rx="0.5" fill="#FFFFFF" />
-          <rect x="13.5" y="5.5" width="5" height="5" rx="0.5" fill="#FFFFFF" />
-          <rect x="9.5" y="9.5" width="5" height="5" rx="0.5" fill="#000000" stroke="#FFFFFF" strokeWidth="1" />
-          <rect x="5.5" y="13.5" width="5" height="5" rx="0.5" fill="#FFFFFF" />
-          <rect x="13.5" y="13.5" width="5" height="5" rx="0.5" fill="#FFFFFF" />
+      <span className={`${className} inline-flex items-center justify-center shrink-0 select-none`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-[90%] h-[90%]" xmlns="http://www.w3.org/2000/svg">
+          <rect x="5" y="5" width="5.2" height="5.2" rx="0.8" fill="#0284C7" />
+          <rect x="13.8" y="5" width="5.2" height="5.2" rx="0.8" fill="#0284C7" />
+          <rect x="9.4" y="9.4" width="5.2" height="5.2" rx="0.8" fill="#000000" stroke="#0284C7" strokeWidth="1" />
+          <rect x="5" y="13.8" width="5.2" height="5.2" rx="0.8" fill="#0284C7" />
+          <rect x="13.8" y="13.8" width="5.2" height="5.2" rx="0.8" fill="#0284C7" />
         </svg>
       </span>
     );
