@@ -407,6 +407,322 @@ export function LeverageSelector({
   );
 }
 
+// Crisp official application logos for supported trading exchanges
+export function ExchangeLogo({ exchange, className = "w-5 h-5" }) {
+  const ex = String(exchange || '').toLowerCase().trim();
+
+  // 1. Delta Exchange
+  if (ex.includes('delta')) {
+    return (
+      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#031525] border border-[#00C2FF]/40 p-0.5 shadow-xs overflow-hidden select-none`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 3.5L20.5 19H3.5L12 3.5Z" fill="url(#deltaGradEx)" stroke="#00E5FF" strokeWidth="0.8" strokeLinejoin="round"/>
+          <path d="M12 9.5L16.2 17H7.8L12 9.5Z" fill="#031525" />
+          <defs>
+            <linearGradient id="deltaGradEx" x1="12" y1="3.5" x2="12" y2="19" gradientUnits="userSpaceOnUse">
+              <stop stopColor="#00E5FF" />
+              <stop offset="1" stopColor="#0B63FF" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </span>
+    );
+  }
+
+  // 2. Coinbase
+  if (ex.includes('coinbase')) {
+    return (
+      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#0052FF] shadow-xs overflow-hidden select-none`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-[85%] h-[85%]" xmlns="http://www.w3.org/2000/svg">
+          <rect x="5" y="5" width="14" height="14" rx="4" fill="#FFFFFF" />
+          <rect x="8.5" y="8.5" width="7" height="7" rx="1.8" fill="#0052FF" />
+        </svg>
+      </span>
+    );
+  }
+
+  // 3. Binance
+  if (ex.includes('binance')) {
+    return (
+      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#181A20] border border-[#F3BA2F]/40 p-0.5 shadow-xs overflow-hidden select-none`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 4.5L14.7 7.2L12 9.9L9.3 7.2L12 4.5ZM16.8 9.3L19.5 12L16.8 14.7L14.1 12L16.8 9.3ZM12 14.1L14.7 16.8L12 19.5L9.3 16.8L12 14.1ZM7.2 9.3L9.9 12L7.2 14.7L4.5 12L7.2 9.3ZM12 10.8L13.2 12L12 13.2L10.8 12L12 10.8Z" fill="#F3BA2F" />
+        </svg>
+      </span>
+    );
+  }
+
+  // 4. CoinSwitch
+  if (ex.includes('coinswitch') || ex.includes('switch')) {
+    return (
+      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-gradient-to-tr from-[#0052FF] via-[#0084FF] to-[#00E5FF] shadow-xs overflow-hidden select-none p-0.5`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-[85%] h-[85%]" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 4.5C7.86 4.5 4.5 7.86 4.5 12C4.5 16.14 7.86 19.5 12 19.5C15.15 19.5 17.86 17.55 18.94 14.78H16.57C15.63 16.42 13.94 17.5 12 17.5C8.96 17.5 6.5 15.04 6.5 12C6.5 8.96 8.96 6.5 12 6.5C13.94 6.5 15.63 7.58 16.57 9.22H18.94C17.86 6.45 15.15 4.5 12 4.5Z" fill="#FFFFFF" />
+          <path d="M16 11.5L19.5 8L23 11.5H16Z" fill="#FFFFFF" />
+          <path d="M8 12.5L4.5 16L1 12.5H8Z" fill="#FFFFFF" />
+        </svg>
+      </span>
+    );
+  }
+
+  // 5. Bybit
+  if (ex.includes('bybit')) {
+    return (
+      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#121214] border border-[#F7A600]/30 shadow-xs overflow-hidden select-none`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-[85%] h-[85%]" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 6H12.8C14.8 6 16.3 7.3 16.3 9C16.3 10.1 15.6 11 14.6 11.5C15.8 12 16.8 13.1 16.8 14.5C16.8 16.4 15.2 18 13.1 18H7V6ZM10.2 8.5V10.7H12.6C13.2 10.7 13.7 10.2 13.7 9.6C13.7 9 13.2 8.5 12.6 8.5H10.2ZM10.2 13V15.5H12.9C13.6 15.5 14.1 15 14.1 14.3C14.1 13.6 13.6 13 12.9 13H10.2Z" fill="#F7A600" />
+        </svg>
+      </span>
+    );
+  }
+
+  // 6. OKX
+  if (ex.includes('okx')) {
+    return (
+      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-black border border-white/20 shadow-xs overflow-hidden select-none`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-[80%] h-[80%]" xmlns="http://www.w3.org/2000/svg">
+          <rect x="5.5" y="5.5" width="5" height="5" rx="0.5" fill="#FFFFFF" />
+          <rect x="13.5" y="5.5" width="5" height="5" rx="0.5" fill="#FFFFFF" />
+          <rect x="9.5" y="9.5" width="5" height="5" rx="0.5" fill="#000000" stroke="#FFFFFF" strokeWidth="1" />
+          <rect x="5.5" y="13.5" width="5" height="5" rx="0.5" fill="#FFFFFF" />
+          <rect x="13.5" y="13.5" width="5" height="5" rx="0.5" fill="#FFFFFF" />
+        </svg>
+      </span>
+    );
+  }
+
+  // 7. NSE (India)
+  if (ex.includes('nse')) {
+    return (
+      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#E65100] shadow-xs overflow-hidden select-none`}>
+        <span className="text-[9px] font-black text-white tracking-tighter">NSE</span>
+      </span>
+    );
+  }
+
+  // 8. Forex / Global Currencies
+  if (ex.includes('forex') || ex.includes('currency')) {
+    return (
+      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#0284C7] shadow-xs overflow-hidden select-none`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-[80%] h-[80%]" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="9" stroke="#FFFFFF" strokeWidth="1.5" />
+          <path d="M3 12H21M12 3C14.5 5.5 16 8.5 16 12C16 15.5 14.5 18.5 12 21C9.5 18.5 8 15.5 8 12C8 8.5 9.5 5.5 12 3Z" stroke="#FFFFFF" strokeWidth="1.2" />
+        </svg>
+      </span>
+    );
+  }
+
+  // Fallback generic badge
+  return (
+    <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-sky-500/20 text-sky-400 font-bold text-[9px] select-none uppercase`}>
+      {String(exchange || 'EX').slice(0, 2)}
+    </span>
+  );
+}
+
+// Supported Platforms with branding & categorization
+export const EXCHANGES_LIST = [
+  { 
+    id: 'Delta Exchange', 
+    name: 'Delta Exchange', 
+    subtitle: 'Crypto & Gold Derivatives', 
+    badge: 'Popular', 
+    badgeColor: 'sky' 
+  },
+  { 
+    id: 'Coinbase', 
+    name: 'Coinbase', 
+    subtitle: 'US & Global Exchange', 
+    badge: 'Global', 
+    badgeColor: 'blue' 
+  },
+  { 
+    id: 'Binance', 
+    name: 'Binance', 
+    subtitle: 'Global Crypto & Futures', 
+    badge: 'High Vol', 
+    badgeColor: 'amber' 
+  },
+  { 
+    id: 'CoinSwitch', 
+    name: 'CoinSwitch', 
+    subtitle: 'India Crypto Platform', 
+    badge: 'INR Direct', 
+    badgeColor: 'cyan' 
+  },
+  { 
+    id: 'Bybit', 
+    name: 'Bybit', 
+    subtitle: 'Perpetuals & Derivatives' 
+  },
+  { 
+    id: 'OKX', 
+    name: 'OKX', 
+    subtitle: 'Web3 & Derivatives' 
+  },
+  { 
+    id: 'NSE', 
+    name: 'NSE (India)', 
+    subtitle: 'National Stock Exchange' 
+  },
+  { 
+    id: 'Forex', 
+    name: 'Forex', 
+    subtitle: 'Currencies & FX Pairs' 
+  }
+];
+
+// Custom, theme-aware Exchange Selector with application logos and dropdown popover
+export function ExchangeSelector({ value, onChange, isDark = true, label = "Exchange" }) {
+  const [isOpen, setIsOpen] = useState(false);
+  const containerRef = useRef(null);
+
+  // Close when clicked outside
+  useEffect(() => {
+    function handleClickOutside(e) {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    }
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
+  // Current exchange object or fallback
+  const currentEx = useMemo(() => {
+    const match = EXCHANGES_LIST.find(
+      e => e.id.toLowerCase() === String(value || '').toLowerCase() || 
+           e.name.toLowerCase() === String(value || '').toLowerCase()
+    );
+    return match || { id: value || 'Delta Exchange', name: value || 'Delta Exchange', subtitle: 'Trading Exchange' };
+  }, [value]);
+
+  return (
+    <div className="relative" ref={containerRef}>
+      {label && (
+        <label className={`block text-[11px] font-medium mb-1.5 font-jakarta ${
+          isDark ? 'text-slate-400' : 'text-slate-600'
+        }`}>
+          {label}
+        </label>
+      )}
+
+      {/* Trigger Button */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full h-10 px-3 rounded-xl border flex items-center justify-between transition cursor-pointer select-none ${
+          isDark
+            ? isOpen 
+              ? 'bg-[#121828] border-sky-500 shadow-sm ring-1 ring-sky-500/20 text-white' 
+              : 'bg-[#0E1320] border-[#1E2638] hover:border-slate-700 text-white'
+            : isOpen
+              ? 'bg-sky-50/50 border-sky-500 shadow-sm ring-1 ring-sky-500/20 text-slate-900'
+              : 'bg-white border-slate-200 hover:border-slate-300 text-slate-900'
+        }`}
+      >
+        <div className="flex items-center space-x-2.5 min-w-0 pr-1">
+          <ExchangeLogo exchange={currentEx.name} className="w-5 h-5 shrink-0" />
+          <span className="text-xs font-semibold truncate tracking-tight">
+            {currentEx.name}
+          </span>
+        </div>
+
+        <ChevronDown className={`w-3.5 h-3.5 shrink-0 transition-transform duration-200 ${
+          isOpen ? 'rotate-180 text-sky-400' : isDark ? 'text-slate-400' : 'text-slate-500'
+        }`} />
+      </button>
+
+      {/* Popover Dropdown */}
+      {isOpen && (
+        <div className={`absolute left-0 top-full mt-2 w-72 max-w-[90vw] z-50 p-2 rounded-2xl border shadow-2xl backdrop-blur-md animate-in fade-in zoom-in-95 duration-150 ${
+          isDark
+            ? 'bg-[#0B0F19]/95 border-[#1E2638] text-white shadow-black/80'
+            : 'bg-white/95 border-slate-200 text-slate-900 shadow-xl'
+        }`}>
+          {/* Header */}
+          <div className={`px-2.5 py-1.5 flex items-center justify-between border-b mb-1 ${
+            isDark ? 'border-[#1E2638]' : 'border-slate-100'
+          }`}>
+            <span className={`text-[10px] font-bold uppercase tracking-wider ${
+              isDark ? 'text-slate-400' : 'text-slate-500'
+            }`}>
+              Select Exchange Platform
+            </span>
+            <span className={`text-[9px] px-1.5 py-0.5 rounded font-mono font-bold ${
+              isDark ? 'bg-sky-500/10 text-sky-400' : 'bg-sky-50 text-sky-600'
+            }`}>
+              Live
+            </span>
+          </div>
+
+          {/* List */}
+          <div className="max-h-64 overflow-y-auto space-y-1 py-1 custom-scrollbar">
+            {EXCHANGES_LIST.map((item) => {
+              const isSelected = String(currentEx.id).toLowerCase() === item.id.toLowerCase() ||
+                                 String(currentEx.name).toLowerCase() === item.name.toLowerCase();
+              return (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => {
+                    onChange(item.id);
+                    setIsOpen(false);
+                  }}
+                  className={`w-full flex items-center justify-between px-2.5 py-2 rounded-xl text-left transition cursor-pointer group ${
+                    isSelected
+                      ? isDark
+                        ? 'bg-sky-500/15 text-white border border-sky-500/30'
+                        : 'bg-sky-50 text-sky-900 border border-sky-200'
+                      : isDark
+                        ? 'hover:bg-[#151D2E] text-slate-200'
+                        : 'hover:bg-slate-100 text-slate-800'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2.5 min-w-0 pr-2">
+                    <ExchangeLogo exchange={item.name} className="w-6 h-6 shrink-0" />
+                    <div className="min-w-0">
+                      <div className="flex items-center space-x-1.5">
+                        <span className="text-xs font-bold truncate font-jakarta">
+                          {item.name}
+                        </span>
+                        {item.badge && (
+                          <span className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded ${
+                            item.badgeColor === 'sky'
+                              ? isDark ? 'bg-sky-500/20 text-sky-400' : 'bg-sky-100 text-sky-700'
+                              : item.badgeColor === 'amber'
+                              ? isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-100 text-amber-700'
+                              : item.badgeColor === 'cyan'
+                              ? isDark ? 'bg-cyan-500/20 text-cyan-400' : 'bg-cyan-100 text-cyan-700'
+                              : isDark ? 'bg-blue-500/20 text-blue-400' : 'bg-blue-100 text-blue-700'
+                          }`}>
+                            {item.badge}
+                          </span>
+                        )}
+                      </div>
+                      <p className={`text-[10px] truncate ${
+                        isDark ? 'text-slate-400 group-hover:text-slate-300' : 'text-slate-500 group-hover:text-slate-600'
+                      }`}>
+                        {item.subtitle}
+                      </p>
+                    </div>
+                  </div>
+
+                  {isSelected && (
+                    <Check className={`w-4 h-4 shrink-0 ${isDark ? 'text-sky-400' : 'text-sky-600'}`} />
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export function TradeModal({ 
   isOpen, 
   onClose, 
@@ -1464,35 +1780,12 @@ export function TradeModal({
 
                   {/* Exchange */}
                   <div>
-                    <label className={`block text-[11px] font-medium mb-1.5 font-jakarta ${
-                      isDark ? 'text-slate-400' : 'text-slate-600'
-                    }`}>
-                      Exchange
-                    </label>
-                    <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
-                      isDark ? 'bg-[#0E1320] border-[#1E2638] hover:border-slate-700 focus-within:border-sky-500' : 'bg-white border-slate-200 hover:border-slate-300 focus-within:border-sky-500'
-                    }`}>
-                      <span className="text-sky-500 text-xs mr-2 select-none">❖</span>
-                      <select
-                        value={exchange}
-                        onChange={(e) => setExchange(e.target.value)}
-                        className={`w-full bg-transparent text-xs font-medium focus:outline-none cursor-pointer appearance-none ${
-                          isDark ? 'text-white' : 'text-slate-900'
-                        }`}
-                      >
-                        <option value="Delta Exchange" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Delta Exchange</option>
-                        <option value="XAUUSD" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>XAUUSD</option>
-                        <option value="Binance" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Binance</option>
-                        <option value="Bybit" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Bybit</option>
-                        <option value="OKX" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>OKX</option>
-                        <option value="Coinbase" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Coinbase</option>
-                        <option value="NSE" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>NSE (India)</option>
-                        <option value="Forex" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>Forex</option>
-                      </select>
-                      <ChevronDown className={`w-3.5 h-3.5 shrink-0 pointer-events-none ${
-                        isDark ? 'text-slate-500' : 'text-slate-400'
-                      }`} />
-                    </div>
+                    <ExchangeSelector
+                      value={exchange}
+                      onChange={setExchange}
+                      isDark={isDark}
+                      label="Exchange"
+                    />
                   </div>
 
                   {/* Leverage (Upper Section) */}
@@ -2150,7 +2443,10 @@ export function TradeModal({
 
                   <div className="flex items-center justify-between">
                     <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Exchange</span>
-                    <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>{exchange}</span>
+                    <span className={`font-semibold flex items-center space-x-1.5 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                      <ExchangeLogo exchange={exchange} className="w-3.5 h-3.5" />
+                      <span>{exchange}</span>
+                    </span>
                   </div>
 
                   <div className="flex items-center justify-between">
