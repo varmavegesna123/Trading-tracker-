@@ -358,6 +358,7 @@ export function App() {
               onViewTradeChart={(trade) => setSelectedChartTrade(trade)}
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
+              darkMode={darkMode}
             />
           )}
 
@@ -460,6 +461,7 @@ export function App() {
         isOpen={isPreTradeChecklistOpen}
         onClose={() => setIsPreTradeChecklistOpen(false)}
         onProceedToLogTrade={handleProceedFromChecklist}
+        darkMode={darkMode}
       />
 
       <CapitalModal
