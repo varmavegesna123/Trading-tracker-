@@ -14,7 +14,9 @@ import {
   CheckCircle2,
   Upload,
   Search,
-  Sparkles
+  Sparkles,
+  Zap,
+  Sliders
 } from 'lucide-react';
 import { CryptoIcon, BINANCE_POPULAR_PAIRS, getAssetTicker } from '../utils/cryptoIcons';
 import { formatCurrency, getCurrencySymbol } from '../utils/formatters';
@@ -209,6 +211,221 @@ function CustomGlassDateTimePicker({ value, onChange, onClose, isDark = true }) 
           Apply
         </button>
       </div>
+    </div>
+  );
+}
+
+export function LeverageSelector({ 
+  value, 
+  onChange, 
+  isDark, 
+  label = "Leverage",
+  align = "left" 
+}) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [customInput, setCustomInput] = useState(String(value || '25'));
+  const containerRef = useRef(null);
+
+  useEffect(() => {
+    setCustomInput(String(value || '25'));
+  }, [value]);
+
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (containerRef.current && !containerRef.current.contains(e.target)) {
+        setIsOpen(false);
+      }
+    };
+    if (isOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
+  const numVal = parseInt(value, 10) || 25;
+
+  const getTier = (v) => {
+    if (v <= 10) return { name: 'Low Risk', border: isDark ? 'border-emerald-500/30' : 'border-emerald-200', bg: isDark ? 'bg-emerald-500/10' : 'bg-emerald-50', text: isDark ? 'text-emerald-400' : 'text-emerald-700' };
+    if (v <= 25) return { name: 'Standard', border: isDark ? 'border-sky-500/30' : 'border-sky-200', bg: isDark ? 'bg-sky-500/10' : 'bg-sky-50', text: isDark ? 'text-sky-400' : 'text-sky-700' };
+    if (v <= 50) return { name: 'High', border: isDark ? 'border-amber-500/30' : 'border-amber-200', bg: isDark ? 'bg-amber-500/10' : 'bg-amber-50', text: isDark ? 'text-amber-400' : 'text-amber-700' };
+    return { name: 'Ultra', border: isDark ? 'border-rose-500/30' : 'border-rose-200', bg: isDark ? 'bg-rose-500/10' : 'bg-rose-50', text: isDark ? 'text-rose-400' : 'text-rose-700' };
+  };
+
+  const tier = getTier(numVal);
+  const presets = [1, 2, 5, 10, 20, 25, 50, 75, 100, 125, 200];
+
+  return (
+    <div className="relative" ref={containerRef}>
+      {label && (
+        <label className={`block text-[11px] font-medium mb-1.5 font-jakarta ${
+          isDark ? 'text-slate-400' : 'text-slate-600'
+        }`}>
+          {label}
+        </label>
+      )}
+
+      {/* Trigger Button */}
+      <button
+        type="button"
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between rounded-xl border px-3 h-10 transition select-none cursor-pointer ${
+          isOpen
+            ? isDark ? 'border-sky-500 ring-2 ring-sky-500/20 bg-[#111726]' : 'border-sky-500 ring-2 ring-sky-500/20 bg-sky-50/50'
+            : isDark ? 'bg-[#0E1320] border-[#1E2638] hover:border-slate-700' : 'bg-white border-slate-200 hover:border-slate-300'
+        }`}
+      >
+        <div className="flex items-center space-x-2 min-w-0">
+          <Zap className="w-3.5 h-3.5 text-sky-400 shrink-0" />
+          <span className={`font-mono font-black text-xs ${isDark ? 'text-white' : 'text-slate-900'}`}>
+            {value}x
+          </span>
+        </div>
+
+        <div className="flex items-center space-x-1.5 shrink-0">
+          <span className={`text-[9px] font-bold uppercase font-mono px-1.5 py-0.5 rounded border ${
+            tier.bg
+          } ${tier.text} ${tier.border}`}>
+            {tier.name}
+          </span>
+          <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 shrink-0 ${
+            isOpen ? 'rotate-180 text-sky-400' : (isDark ? 'text-slate-500' : 'text-slate-400')
+          }`} />
+        </div>
+      </button>
+
+      {/* Custom Popover */}
+      {isOpen && (
+        <div className={`absolute z-50 top-full mt-1.5 ${
+          align === 'right' ? 'right-0' : 'left-0'
+        } w-72 rounded-2xl border p-3.5 space-y-3 shadow-2xl backdrop-blur-xl animate-in fade-in zoom-in-95 duration-150 ${
+          isDark ? 'bg-[#0B0F19]/95 border-[#1E2638] text-slate-100 shadow-black/80' : 'bg-white/95 border-slate-200 text-slate-800 shadow-slate-200/80'
+        }`}>
+          {/* Header */}
+          <div className={`flex items-center justify-between border-b pb-2 ${
+            isDark ? 'border-[#1E2638]/70' : 'border-slate-200'
+          }`}>
+            <div>
+              <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block ${
+                isDark ? 'text-slate-400' : 'text-slate-500'
+              }`}>
+                Leverage Multiplier
+              </span>
+              <span className="text-lg font-black font-mono text-sky-400">
+                {value}x
+              </span>
+            </div>
+            <span className={`text-[10px] font-extrabold uppercase font-mono px-2 py-0.5 rounded-md border ${
+              tier.bg
+            } ${tier.text} ${tier.border}`}>
+              {tier.name} Tier
+            </span>
+          </div>
+
+          {/* Quick Presets Grid */}
+          <div className="space-y-1.5">
+            <span className={`text-[10px] font-mono font-semibold uppercase ${
+              isDark ? 'text-slate-400' : 'text-slate-500'
+            }`}>
+              Quick Multipliers
+            </span>
+            <div className="grid grid-cols-4 gap-1.5">
+              {presets.map((p) => {
+                const isSelected = String(value) === String(p);
+                return (
+                  <button
+                    key={p}
+                    type="button"
+                    onClick={() => {
+                      onChange(String(p));
+                      setCustomInput(String(p));
+                    }}
+                    className={`py-1.5 text-xs font-mono font-bold rounded-lg transition cursor-pointer border ${
+                      isSelected
+                        ? 'bg-sky-500 text-white border-sky-500 shadow-md shadow-sky-500/25 ring-1 ring-white/20'
+                        : isDark
+                          ? 'bg-[#111726] border-[#1E2638] text-slate-300 hover:border-sky-500/40 hover:text-white'
+                          : 'bg-slate-50 border-slate-200 text-slate-700 hover:border-sky-300 hover:bg-slate-100'
+                    }`}
+                  >
+                    {p}x
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Slider & Custom Input */}
+          <div className={`space-y-2 pt-1 border-t ${
+            isDark ? 'border-[#1E2638]/70' : 'border-slate-200'
+          }`}>
+            <div className="flex items-center justify-between">
+              <span className={`text-[10px] font-mono font-semibold uppercase ${
+                isDark ? 'text-slate-400' : 'text-slate-500'
+              }`}>
+                Drag Slider (1x – 100x)
+              </span>
+              <span className="text-[10px] font-mono font-bold text-sky-400">
+                {numVal}x
+              </span>
+            </div>
+
+            <input
+              type="range"
+              min="1"
+              max="100"
+              value={Math.min(numVal, 100)}
+              onChange={(e) => {
+                onChange(e.target.value);
+                setCustomInput(e.target.value);
+              }}
+              className="w-full accent-sky-500 cursor-pointer h-1.5 rounded-lg"
+            />
+
+            {/* Custom Input */}
+            <div className="flex items-center space-x-2 pt-1">
+              <div className={`relative flex-1 flex items-center rounded-xl border px-2.5 h-8 ${
+                isDark ? 'bg-[#111726] border-[#1E2638]' : 'bg-slate-50 border-slate-200'
+              }`}>
+                <input
+                  type="number"
+                  min="1"
+                  max="200"
+                  placeholder="Custom"
+                  value={customInput}
+                  onChange={(e) => {
+                    setCustomInput(e.target.value);
+                    const parsed = parseInt(e.target.value, 10);
+                    if (!isNaN(parsed) && parsed >= 1 && parsed <= 200) {
+                      onChange(String(parsed));
+                    }
+                  }}
+                  className={`w-full bg-transparent font-mono text-xs font-bold focus:outline-none ${
+                    isDark ? 'text-white' : 'text-slate-900'
+                  }`}
+                />
+                <span className={`text-[10px] font-mono font-bold ${isDark ? 'text-slate-500' : 'text-slate-400'}`}>
+                  x
+                </span>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="px-3 h-8 bg-sky-500 hover:bg-sky-600 text-white text-xs font-extrabold rounded-xl transition cursor-pointer shadow-sm"
+              >
+                Apply
+              </button>
+            </div>
+          </div>
+
+          {/* Delta Exchange Footer Hint */}
+          <div className={`text-[9px] font-mono leading-tight pt-1 border-t ${
+            isDark ? 'border-[#1E2638]/50 text-slate-500' : 'border-slate-100 text-slate-400'
+          }`}>
+            Delta Exchange supports up to 100x leverage on Gold & 200x on BTC/ETH.
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -1065,8 +1282,8 @@ export function TradeModal({
                   </div>
                 </div>
 
-                {/* Row 2: Instrument / Symbol, Exchange, Execution Date */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                {/* Row 2: Instrument / Symbol, Exchange, Leverage (Upper), Execution Date */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
                   {/* Instrument / Symbol */}
                   <div className="relative" ref={symbolDropdownRef}>
                     <div className="flex items-center justify-between mb-1.5">
@@ -1301,6 +1518,17 @@ export function TradeModal({
                     </div>
                   </div>
 
+                  {/* Leverage (Upper Section) */}
+                  <div>
+                    <LeverageSelector
+                      value={leverage}
+                      onChange={setLeverage}
+                      isDark={isDark}
+                      label="Leverage"
+                      align="left"
+                    />
+                  </div>
+
                   {/* Execution Date */}
                   <div>
                     <label className={`block text-[11px] font-medium mb-1.5 font-jakarta ${
@@ -1428,32 +1656,13 @@ export function TradeModal({
                     </div>
 
                     <div>
-                      <label className={`block text-[11px] font-medium mb-1 font-jakarta ${
-                        isDark ? 'text-slate-400' : 'text-slate-600'
-                      }`}>
-                        Leverage
-                      </label>
-                      <div className={`relative flex items-center rounded-xl border px-3 h-10 transition ${
-                        isDark ? 'bg-[#0B0F19] border-[#1E2638] focus-within:border-sky-500 hover:border-slate-700' : 'bg-white border-slate-200 focus-within:border-sky-500 hover:border-slate-300'
-                      }`}>
-                        <select
-                          value={leverage}
-                          onChange={(e) => setLeverage(e.target.value)}
-                          className={`w-full bg-transparent text-xs font-medium focus:outline-none cursor-pointer appearance-none ${
-                            isDark ? 'text-white' : 'text-slate-900'
-                          }`}
-                        >
-                          <option value="1" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>1x</option>
-                          <option value="5" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>5x</option>
-                          <option value="10" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>10x</option>
-                          <option value="20" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>20x</option>
-                          <option value="25" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>25x</option>
-                          <option value="50" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>50x</option>
-                          <option value="75" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>75x</option>
-                          <option value="100" className={isDark ? 'bg-[#0B0F19] text-white' : 'bg-white text-slate-900'}>100x</option>
-                        </select>
-                        <ChevronDown className={`w-3.5 h-3.5 shrink-0 pointer-events-none ${isDark ? 'text-slate-500' : 'text-slate-400'}`} />
-                      </div>
+                      <LeverageSelector
+                        value={leverage}
+                        onChange={setLeverage}
+                        isDark={isDark}
+                        label="Leverage"
+                        align="right"
+                      />
                     </div>
                   </div>
 
@@ -1969,7 +2178,18 @@ export function TradeModal({
 
                   <div className="flex items-center justify-between">
                     <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Leverage</span>
-                    <span className={`font-semibold ${isDark ? 'text-white' : 'text-slate-900'}`}>{leverage}x</span>
+                    <span className={`font-mono font-bold text-xs px-2 py-0.5 rounded-lg border flex items-center space-x-1 ${
+                      (parseInt(leverage) || 25) <= 10
+                        ? isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                        : (parseInt(leverage) || 25) <= 25
+                        ? isDark ? 'bg-sky-500/10 text-sky-400 border-sky-500/30' : 'bg-sky-50 text-sky-700 border-sky-200'
+                        : (parseInt(leverage) || 25) <= 50
+                        ? isDark ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' : 'bg-amber-50 text-amber-700 border-amber-200'
+                        : isDark ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' : 'bg-rose-50 text-rose-700 border-rose-200'
+                    }`}>
+                      <Zap className="w-3 h-3 text-current" />
+                      <span>{leverage}x</span>
+                    </span>
                   </div>
 
                   <div className="flex items-center justify-between">
