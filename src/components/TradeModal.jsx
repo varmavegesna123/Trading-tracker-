@@ -411,25 +411,23 @@ export function LeverageSelector({
 export function ExchangeLogo({ exchange, className = "w-5 h-5" }) {
   const ex = String(exchange || '').toLowerCase().trim();
 
-  // 1. Delta Exchange
+  // 1. Delta Exchange (Official India 3D Orange & Green Delta)
   if (ex.includes('delta')) {
     return (
-      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#031525] border border-[#00C2FF]/40 p-0.5 shadow-xs overflow-hidden select-none`}>
-        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 3.5L20.5 19H3.5L12 3.5Z" fill="url(#deltaGradEx)" stroke="#00E5FF" strokeWidth="0.8" strokeLinejoin="round"/>
-          <path d="M12 9.5L16.2 17H7.8L12 9.5Z" fill="#031525" />
-          <defs>
-            <linearGradient id="deltaGradEx" x1="12" y1="3.5" x2="12" y2="19" gradientUnits="userSpaceOnUse">
-              <stop stopColor="#00E5FF" />
-              <stop offset="1" stopColor="#0B63FF" />
-            </linearGradient>
-          </defs>
+      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#181A20] border border-[#FF7A00]/25 p-0.5 shadow-xs overflow-hidden select-none`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-[90%] h-[90%]" xmlns="http://www.w3.org/2000/svg">
+          {/* Left Orange Shadow Facet */}
+          <polygon points="4,12 9.5,8.8 9.5,15.2" fill="#E65800" />
+          {/* Top Orange Wing */}
+          <polygon points="10.2,4.8 21.2,10.2 13.8,12 10.2,9.2" fill="#FF7A00" />
+          {/* Bottom Green Wing */}
+          <polygon points="10.2,19.2 21.2,10.2 13.8,12 10.2,14.8" fill="#00C853" />
         </svg>
       </span>
     );
   }
 
-  // 2. Coinbase
+  // 2. Coinbase (Official Coinbase Blue Circle & Rounded Square Emblem)
   if (ex.includes('coinbase')) {
     return (
       <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#0052FF] shadow-xs overflow-hidden select-none`}>
@@ -441,7 +439,7 @@ export function ExchangeLogo({ exchange, className = "w-5 h-5" }) {
     );
   }
 
-  // 3. Binance
+  // 3. Binance (Official Binance Yellow Diamond Lattice)
   if (ex.includes('binance')) {
     return (
       <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#181A20] border border-[#F3BA2F]/40 p-0.5 shadow-xs overflow-hidden select-none`}>
@@ -452,14 +450,24 @@ export function ExchangeLogo({ exchange, className = "w-5 h-5" }) {
     );
   }
 
-  // 4. CoinSwitch
+  // 4. CoinSwitch (Official Rebranded Mint Green 'C' & White Coin)
   if (ex.includes('coinswitch') || ex.includes('switch')) {
     return (
-      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-gradient-to-tr from-[#0052FF] via-[#0084FF] to-[#00E5FF] shadow-xs overflow-hidden select-none p-0.5`}>
-        <svg viewBox="0 0 24 24" fill="none" className="w-[85%] h-[85%]" xmlns="http://www.w3.org/2000/svg">
-          <path d="M12 4.5C7.86 4.5 4.5 7.86 4.5 12C4.5 16.14 7.86 19.5 12 19.5C15.15 19.5 17.86 17.55 18.94 14.78H16.57C15.63 16.42 13.94 17.5 12 17.5C8.96 17.5 6.5 15.04 6.5 12C6.5 8.96 8.96 6.5 12 6.5C13.94 6.5 15.63 7.58 16.57 9.22H18.94C17.86 6.45 15.15 4.5 12 4.5Z" fill="#FFFFFF" />
-          <path d="M16 11.5L19.5 8L23 11.5H16Z" fill="#FFFFFF" />
-          <path d="M8 12.5L4.5 16L1 12.5H8Z" fill="#FFFFFF" />
+      <span className={`${className} inline-flex items-center justify-center shrink-0 rounded-full bg-[#181A20] border border-[#21CC7B]/30 shadow-xs overflow-hidden select-none`}>
+        <svg viewBox="0 0 24 24" fill="none" className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="12" cy="12" r="11" fill="#181A20" />
+          {/* Left Mint Green Crescent / C-Spine */}
+          <path 
+            d="M 12 4.2 C 7.69 4.2 4.2 7.69 4.2 12 C 4.2 16.31 7.69 19.8 12 19.8 L 12 16.2 C 9.68 16.2 7.8 14.32 7.8 12 C 7.8 9.68 9.68 7.8 12 7.8 Z" 
+            fill="#21CC7B" 
+          />
+          {/* Top Right Dark Teal-Green Quadrant */}
+          <path 
+            d="M 12 4.2 C 16.31 4.2 19.8 7.69 19.8 12 L 16.2 12 C 16.2 9.68 14.32 7.8 12 7.8 Z" 
+            fill="#1C945E" 
+          />
+          {/* Bottom Right Solid White Coin */}
+          <circle cx="15.6" cy="15.6" r="3" fill="#FFFFFF" />
         </svg>
       </span>
     );
@@ -527,7 +535,7 @@ export const EXCHANGES_LIST = [
     name: 'Delta Exchange', 
     subtitle: 'Crypto & Gold Derivatives', 
     badge: 'Popular', 
-    badgeColor: 'sky' 
+    badgeColor: 'amber' 
   },
   { 
     id: 'Coinbase', 
@@ -548,7 +556,7 @@ export const EXCHANGES_LIST = [
     name: 'CoinSwitch', 
     subtitle: 'India Crypto Platform', 
     badge: 'INR Direct', 
-    badgeColor: 'cyan' 
+    badgeColor: 'emerald' 
   },
   { 
     id: 'Bybit', 
@@ -690,8 +698,8 @@ export function ExchangeSelector({ value, onChange, isDark = true, label = "Exch
                         </span>
                         {item.badge && (
                           <span className={`text-[9px] font-mono font-bold px-1.5 py-0.2 rounded ${
-                            item.badgeColor === 'sky'
-                              ? isDark ? 'bg-sky-500/20 text-sky-400' : 'bg-sky-100 text-sky-700'
+                            item.badgeColor === 'emerald'
+                              ? isDark ? 'bg-emerald-500/20 text-emerald-400' : 'bg-emerald-100 text-emerald-700'
                               : item.badgeColor === 'amber'
                               ? isDark ? 'bg-amber-500/20 text-amber-400' : 'bg-amber-100 text-amber-700'
                               : item.badgeColor === 'cyan'
