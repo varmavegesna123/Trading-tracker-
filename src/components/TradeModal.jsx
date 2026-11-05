@@ -243,15 +243,6 @@ export function LeverageSelector({
   }, [isOpen]);
 
   const numVal = parseInt(value, 10) || 25;
-
-  const getTier = (v) => {
-    if (v <= 10) return { name: 'Low Risk', border: isDark ? 'border-emerald-500/30' : 'border-emerald-200', bg: isDark ? 'bg-emerald-500/10' : 'bg-emerald-50', text: isDark ? 'text-emerald-400' : 'text-emerald-700' };
-    if (v <= 25) return { name: 'Standard', border: isDark ? 'border-sky-500/30' : 'border-sky-200', bg: isDark ? 'bg-sky-500/10' : 'bg-sky-50', text: isDark ? 'text-sky-400' : 'text-sky-700' };
-    if (v <= 50) return { name: 'High', border: isDark ? 'border-amber-500/30' : 'border-amber-200', bg: isDark ? 'bg-amber-500/10' : 'bg-amber-50', text: isDark ? 'text-amber-400' : 'text-amber-700' };
-    return { name: 'Ultra', border: isDark ? 'border-rose-500/30' : 'border-rose-200', bg: isDark ? 'bg-rose-500/10' : 'bg-rose-50', text: isDark ? 'text-rose-400' : 'text-rose-700' };
-  };
-
-  const tier = getTier(numVal);
   const presets = [1, 2, 5, 10, 20, 25, 50, 75, 100, 125, 200];
 
   return (
@@ -281,16 +272,9 @@ export function LeverageSelector({
           </span>
         </div>
 
-        <div className="flex items-center space-x-1.5 shrink-0">
-          <span className={`text-[9px] font-bold uppercase font-mono px-1.5 py-0.5 rounded border ${
-            tier.bg
-          } ${tier.text} ${tier.border}`}>
-            {tier.name}
-          </span>
-          <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 shrink-0 ${
-            isOpen ? 'rotate-180 text-sky-400' : (isDark ? 'text-slate-500' : 'text-slate-400')
-          }`} />
-        </div>
+        <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 shrink-0 ${
+          isOpen ? 'rotate-180 text-sky-400' : (isDark ? 'text-slate-500' : 'text-slate-400')
+        }`} />
       </button>
 
       {/* Custom Popover */}
@@ -304,20 +288,13 @@ export function LeverageSelector({
           <div className={`flex items-center justify-between border-b pb-2 ${
             isDark ? 'border-[#1E2638]/70' : 'border-slate-200'
           }`}>
-            <div>
-              <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block ${
-                isDark ? 'text-slate-400' : 'text-slate-500'
-              }`}>
-                Leverage Multiplier
-              </span>
-              <span className="text-lg font-black font-mono text-sky-400">
-                {value}x
-              </span>
-            </div>
-            <span className={`text-[10px] font-extrabold uppercase font-mono px-2 py-0.5 rounded-md border ${
-              tier.bg
-            } ${tier.text} ${tier.border}`}>
-              {tier.name} Tier
+            <span className={`text-[10px] font-mono font-bold uppercase tracking-wider block ${
+              isDark ? 'text-slate-400' : 'text-slate-500'
+            }`}>
+              Select Leverage
+            </span>
+            <span className="text-base font-black font-mono text-sky-400">
+              {value}x
             </span>
           </div>
 
@@ -2178,18 +2155,7 @@ export function TradeModal({
 
                   <div className="flex items-center justify-between">
                     <span className={isDark ? 'text-slate-400' : 'text-slate-500'}>Leverage</span>
-                    <span className={`font-mono font-bold text-xs px-2 py-0.5 rounded-lg border flex items-center space-x-1 ${
-                      (parseInt(leverage) || 25) <= 10
-                        ? isDark ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                        : (parseInt(leverage) || 25) <= 25
-                        ? isDark ? 'bg-sky-500/10 text-sky-400 border-sky-500/30' : 'bg-sky-50 text-sky-700 border-sky-200'
-                        : (parseInt(leverage) || 25) <= 50
-                        ? isDark ? 'bg-amber-500/10 text-amber-400 border-amber-500/30' : 'bg-amber-50 text-amber-700 border-amber-200'
-                        : isDark ? 'bg-rose-500/10 text-rose-400 border-rose-500/30' : 'bg-rose-50 text-rose-700 border-rose-200'
-                    }`}>
-                      <Zap className="w-3 h-3 text-current" />
-                      <span>{leverage}x</span>
-                    </span>
+                    <span className={`font-mono font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>{leverage}x</span>
                   </div>
 
                   <div className="flex items-center justify-between">
